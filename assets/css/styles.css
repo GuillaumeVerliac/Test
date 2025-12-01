@@ -90,21 +90,101 @@ body {
   cursor: pointer;
 }
 
-/* FOOTER */
+/* FOOTER – style sombre type page contact */
 .site-footer {
-  background: var(--color-bg-alt);
+  background-color: #0b0d12;                      /* fond sombre comme l'ancien site */
+  color: #ccc;
+  font-size: 0.875rem;                            /* petite police */
+  padding: 30px 5%;
+  border-top: 1px solid #222;
+  text-align: center;
+  width: 100%;
   margin-top: 3rem;
-  padding: 1.5rem 0;
-  box-shadow: 0 -6px 20px rgba(0,0,0,0.04);
 }
 
+/* wrapper interne (ex: <div class="container footer-inner">) */
 .footer-inner {
+  max-width: 800px;
+  margin: 0 auto;
+  line-height: 1.6;
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+/* bloc texte principal */
+.footer-inner p {
+  margin: 0;
+}
+
+.footer-inner strong {
+  color: #fff;
+  font-weight: bold;
+}
+
+/* liens du footer */
+.site-footer a {
+  color: #ccc;
+  text-decoration: underline;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.site-footer a:hover {
+  color: #ffffff;
+}
+
+/* ligne du bas : mentions + icônes sociales (LinkedIn, etc.) */
+.footer-bottom {
+  margin-top: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
   flex-wrap: wrap;
-  gap: 1rem;
-  justify-content: space-between;
-  font-size: 0.9rem;
-  color: var(--color-text-muted);
+}
+
+.mentions-link {
+  font-size: 0.8rem;
+}
+
+/* bouton rond pour LinkedIn */
+.social-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid #444;
+  text-decoration: none;
+}
+
+.social-link svg {
+  width: 16px;
+  height: 16px;
+  fill: #ccc;
+  transition: fill 0.2s ease,
+              transform 0.2s ease,
+              border-color 0.2s ease;
+}
+
+.social-link:hover svg {
+  fill: var(--primary-color, #72abdd);
+  transform: translateY(-1px);
+}
+
+.social-link:hover {
+  border-color: var(--primary-color, #72abdd);
+}
+
+/* petite adaptation mobile */
+@media (max-width: 480px) {
+  .footer-bottom {
+    flex-direction: row;
+    gap: 10px;
+  }
 }
 
 /* Sections génériques */

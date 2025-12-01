@@ -91,10 +91,13 @@ body {
 }
 
 /* FOOTER – style sombre type page contact */
+
+/* Cible à la fois <footer> simple et <footer class="site-footer"> */
+footer,
 .site-footer {
-  background-color: #0b0d12;                      /* fond sombre comme l'ancien site */
+  background-color: #0b0d12;
   color: #ccc;
-  font-size: 0.875rem;                            /* petite police */
+  font-size: 0.875rem;
   padding: 30px 5%;
   border-top: 1px solid #222;
   text-align: center;
@@ -102,8 +105,9 @@ body {
   margin-top: 3rem;
 }
 
-/* wrapper interne (ex: <div class="container footer-inner">) */
-.footer-inner {
+/* Cible à la fois .footer-inner (nouveau) et .footer-container (ancien) */
+.footer-inner,
+.footer-container {
   max-width: 800px;
   margin: 0 auto;
   line-height: 1.6;
@@ -113,17 +117,19 @@ body {
   gap: 8px;
 }
 
-/* bloc texte principal */
-.footer-inner p {
+.footer-inner p,
+.footer-container p {
   margin: 0;
 }
 
-.footer-inner strong {
+.footer-inner strong,
+.footer-container strong {
   color: #fff;
   font-weight: bold;
 }
 
-/* liens du footer */
+/* liens du footer (ancien & nouveau) */
+footer a,
 .site-footer a {
   color: #ccc;
   text-decoration: underline;
@@ -131,11 +137,12 @@ body {
   transition: color 0.2s ease;
 }
 
+footer a:hover,
 .site-footer a:hover {
   color: #ffffff;
 }
 
-/* ligne du bas : mentions + icônes sociales (LinkedIn, etc.) */
+/* ligne du bas : mentions + LinkedIn */
 .footer-bottom {
   margin-top: 12px;
   display: flex;
@@ -171,15 +178,14 @@ body {
 }
 
 .social-link:hover svg {
-  fill: var(--primary-color, #72abdd);
+  fill: #72abdd;
   transform: translateY(-1px);
 }
 
 .social-link:hover {
-  border-color: var(--primary-color, #72abdd);
+  border-color: #72abdd;
 }
 
-/* petite adaptation mobile */
 @media (max-width: 480px) {
   .footer-bottom {
     flex-direction: row;

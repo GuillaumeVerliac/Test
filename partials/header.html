@@ -1,21 +1,26 @@
 <header class="site-header">
   <div class="container header-inner">
-    <a href="index.html" class="logo">
-      <!-- Tu mets ton logo (img ou texte) -->
-      <span class="logo-mark">MA SOCIÉTÉ</span>
+    <!-- Logo + texte Priam / Solutions, cliquable vers l'accueil -->
+    <a href="index.html" class="header-left" aria-label="Accueil Priam Solutions">
+      <img src="logo.png" alt="Logo Priam Solutions" />
+      <div class="header-text">
+        <span class="priam">Priam</span>
+        <span class="solutions">Solutions</span>
+      </div>
     </a>
 
-    <nav class="main-nav">
+    <!-- Navigation principale (desktop + mobile via .nav-toggle) -->
+    <nav class="main-nav" aria-label="Navigation principale">
       <ul>
         <li><a href="index.html">Accueil</a></li>
         <li><a href="solutions.html">Solutions</a></li>
         <li><a href="a-propos.html">À propos</a></li>
-        <li><a href="contact.html">Contact</a></li>
+        <li><a href="contact.html" class="contact-link">Nous contacter</a></li>
       </ul>
     </nav>
 
-    <!-- Bouton menu mobile -->
-    <button class="nav-toggle" aria-label="Ouvrir le menu">
+    <!-- Burger mobile (géré par main.js via .nav-toggle / .main-nav.nav-open) -->
+    <button class="nav-toggle" aria-label="Ouvrir le menu principal">
       ☰
     </button>
   </div>

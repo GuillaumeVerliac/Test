@@ -1,13 +1,20 @@
 // assets/js/main.js
 
 document.addEventListener("DOMContentLoaded", () => {
+  loadPartials();
+});
+
+/* ================================
+   CHARGEMENT HEADER + FOOTER
+================================= */
+function loadPartials() {
   const headerPlaceholder = document.getElementById("site-header");
   const footerPlaceholder = document.getElementById("site-footer");
 
-  // Injecte le header
+  // Charger le header
   if (headerPlaceholder) {
     fetch("partials/header.html")
-      .then((response) => response.text())
+      .then((res) => res.text())
       .then((html) => {
         headerPlaceholder.innerHTML = html;
         initNavToggle();
@@ -16,18 +23,20 @@ document.addEventListener("DOMContentLoaded", () => {
       .catch((err) => console.error("Erreur chargement header:", err));
   }
 
-  // Injecte le footer
+  // Charger le footer
   if (footerPlaceholder) {
     fetch("partials/footer.html")
-      .then((response) => response.text())
+      .then((res) => res.text())
       .then((html) => {
         footerPlaceholder.innerHTML = html;
       })
       .catch((err) => console.error("Erreur chargement footer:", err));
   }
-});
+}
 
-// Gestion du burger / nav mobile
+/* ================================
+   NAV MOBILE
+================================= */
 function initNavToggle() {
   const header = document.querySelector(".site-header");
   if (!header) return;
@@ -42,40 +51,32 @@ function initNavToggle() {
   });
 }
 
-// Comportement du header selon le scroll
+/* ================================
+   HEADER SHOW/HIDE ON SCROLL
+================================= */
 function initHeaderScrollBehavior() {
   const header = document.querySelector(".site-header");
-  if (!header) return;
+  if (!header) {
+    console.warn("Header non trouvé pour le scroll.");
+    return;
+  }
 
-  let lastScrollY = window.scrollY;
-  let ticking = false;
-
-  const updateHeader = () => {
-    const currentScrollY = window.scrollY;
-    const delta = currentScrollY - lastScrollY;
-
-    // Toujours visible près du haut de page
-    if (currentScrollY < 80) {
-      header.classList.remove("header-hidden");
-    } else {
-      if (delta > 0) {
-        // on descend -> cacher le header
-        header.classList.add("header-hidden");
-      } else if (delta < 0) {
-        // on remonte -> montrer le header
-        header.classList.remove("header-hidden");
-      }
-    }
-
-    lastScrollY = currentScrollY;
-    ticking = false;
-  };
+  let lastY = window.scrollY;
 
   window.addEventListener("scroll", () => {
-    if (!ticking) {
-      window.requestAnimationFrame(updateHeader);
-      ticking = true;
+    const currentY = window.scrollY;
+
+    // Toujours visible tout en haut
+    if (currentY < 80) {
+      header.classList.remove("header-hidden");
+    } else if (currentY > lastY) {
+      // On descend => cacher
+      header.classList.add("header-hidden");
+    } else if (currentY < lastY) {
+      // On remonte => montrer
+      header.classList.remove("header-hidden");
     }
+
+    lastY = currentY;
   });
 }
-

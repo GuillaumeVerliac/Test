@@ -1,21 +1,48 @@
-/* Variables & base */
+/* =========================
+   VARIABLES & BASE
+   ========================= */
 :root {
-  --color-bg: #f5f5f7;
-  --color-bg-alt: #ffffff;
-  --color-primary: #1f3a93;
-  --color-primary-soft: #e6ecff;
-  --color-text: #222222;
-  --color-text-muted: #666666;
-  --shadow-soft: 0 12px 30px rgba(0, 0, 0, 0.06);
+  /* Palette issue de la page contact */
+  --primary-color: #72abdd;
+  --secondary-color: #4b0082;
+  --background-color: #0b0d12;
+  --background-image: url('fondetoile4.jpg');
+  --text-color: #ffffff;
+  --muted-text: #cfd6df;
+
+  /* Cartes / surfaces */
+  --card-bg: #111111;
+  --line-color: #444444;
+
+  /* Ombres / radius */
+  --shadow-soft: 0 12px 30px rgba(0, 0, 0, 0.5);
   --radius-lg: 16px;
   --radius-xl: 24px;
+
+  /* Layout */
   --max-width: 1100px;
 }
 
+/* BASE */
+html, body {
+  height: 100%;
+}
+
 body {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  background: var(--color-bg);
-  color: var(--color-text);
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background-color: var(--background-color);
+  background-image: var(--background-image);
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  color: var(--text-color);
+  margin: 0;
+}
+
+/* Liens génériques */
+a {
+  color: inherit;
+  text-decoration: none;
 }
 
 /* Layout générique */
@@ -26,76 +53,142 @@ body {
   padding: 0 1.5rem;
 }
 
-/* HEADER */
+/* =========================
+   HEADER (style proche page contact)
+   ========================= */
 .site-header {
-  background: var(--color-bg-alt);
-  box-shadow: var(--shadow-soft);
+  --h: 80px;
+
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 1000;
+  height: var(--h);
+  background: linear-gradient(
+    to bottom,
+    rgba(11, 13, 18, 0.85),
+    rgba(11, 13, 18, 0.55)
+  );
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .header-inner {
+  height: 100%;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 0.75rem 0;
+  justify-content: flex-start;
 }
 
+/* "Logo" texte type Priam / Solutions */
 .logo-mark {
   font-weight: 700;
   letter-spacing: 0.08em;
   font-size: 0.95rem;
   text-transform: uppercase;
-  color: var(--color-primary);
+  color: var(--primary-color);
 }
 
-/* Nav desktop */
+/* Si tu mets une image + texte, tu peux utiliser une structure type :
+   <div class="header-left"> <img> <div class="header-text">...</div> </div> */
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-left img {
+  height: 50px;
+  width: auto;
+  display: block;
+}
+
+.header-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
+
+.header-text .priam {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+.header-text .solutions {
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--text-color);
+}
+
+/* NAV DESKTOP */
+.main-nav {
+  margin-left: auto;
+}
+
 .main-nav ul {
   display: flex;
-  gap: 1.5rem;
+  align-items: center;
+  gap: 28px;
 }
 
 .main-nav a {
   font-size: 0.95rem;
-  color: var(--color-text-muted);
+  color: var(--muted-text);
   position: relative;
-}
-
-.main-nav a:hover {
-  color: var(--color-primary);
+  font-weight: 600;
+  padding: 10px 0;
+  opacity: 0.95;
+  transition: opacity 0.2s ease, color 0.2s ease, transform 0.2s ease;
 }
 
 .main-nav a::after {
   content: "";
   position: absolute;
   left: 0;
-  bottom: -0.2rem;
-  width: 0;
+  bottom: 0;
   height: 2px;
-  background: var(--color-primary);
-  transition: width 0.2s ease;
+  width: 0;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+  transition: width 0.25s ease;
+}
+
+.main-nav a:hover {
+  color: var(--primary-color);
+  opacity: 1;
+  transform: translateY(-1px);
 }
 
 .main-nav a:hover::after {
   width: 100%;
 }
 
-/* Bouton menu mobile */
+/* Lien contact un peu mis en avant (optionnel) */
+.main-nav a.contact-link {
+  color: #5a6fd6;
+}
+.main-nav a.contact-link:hover {
+  color: #7a5fd9;
+}
+
+/* Bouton menu mobile (burger) */
 .nav-toggle {
   display: none;
   background: none;
   border: none;
   font-size: 1.4rem;
   cursor: pointer;
+  margin-left: auto;
 }
 
-/* FOOTER – style sombre type page contact */
+/* =========================
+   FOOTER – style sombre identique contact
+   ========================= */
 
-/* Cible à la fois <footer> simple et <footer class="site-footer"> */
+/* On cible à la fois <footer> et .site-footer pour être safe */
 footer,
 .site-footer {
-  background-color: #0b0d12;
+  background-color: var(--background-color);
   color: #ccc;
   font-size: 0.875rem;
   padding: 30px 5%;
@@ -105,7 +198,7 @@ footer,
   margin-top: 3rem;
 }
 
-/* Cible à la fois .footer-inner (nouveau) et .footer-container (ancien) */
+/* Conteneur interne */
 .footer-inner,
 .footer-container {
   max-width: 800px;
@@ -114,12 +207,12 @@ footer,
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
 }
 
 .footer-inner p,
 .footer-container p {
   margin: 0;
+  text-align: center;
 }
 
 .footer-inner strong,
@@ -128,7 +221,7 @@ footer,
   font-weight: bold;
 }
 
-/* liens du footer (ancien & nouveau) */
+/* Liens du footer */
 footer a,
 .site-footer a {
   color: #ccc;
@@ -142,58 +235,55 @@ footer a:hover,
   color: #ffffff;
 }
 
-/* ligne du bas : mentions + LinkedIn */
+/* Bloc LinkedIn + mentions (VERTICAL, centré) */
 .footer-bottom {
-  margin-top: 12px;
+  margin-top: 16px;
   display: flex;
-  justify-content: center;
+  flex-direction: column;   /* <-- vertical */
   align-items: center;
-  gap: 16px;
-  flex-wrap: wrap;
+  gap: 8px;
 }
 
-.mentions-link {
-  font-size: 0.8rem;
-}
-
-/* bouton rond pour LinkedIn */
+/* Bouton rond pour LinkedIn */
 .social-link {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   border: 1px solid #444;
   text-decoration: none;
 }
 
 .social-link svg {
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   fill: #ccc;
-  transition: fill 0.2s ease,
-              transform 0.2s ease,
-              border-color 0.2s ease;
+  transition:
+    fill 0.2s ease,
+    transform 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .social-link:hover svg {
-  fill: #72abdd;
+  fill: var(--primary-color);
   transform: translateY(-1px);
 }
 
 .social-link:hover {
-  border-color: #72abdd;
+  border-color: var(--primary-color);
 }
 
-@media (max-width: 480px) {
-  .footer-bottom {
-    flex-direction: row;
-    gap: 10px;
-  }
+/* Lien "Mentions légales" SOUS l'icône */
+.mentions-link {
+  font-size: 0.8rem;
 }
 
-/* Sections génériques */
+/* =========================
+   SECTIONS / CARTES / GRILLES
+   ========================= */
+
 .section {
   padding: 3rem 0 2rem 0;
 }
@@ -205,22 +295,24 @@ footer a:hover,
 .section-title {
   font-size: 2rem;
   margin-bottom: 1rem;
+  color: var(--text-color);
 }
 
 .section-subtitle {
-  color: var(--color-text-muted);
+  color: var(--muted-text);
   max-width: 600px;
 }
 
-/* Carte / bloc */
+/* Cartes, dans l'esprit de ta page contact (fond foncé, coins arrondis) */
 .card {
-  background: var(--color-bg-alt);
+  background: var(--card-bg);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-soft);
   padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.02);
 }
 
-/* Grille simple */
+/* Grille 2 colonnes */
 .grid-2 {
   display: grid;
   grid-template-columns: 1.2fr 1fr;
@@ -234,18 +326,25 @@ footer a:hover,
   justify-content: center;
   padding: 0.7rem 1.4rem;
   border-radius: 999px;
-  border: none;
-  background: var(--color-primary);
-  color: #fff;
+  border: 2px solid var(--primary-color);
+  background: transparent;
+  color: var(--primary-color);
   font-size: 0.95rem;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.btn:hover {
+  background: var(--primary-color);
+  color: #0b0d12;
+  border-color: var(--secondary-color);
 }
 
 .btn-outline {
   background: transparent;
-  border: 1px solid var(--color-primary);
-  color: var(--color-primary);
+  border: 1px solid var(--primary-color);
+  color: var(--primary-color);
 }
 
 /* Classes desktop/mobile spécifiques */
@@ -257,17 +356,22 @@ footer a:hover,
   display: none;
 }
 
-/* RESPONSIVE */
+/* =========================
+   RESPONSIVE
+   ========================= */
+
 @media (max-width: 768px) {
   .header-inner {
     padding: 0.5rem 0;
   }
 
+  /* Nav mobile type "menu déroulant" si tu ajoutes la classe .nav-open en JS */
   .main-nav ul {
     position: absolute;
-    top: 56px;
+    top: 80px;
     right: 0;
-    background: var(--color-bg-alt);
+    left: 0;
+    background: rgba(11, 13, 18, 0.98);
     flex-direction: column;
     padding: 0.75rem 1.5rem;
     box-shadow: var(--shadow-soft);
@@ -303,4 +407,12 @@ footer a:hover,
     display: block;
   }
 }
+
+/* Footer : petit ajustement mobile */
+@media (max-width: 480px) {
+  .footer-bottom {
+    gap: 6px;
+  }
+}
+
 

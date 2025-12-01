@@ -181,6 +181,29 @@ a {
   margin-left: auto;
 }
 
+.site-header {
+  --h: 80px;
+
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  height: var(--h);
+  background: linear-gradient(
+    to bottom,
+    rgba(11, 13, 18, 0.85),
+    rgba(11, 13, 18, 0.55)
+  );
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  transition: transform 0.25s ease-out, background 0.2s ease; /* <= important */
+}
+
+/* Quand on scroll vers le bas, on cache le header en le faisant sortir en haut */
+.site-header.header-hidden {
+  transform: translateY(-100%);
+}
+
+
 /* =========================
    FOOTER – style sombre identique contact
    ========================= */

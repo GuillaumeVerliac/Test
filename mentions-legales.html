@@ -2,71 +2,71 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Mentions légales – Priam Solutions</title>
-  <link rel="icon" href="Logonoir.png" type="image/png" />
+
   <style>
     body {
-      font-family: 'Inter', system-ui, sans-serif;
-      background-color: #05060a;
-      color: #dddddd;
-      margin: 0;
-      padding: 30px 8%;
-      font-size: 0.8rem;       /* petite police */
-      line-height: 1.5;
+      font-family: "Inter", sans-serif;
+      background-color: #0b0d12;
+      color: #cfd6df;
+      padding: 40px 12%;
+      font-size: 0.85rem;
+      line-height: 1.6;
     }
-    h1 {
-      font-size: 1rem;
-      margin-bottom: 1.5rem;
-      color: #ffffff;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
+
+    .close-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: transparent;
+      border: 1px solid #444;
+      color: #ccc;
+      width: 36px;
+      height: 36px;
+      font-size: 20px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: 0.2s;
     }
-    h2 {
-      font-size: 0.9rem;
-      margin-top: 1.5rem;
-      margin-bottom: 0.5rem;
-      color: #ffffff;
-    }
-    p {
-      margin: 0.25rem 0;
-    }
-    a {
+
+    .close-btn:hover {
+      border-color: #72abdd;
       color: #72abdd;
+    }
+
+    h1 {
+      color: #ffffff;
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    h2 {
+      color: #ffffff;
+      font-size: 1rem;
+      margin-top: 20px;
     }
   </style>
 </head>
+
 <body>
+
+  <button class="close-btn" onclick="history.back()">✕</button>
+
   <h1>Mentions légales</h1>
 
   <h2>Éditeur du site</h2>
   <p><strong>Priam Solutions</strong></p>
   <p>4 rue Hérold, 75001 Paris</p>
-  <p>Email : contact@exemple.com</p>
-
-  <h2>Directeur de la publication</h2>
-  <p>Nom Prénom</p>
-
-  <h2>Hébergement</h2>
-  <p>Nom de l’hébergeur</p>
-  <p>Adresse de l’hébergeur</p>
-
-  <h2>Propriété intellectuelle</h2>
-  <p>
-    L’ensemble des contenus présents sur ce site (textes, images, logos, etc.) est protégé par le droit de la propriété intellectuelle.
-    Toute reproduction ou représentation, totale ou partielle, sans autorisation préalable est interdite.
-  </p>
 
   <h2>Responsabilité</h2>
-  <p>
-    Les informations fournies sur ce site le sont à titre informatif et ne constituent en aucun cas une recommandation financière, juridique ou fiscale.
-    Priam Solutions ne peut être tenu responsable des décisions prises sur la base des informations fournies.
-  </p>
+  <p>Les informations fournies sur ce site ne constituent en aucun cas une recommandation financière.</p>
 
   <h2>Données personnelles</h2>
-  <p>
-    Les données collectées via le formulaire de contact sont utilisées uniquement pour répondre aux demandes et ne sont pas cédées à des tiers.
-    Conformément à la réglementation en vigueur, vous disposez d’un droit d’accès, de rectification et de suppression de vos données.
-  </p>
+  <p>Les données envoyées via les formulaires ne sont jamais partagées.</p>
+
 </body>
 </html>
+

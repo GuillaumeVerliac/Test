@@ -2,74 +2,28 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>Accueil – Ton entreprise</title>
+  <title>Accueil – Priam Solutions</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Texte de description de ta page d'accueil.">
 
+  <!-- Styles -->
   <link rel="stylesheet" href="assets/css/reset.css" />
   <link rel="stylesheet" href="assets/css/style.css" />
 </head>
+
 <body>
-  <!-- Header injecté -->
-  <div data-include-html="partials/header.html"></div>
 
-  <main>
-    <!-- SECTION HERO -->
-    <section class="section section--hero">
-      <div class="container">
-        <div class="card">
-          <div class="grid-2">
-            <!-- Version DESKTOP -->
-            <div class="desktop-only">
-              <h1 class="section-title">Titre principal pour les visiteurs sur ordinateur</h1>
-              <p class="section-subtitle">
-                Ici tu peux mettre un texte un peu plus développé, adapté à quelqu’un
-                qui consulte depuis un écran plus large, avec plus d’informations.
-              </p>
-              <div style="margin-top: 1.5rem;">
-                <a href="solutions.html" class="btn">Découvrir nos solutions</a>
-                <a href="contact.html" class="btn btn-outline" style="margin-left: 0.75rem;">Parler à un expert</a>
-              </div>
-            </div>
+  <!-- Header injecté ici -->
+  <div id="site-header"></div>
 
-            <!-- Version MOBILE -->
-            <div class="mobile-only">
-              <h1 class="section-title">Titre plus court pour mobile</h1>
-              <p class="section-subtitle">
-                Message plus condensé, pensé pour un utilisateur pressé sur smartphone.
-              </p>
-              <div style="margin-top: 1.2rem;">
-                <a href="solutions.html" class="btn">Voir les solutions</a>
-              </div>
-            </div>
-
-            <!-- Colonne de droite (visuel, accroche, etc.) -->
-            <div>
-              <p style="color: var(--color-text-muted); font-size: 0.9rem;">
-                Ici tu peux mettre un visuel, une illustration, quelques chiffres clés
-                ou une courte présentation de ta proposition de valeur.
-              </p>
-            </div>
-
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Autre section d'exemple -->
-    <section class="section">
-      <div class="container">
-        <h2 class="section-title">Ce que nous faisons</h2>
-        <p class="section-subtitle">
-          Quelques lignes pour expliquer tes services / ton positionnement. Tu pourras affiner ensuite.
-        </p>
-      </div>
-    </section>
+  <main class="container" style="padding-top: 120px; text-align:center;">
+    <h1>Page de test</h1>
+    <p>Si vous voyez le header et le footer, tout fonctionne ✔️</p>
   </main>
 
-  <!-- Footer injecté -->
-  <div data-include-html="partials/footer.html"></div>
+  <!-- Footer injecté ici -->
+  <div id="site-footer"></div>
 
+  <!-- Script pour injecter header/footer -->
   <script src="assets/js/main.js"></script>
 </body>
 </html>

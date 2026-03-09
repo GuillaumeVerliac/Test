@@ -2,23 +2,1257 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>Accueil – Priam Solutions</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="assets/css/reset.css" />
-  <link rel="stylesheet" href="assets/css/style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Priam Solutions — Structuration sur actifs volatils</title>
+  <style>
+    :root {
+      --bg: #07101d;
+      --bg-soft: #0b1730;
+      --surface: rgba(255,255,255,0.06);
+      --surface-strong: rgba(255,255,255,0.1);
+      --border: rgba(255,255,255,0.11);
+      --text: #eef4ff;
+      --muted: #9cb0d2;
+      --accent: #7cc4ff;
+      --accent-2: #b8ef6f;
+      --shadow: 0 24px 90px rgba(0,0,0,0.30);
+      --shadow-soft: 0 18px 50px rgba(0,0,0,0.22);
+      --radius: 26px;
+      --container: 1180px;
+      --ease: cubic-bezier(.22,.84,.24,1);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 12% 12%, rgba(124,196,255,0.13), transparent 22%),
+        radial-gradient(circle at 88% 42%, rgba(184,239,111,0.08), transparent 20%),
+        linear-gradient(180deg, #06101b 0%, #091424 36%, #0b1730 68%, #07101d 100%);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.06;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+      background-size: 84px 84px;
+      mask-image: radial-gradient(circle at center, black 36%, transparent 90%);
+      z-index: 0;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .container {
+      width: min(var(--container), calc(100% - 40px));
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      z-index: 100;
+      transform-origin: left;
+      transform: scaleX(0);
+      background: linear-gradient(90deg, var(--accent), #88a8ff, var(--accent-2));
+    }
+
+    .site-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 50;
+      backdrop-filter: blur(16px);
+      background: rgba(6, 12, 22, 0.42);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      transition: background .3s ease, border-color .3s ease;
+    }
+
+    .site-header.scrolled {
+      background: rgba(6, 12, 22, 0.82);
+      border-bottom-color: rgba(255,255,255,0.11);
+    }
+
+    .nav {
+      min-height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .brand-mark {
+      width: 40px;
+      height: 40px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--accent), #5276ff);
+      box-shadow: 0 14px 35px rgba(82,118,255,0.35);
+      position: relative;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .brand-mark::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(255,255,255,0.32), transparent 55%);
+    }
+
+    .nav-links,
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .nav-links {
+      gap: 26px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .nav-links a {
+      position: relative;
+      transition: color .25s ease;
+    }
+
+    .nav-links a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -8px;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), transparent);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform .3s var(--ease);
+    }
+
+    .nav-links a:hover {
+      color: var(--text);
+    }
+
+    .nav-links a:hover::after {
+      transform: scaleX(1);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px 20px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      font-weight: 600;
+      cursor: pointer;
+      transition:
+        transform .3s var(--ease),
+        box-shadow .3s var(--ease),
+        background .3s ease,
+        border-color .3s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), #91a5ff);
+      color: #06101b;
+      box-shadow: 0 18px 42px rgba(124,196,255,0.24);
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.04);
+      border-color: rgba(255,255,255,0.12);
+      color: var(--text);
+    }
+
+    .panel,
+    .card,
+    .quote,
+    .newsletter-card,
+    .solution-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+    }
+
+    .section {
+      min-height: 100svh;
+      display: flex;
+      align-items: center;
+      padding: 120px 0 72px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .section + .section {
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(44px);
+      transition: opacity .9s var(--ease), transform .9s var(--ease);
+      will-change: transform, opacity;
+    }
+
+    .reveal.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.02fr 0.98fr;
+      gap: 48px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--accent);
+      font-size: 0.88rem;
+      margin-bottom: 20px;
+    }
+
+    h1, h2 {
+      margin: 0;
+      letter-spacing: -0.05em;
+      line-height: 0.98;
+    }
+
+    h1 {
+      font-size: clamp(2.2rem, 4.4vw, 4.4rem);
+      max-width: 14ch;
+      line-height: 1.02;
+    }
+
+    h2 {
+      font-size: clamp(2.2rem, 4.2vw, 4.2rem);
+      max-width: 12ch;
+    }
+
+    h3 {
+      margin: 0;
+    }
+
+    .hero-title {
+      max-width: 14ch;
+    }
+
+    .accent-word {
+      color: var(--accent);
+    }
+
+    .accent-strong {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .lead {
+      margin: 24px 0 0;
+      max-width: 62ch;
+      color: var(--muted);
+      font-size: 1.08rem;
+    }
+
+    .sublead {
+      margin: 22px 0 0;
+      font-size: 1.15rem;
+      color: #dfe9fb;
+      max-width: 58ch;
+    }
+
+    .quote {
+      padding: 22px 24px;
+      font-size: 1.05rem;
+      color: #d9e5fb;
+      margin-top: 18px;
+    }
+
+    .hero-side {
+      position: relative;
+      min-height: 650px;
+    }
+
+    .hero-cards {
+      position: relative;
+      height: 100%;
+      min-height: 650px;
+    }
+
+    .hero-card {
+      position: absolute;
+      width: min(100%, 360px);
+      padding: 24px 24px 22px;
+      transition:
+        transform .35s var(--ease),
+        border-color .3s ease,
+        background .3s ease,
+        box-shadow .35s var(--ease);
+      will-change: transform;
+    }
+
+    .hero-card:hover {
+      border-color: rgba(124,196,255,0.24);
+      background: var(--surface-strong);
+      box-shadow: 0 28px 80px rgba(0,0,0,0.34);
+    }
+
+    .hero-card:nth-child(1) {
+      top: 1%;
+      right: 4%;
+      animation: heroFloatOne 8.5s ease-in-out infinite;
+    }
+
+    .hero-card:nth-child(2) {
+      top: 29%;
+      left: 2%;
+      animation: heroFloatTwo 9.5s ease-in-out infinite;
+    }
+
+    .hero-card:nth-child(3) {
+      right: 4%;
+      bottom: 7%;
+      animation: heroFloatThree 10.5s ease-in-out infinite;
+    }
+
+    @keyframes heroFloatOne {
+      0%, 100% { transform: translate3d(0, 0, 0) rotate(-1.2deg); }
+      50% { transform: translate3d(-6px, -8px, 0) rotate(0.3deg); }
+    }
+
+    @keyframes heroFloatTwo {
+      0%, 100% { transform: translate3d(0, 0, 0) rotate(1deg); }
+      50% { transform: translate3d(10px, 14px, 0) rotate(-0.4deg); }
+    }
+
+    @keyframes heroFloatThree {
+      0%, 100% { transform: translate3d(0, 0, 0) rotate(-0.8deg); }
+      50% { transform: translate3d(-6px, 15px, 0) rotate(0.5deg); }
+    }
+
+    .metric {
+      font-size: 1.45rem;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      margin: 0 0 12px;
+      line-height: 1.15;
+      color: #ffffff;
+    }
+
+    .hero-card p,
+    .card p,
+    .newsletter-card p,
+    .footer-note {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .solutions-section {
+      min-height: auto;
+      display: block;
+      padding: 92px 0 96px;
+    }
+
+    .solutions-shell {
+      position: relative;
+    }
+
+    .solutions-shell::before,
+    .solutions-shell::after {
+      content: "";
+      position: absolute;
+      border-radius: 999px;
+      filter: blur(70px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .solutions-shell::before {
+      width: 240px;
+      height: 240px;
+      top: 80px;
+      left: -60px;
+      background: rgba(124,196,255,0.12);
+    }
+
+    .solutions-shell::after {
+      width: 220px;
+      height: 220px;
+      right: -30px;
+      bottom: 40px;
+      background: rgba(184,239,111,0.08);
+    }
+
+    .solutions-header,
+    .solutions-panels,
+    .solutions-cta {
+      position: relative;
+      z-index: 1;
+    }
+
+    .solutions-header {
+      max-width: 100%;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .solutions-title {
+      max-width: none;
+      font-size: clamp(1.95rem, 3vw, 3.45rem);
+      line-height: 1.08;
+      white-space: nowrap;
+    }
+
+    .solutions-intro {
+      margin: 18px auto 0;
+      max-width: none;
+      font-size: clamp(0.88rem, 0.95vw, 1rem);
+      line-height: 1.45;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .solutions-panels {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      align-items: stretch;
+      gap: 22px;
+      margin-top: 54px;
+    }
+
+    .solution-panel {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      padding: 30px 28px 28px;
+      border-radius: 28px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03)),
+        rgba(7,16,29,0.72);
+      box-shadow: 0 24px 70px rgba(0,0,0,0.24);
+      overflow: hidden;
+      transition:
+        transform .35s var(--ease),
+        border-color .3s ease,
+        background .3s ease,
+        box-shadow .35s var(--ease);
+    }
+
+    .solution-panel > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .solution-panel::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 28px;
+      right: 28px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(124,196,255,0.7), transparent);
+    }
+
+    .solution-panel::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top right, rgba(124,196,255,0.08), transparent 36%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .solution-panel:hover {
+      transform: translateY(-8px);
+      border-color: rgba(124,196,255,0.22);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04)),
+        rgba(7,16,29,0.78);
+      box-shadow: 0 28px 90px rgba(0,0,0,0.32);
+    }
+
+    .solution-index {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 44px;
+      width: fit-content;
+      height: 44px;
+      padding: 0 12px;
+      border-radius: 999px;
+      margin-bottom: 20px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+      background: rgba(124,196,255,0.08);
+      border: 1px solid rgba(124,196,255,0.16);
+    }
+
+    .solution-panel p {
+      margin: 0;
+      color: #edf3ff;
+      font-size: 1.02rem;
+      line-height: 1.8;
+    }
+
+    .solution-panel strong,
+    .solution-quote strong,
+    .newsletter-copy strong {
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .solution-quote {
+      margin: 26px 0 0;
+      padding-top: 22px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      color: var(--accent);
+      font-size: 1rem;
+      line-height: 1.55;
+      letter-spacing: -0.01em;
+      margin-top: auto;
+      min-height: 92px;
+    }
+
+    .solutions-cta {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-top: 38px;
+    }
+
+    .solutions-cta .btn {
+      min-width: 220px;
+    }
+
+    .newsletter-section {
+      min-height: auto;
+      display: block;
+      padding: 92px 0 100px;
+    }
+
+    .newsletter-shell {
+      position: relative;
+    }
+
+    .newsletter-shell::before,
+    .newsletter-shell::after {
+      content: "";
+      position: absolute;
+      border-radius: 999px;
+      filter: blur(80px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .newsletter-shell::before {
+      width: 280px;
+      height: 280px;
+      left: -40px;
+      top: 20px;
+      background: rgba(124,196,255,0.14);
+    }
+
+    .newsletter-shell::after {
+      width: 240px;
+      height: 240px;
+      right: 0;
+      bottom: 20px;
+      background: rgba(184,239,111,0.08);
+    }
+
+    .newsletter-grid {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 34px;
+      align-items: start;
+    }
+
+    .newsletter-card {
+      position: relative;
+      padding: 30px;
+      border-radius: 28px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04)),
+        rgba(8,18,34,0.82);
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: 0 28px 90px rgba(0,0,0,0.28);
+      overflow: hidden;
+    }
+
+    .newsletter-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at top left, rgba(124,196,255,0.18), transparent 35%),
+        linear-gradient(180deg, rgba(255,255,255,0.02), transparent 40%);
+      pointer-events: none;
+    }
+
+    .newsletter-card > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .newsletter-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      margin-bottom: 18px;
+      background: rgba(124,196,255,0.08);
+      border: 1px solid rgba(124,196,255,0.18);
+      color: var(--accent);
+      font-size: 0.88rem;
+      font-weight: 600;
+    }
+
+    .newsletter-title {
+      font-size: clamp(1.65rem, 2.2vw, 2.2rem);
+      letter-spacing: -0.04em;
+      line-height: 1.05;
+      color: #ffffff;
+    }
+
+    .newsletter-intro {
+      margin-top: 12px;
+      color: #dce7fb;
+      font-size: 1rem;
+      line-height: 1.7;
+    }
+
+    .newsletter-form {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .field-full {
+      grid-column: 1 / -1;
+    }
+
+    .field label {
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .field input {
+      width: 100%;
+      min-height: 56px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      padding: 0 16px;
+      outline: none;
+      transition:
+        border-color .25s ease,
+        background .25s ease,
+        transform .25s ease,
+        box-shadow .25s ease;
+    }
+
+    .field input::placeholder {
+      color: rgba(156,176,210,0.72);
+    }
+
+    .field input:focus {
+      border-color: rgba(124,196,255,0.55);
+      background: rgba(255,255,255,0.06);
+      box-shadow: 0 0 0 4px rgba(124,196,255,0.08);
+      transform: translateY(-1px);
+    }
+
+    .newsletter-actions {
+      grid-column: 1 / -1;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 4px;
+    }
+
+    .newsletter-actions .btn {
+      width: 100%;
+      min-height: 56px;
+      font-size: 0.98rem;
+    }
+
+    .footer-note {
+      font-size: 0.92rem;
+      color: var(--muted);
+    }
+
+    .newsletter-content {
+      padding: 6px 4px 6px 10px;
+    }
+
+    .newsletter-content .eyebrow {
+      margin-bottom: 18px;
+    }
+
+    .newsletter-content h2 {
+      max-width: 12ch;
+      line-height: 1.02;
+    }
+
+    .newsletter-copy {
+      margin-top: 22px;
+      display: grid;
+      gap: 18px;
+    }
+
+    .newsletter-copy p {
+      margin: 0;
+      color: #d9e5fb;
+      font-size: 1.08rem;
+      line-height: 1.9;
+      max-width: 60ch;
+    }
+
+    .newsletter-highlight {
+      margin-top: 22px;
+      padding: 20px 22px;
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.04);
+      box-shadow: var(--shadow-soft);
+      color: #edf4ff;
+      font-size: 1rem;
+      line-height: 1.7;
+    }
+
+    .newsletter-highlight strong {
+      color: var(--accent);
+    }
+
+    .site-footer {
+      position: relative;
+      z-index: 1;
+      padding: 36px 0 42px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      background: rgba(4, 10, 18, 0.72);
+      backdrop-filter: blur(14px);
+    }
+
+    .footer-content {
+      display: grid;
+      gap: 14px;
+    }
+
+    .footer-company {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #ffffff;
+      line-height: 1.5;
+    }
+
+    .footer-address,
+    .footer-copy,
+    .footer-disclaimer {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .footer-copy {
+      font-size: 0.95rem;
+    }
+
+    .footer-disclaimer {
+      max-width: 90ch;
+      font-size: 0.92rem;
+      line-height: 1.7;
+    }
+
+    .parallax {
+      transform: translateY(var(--offset, 0px));
+      transition: transform .15s linear;
+    }
+
+    @media (max-width: 1200px) {
+      .solutions-title,
+      .solutions-intro {
+        white-space: normal;
+      }
+    }
+
+    @media (max-width: 1100px) {
+      .solutions-panels {
+        grid-template-columns: 1fr;
+      }
+
+      .newsletter-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .newsletter-content {
+        padding: 0;
+      }
+    }
+
+    @media (max-width: 1024px) {
+      .hero-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .hero-side,
+      .hero-cards {
+        min-height: auto;
+        height: auto;
+      }
+
+      .hero-cards {
+        display: grid;
+        gap: 18px;
+        margin-top: 8px;
+      }
+
+      .hero-card {
+        position: relative;
+        width: 100%;
+        top: auto !important;
+        left: auto !important;
+        right: auto !important;
+        bottom: auto !important;
+        animation: none !important;
+        transform: none !important;
+      }
+
+      .hero-card:hover {
+        transform: translateY(-4px) !important;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .container {
+        width: min(var(--container), calc(100% - 24px));
+      }
+
+      .section {
+        min-height: auto;
+        padding: 110px 0 64px;
+      }
+
+      .solutions-section,
+      .newsletter-section {
+        padding: 110px 0 72px;
+      }
+
+      .solutions-cta,
+      .nav-actions {
+        flex-direction: column;
+      }
+
+      .btn,
+      .solutions-cta .btn {
+        width: 100%;
+      }
+
+      .nav-actions .btn-secondary {
+        display: none;
+      }
+
+      .hero-card,
+      .solution-panel,
+      .newsletter-card {
+        padding: 22px;
+      }
+
+      .solution-panel {
+        border-radius: 22px;
+      }
+
+      .newsletter-card {
+        border-radius: 24px;
+      }
+
+      .newsletter-form {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        max-width: none;
+        font-size: clamp(2rem, 8vw, 3rem);
+      }
+
+      .hero-title {
+        max-width: none;
+      }
+
+      .solutions-title,
+      .solutions-intro {
+        white-space: normal;
+      }
+
+      .solutions-title {
+        font-size: clamp(2rem, 8vw, 3rem);
+      }
+
+      .newsletter-content h2 {
+        max-width: none;
+        font-size: clamp(2rem, 8vw, 3rem);
+      }
+
+      .newsletter-copy p {
+        font-size: 1rem;
+        line-height: 1.8;
+      }
+
+      .site-footer {
+        padding: 28px 0 34px;
+      }
+
+      .footer-company,
+      .footer-address,
+      .footer-copy,
+      .footer-disclaimer {
+        font-size: 0.95rem;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+        scroll-behavior: auto !important;
+      }
+
+      .reveal {
+        opacity: 1 !important;
+        transform: none !important;
+      }
+
+      .parallax {
+        transform: none !important;
+      }
+
+      .hero-card {
+        animation: none !important;
+        transform: none !important;
+      }
+    }
+  </style>
 </head>
-
 <body>
-  <div id="site-header"></div>
+  <div class="progress" aria-hidden="true"></div>
 
-  <main class="container" style="padding-top:120px; text-align:center;">
-    <h1>Accueil</h1>
-    <p>Page de test : plop header + footer fonctionnent.</p>
+  <header class="site-header" id="header">
+    <div class="container nav">
+      <a href="#top" class="brand">
+        <span class="brand-mark"></span>
+        <span>Priam Solutions</span>
+      </a>
+
+      <nav class="nav-links" aria-label="Navigation principale">
+        <a href="#top">Accueil</a>
+        <a href="#solutions">Équipe</a>
+        <a href="#newsletter">Recherche</a>
+      </nav>
+
+      <div class="nav-actions">
+        <a href="#newsletter" class="btn btn-primary">Nous contacter</a>
+        <a href="#newsletter" class="btn btn-secondary">Se connecter</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="section" id="intro">
+      <div class="container hero-grid">
+        <div class="reveal">
+          <h1 class="hero-title">
+            <span class="accent-word">Construire</span> plutôt que
+            <span class="accent-word">parier</span>,<br>
+            c’est convertir la volatilité en stratégie.
+          </h1>
+
+          <p class="sublead">
+            Produits structurés dédiés aux actifs et secteurs à forte volatilité : crypto-actifs, intelligence artificielle, technologie et autres thématiques de croissance.
+          </p>
+
+          <p class="lead">
+            Nous concevons pour les
+            <strong class="accent-strong">Family offices</strong>,
+            <strong class="accent-strong">banques privées</strong>
+            et
+            <strong class="accent-strong">asset managers indépendants</strong>
+            des solutions structurées sur mesure permettant d’aborder les marchés les plus volatils avec davantage de lisibilité, de discipline et de maîtrise du risque.
+          </p>
+        </div>
+
+        <div class="hero-side parallax" data-speed="0.08">
+          <div class="hero-cards">
+            <article class="panel hero-card reveal">
+              <div class="metric">Recherche</div>
+              <p>
+                Nous développons une lecture macro et thématique des marchés afin d’identifier
+                les tendances, régimes de volatilité et zones d’opportunité sur les actifs les plus volatils.
+              </p>
+            </article>
+
+            <article class="panel hero-card reveal">
+              <div class="metric">Analyse</div>
+              <p>
+                Nous analysons les sous-jacents, les structures disponibles et les expositions déjà en portefeuille
+                pour faire émerger les solutions les plus cohérentes dans les environnements de marché les plus instables.
+              </p>
+            </article>
+
+            <article class="panel hero-card reveal">
+              <div class="metric">Structuration</div>
+              <p>
+                À partir de cette analyse, nous concevons des solutions d’investissement sur mesure adaptées
+                à vos objectifs de rendement, à vos contraintes de risque et à la nature propre de chaque actif ou secteur.
+              </p>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section solutions-section" id="solutions">
+      <div class="container solutions-shell">
+        <div class="solutions-header reveal">
+          <h2 class="solutions-title">
+            Nos produits structurés sur <span class="accent-word">crypto-actifs</span>
+          </h2>
+          <p class="solutions-intro">
+            Des solutions conçues pour donner un cadre plus <strong>lisible</strong>, plus <strong>rigoureux</strong> et plus <strong>maîtrisé</strong> aux marchés numériques.
+          </p>
+        </div>
+
+        <div class="solutions-panels">
+          <article class="solution-panel reveal">
+            <div class="solution-index">01</div>
+            <p>
+              Chez <strong class="accent-strong">Priam</strong>, nous structurons des solutions
+              adaptées aux marchés numériques : <strong>autocallables</strong>,
+              <strong>capital garanti</strong>, <strong>volatility harvesting</strong>
+              et montages <strong>sur mesure</strong>.
+            </p>
+
+            <blockquote class="solution-quote">
+              « Chaque structure vise un équilibre clair entre
+              <strong>rendement</strong>, <strong>risque</strong> et <strong>liquidité</strong>. »
+            </blockquote>
+          </article>
+
+          <article class="solution-panel reveal">
+            <div class="solution-index">02</div>
+            <p>
+              Nos solutions s’intègrent à des stratégies précises :
+              <strong>générer du rendement</strong>, <strong>protéger le capital</strong>
+              et <strong>diversifier</strong> un portefeuille déjà exposé aux crypto-actifs.
+            </p>
+
+            <blockquote class="solution-quote">
+              « Chaque produit est <strong>modélisé</strong> avec rigueur et
+              <strong>calibré</strong> selon vos contraintes et votre vision. »
+            </blockquote>
+          </article>
+
+          <article class="solution-panel reveal">
+            <div class="solution-index">03</div>
+            <p>
+              Notre équipe réunit une expertise en <strong>structuration financière</strong>
+              et une lecture approfondie des <strong>marchés crypto</strong>
+              pour bâtir des solutions plus cohérentes et plus agiles.
+            </p>
+
+            <blockquote class="solution-quote">
+              « Cette double expertise transforme chaque structuration en
+              <strong>avantage stratégique</strong>, lisible et personnalisé. »
+            </blockquote>
+          </article>
+        </div>
+
+        <div class="solutions-cta reveal">
+          <a href="/a-propos" class="btn btn-secondary">Découvrir Priam</a>
+          <a href="/nous-contacter" class="btn btn-primary">Construire sur mesure</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section newsletter-section" id="newsletter">
+      <div class="container newsletter-shell">
+        <div class="newsletter-grid">
+          <div class="newsletter-card reveal parallax" data-speed="0.05">
+
+            <h3 class="newsletter-title">Recevoir nos analyses de marché</h3>
+
+            <p class="newsletter-intro">
+              Une lecture claire, structurée et directement exploitable des dynamiques de marché.
+            </p>
+
+            <form class="newsletter-form">
+              <div class="field">
+                <label for="firstname">Prénom *</label>
+                <input id="firstname" name="firstname" type="text" placeholder="Votre prénom" required />
+              </div>
+
+              <div class="field">
+                <label for="lastname">Nom *</label>
+                <input id="lastname" name="lastname" type="text" placeholder="Votre nom" required />
+              </div>
+
+              <div class="field field-full">
+                <label for="company">Entreprise</label>
+                <input id="company" name="company" type="text" placeholder="Nom de votre entreprise" />
+              </div>
+
+              <div class="field field-full">
+                <label for="email">E-mail *</label>
+                <input id="email" name="email" type="email" placeholder="Adresse e-mail" required />
+              </div>
+
+              <div class="newsletter-actions">
+                <button type="submit" class="btn btn-primary">S’inscrire à la newsletter</button>
+                <p class="footer-note">
+                  En vous inscrivant, vous recevez chaque semaine notre lecture des marchés et des opportunités de structuration.
+                </p>
+              </div>
+            </form>
+          </div>
+
+          <div class="newsletter-content reveal">
+
+            <h2>
+              <span class="accent-word">Comprendre</span> les marchés, <span class="accent-word">anticiper</span> les tendances
+            </h2>
+
+            <div class="newsletter-copy">
+              <p>
+                Naviguer dans l’univers des <strong>crypto-actifs</strong> exige plus que de l’intuition :
+                il faut une information <strong>fiable</strong>, <strong>précise</strong> et <strong>exploitable</strong>.
+                Nous diffusons désormais nos analyses via une <strong>newsletter hebdomadaire</strong> :
+                un condensé clair des dynamiques de marché pour <strong>gagner du temps</strong>
+                sans rien perdre en profondeur.
+              </p>
+
+              <p>
+                Au programme chaque semaine : <strong>récap des mouvements clés</strong>,
+                lecture de la <strong>volatilité</strong> et des <strong>flux techniques</strong>,
+                angles de <strong>structuration</strong> et <strong>signaux actionnables</strong>
+                pour vos décisions. Une approche <strong>quantitative</strong> croisée à une lecture
+                <strong>macro</strong> pour identifier les <strong>fenêtres d’opportunité</strong>,
+                ajuster les <strong>allocations</strong> et renforcer la pertinence du
+                <strong>conseil client</strong>.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
 
-  <div id="site-footer"></div>
+  <footer class="site-footer">
+    <div class="container footer-content">
+      <div class="footer-company">Priam Solutions</div>
+      <p class="footer-address">4 rue Hérold, 75001 Paris</p>
+      <p class="footer-copy">© 2025 Priam Solutions — Plateforme indépendante dédiée aux produits structurés sur crypto-actifs</p>
+      <p class="footer-disclaimer">
+        Toutes les informations fournies sur cette plateforme le sont à titre informatif et ne constituent en aucun cas une recommandation financière, juridique ou fiscale.
+      </p>
+    </div>
+  </footer>
 
-  <script src="assets/js/main.js"></script>
+  <script>
+    const progress = document.querySelector('.progress');
+    const header = document.getElementById('header');
+    const revealEls = document.querySelectorAll('.reveal');
+    const parallaxEls = document.querySelectorAll('.parallax');
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('show');
+        }
+      });
+    }, { threshold: 0.18 });
+
+    revealEls.forEach(el => observer.observe(el));
+
+    const updateScrollEffects = () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const ratio = docHeight > 0 ? scrollTop / docHeight : 0;
+
+      progress.style.transform = `scaleX(${ratio})`;
+      header.classList.toggle('scrolled', scrollTop > 20);
+
+      parallaxEls.forEach(el => {
+        const speed = parseFloat(el.dataset.speed || '0.06');
+        const rect = el.getBoundingClientRect();
+        const centerOffset = rect.top - window.innerHeight / 2;
+        const move = centerOffset * -speed;
+        el.style.setProperty('--offset', `${move}px`);
+      });
+    };
+
+    updateScrollEffects();
+    window.addEventListener('scroll', updateScrollEffects, { passive: true });
+    window.addEventListener('resize', updateScrollEffects);
+  </script>
 </body>
 </html>
 

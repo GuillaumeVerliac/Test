@@ -9,7 +9,7 @@
       --bg: #07101d;
       --bg-soft: #0b1730;
       --surface: rgba(255,255,255,0.06);
-      --surface-strong: rgba(255,255,255,0.1);
+      --surface-strong: rgba(255,255,255,0.10);
       --border: rgba(255,255,255,0.11);
       --text: #eef4ff;
       --muted: #9cb0d2;
@@ -22,9 +22,13 @@
       --ease: cubic-bezier(.22,.84,.24,1);
     }
 
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
-    html { scroll-behavior: smooth; }
+    html {
+      scroll-behavior: smooth;
+    }
 
     body {
       margin: 0;
@@ -94,7 +98,7 @@
     }
 
     .nav {
-      min-height: 80px;
+      min-height: 84px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -107,41 +111,36 @@
       gap: 14px;
       font-weight: 700;
       letter-spacing: 0.02em;
-    }
-
-    .brand-mark {
-      width: 40px;
-      height: 40px;
-      border-radius: 14px;
-      background: linear-gradient(135deg, var(--accent), #5276ff);
-      box-shadow: 0 14px 35px rgba(82,118,255,0.35);
-      position: relative;
-      overflow: hidden;
       flex-shrink: 0;
     }
 
-    .brand-mark::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(180deg, rgba(255,255,255,0.32), transparent 55%);
+    .brand-logo {
+      width: 50px;
+      height: 50px;
+      object-fit: contain;
+      display: block;
+      flex-shrink: 0;
     }
 
-    .nav-links,
-    .nav-actions {
+    .nav-right {
+      margin-left: auto;
       display: flex;
       align-items: center;
-      gap: 14px;
+      justify-content: flex-end;
+      gap: 16px;
     }
 
     .nav-links {
-      gap: 26px;
+      display: flex;
+      align-items: center;
+      gap: 28px;
       color: var(--muted);
-      font-size: 0.95rem;
+      font-size: 0.96rem;
     }
 
     .nav-links a {
       position: relative;
+      padding: 6px 0;
       transition: color .25s ease;
     }
 
@@ -149,7 +148,7 @@
       content: "";
       position: absolute;
       left: 0;
-      bottom: -8px;
+      bottom: -4px;
       width: 100%;
       height: 2px;
       background: linear-gradient(90deg, var(--accent), transparent);
@@ -166,12 +165,19 @@
       transform: scaleX(1);
     }
 
+    .header-buttons {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-left: 10px;
+    }
+
     .btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 10px;
-      padding: 14px 20px;
+      padding: 13px 18px;
       border-radius: 999px;
       border: 1px solid transparent;
       font-weight: 600;
@@ -180,7 +186,8 @@
         transform .3s var(--ease),
         box-shadow .3s var(--ease),
         background .3s ease,
-        border-color .3s ease;
+        border-color .3s ease,
+        opacity .3s ease;
     }
 
     .btn:hover {
@@ -199,10 +206,12 @@
       color: var(--text);
     }
 
+    .btn-secondary:hover {
+      border-color: rgba(124,196,255,0.32);
+      background: rgba(255,255,255,0.07);
+    }
+
     .panel,
-    .card,
-    .quote,
-    .newsletter-card,
     .solution-panel {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -241,19 +250,6 @@
       grid-template-columns: 1.02fr 0.98fr;
       gap: 48px;
       align-items: center;
-    }
-
-    .eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 8px 14px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.08);
-      color: var(--accent);
-      font-size: 0.88rem;
-      margin-bottom: 20px;
     }
 
     h1, h2 {
@@ -302,13 +298,6 @@
       font-size: 1.15rem;
       color: #dfe9fb;
       max-width: 58ch;
-    }
-
-    .quote {
-      padding: 22px 24px;
-      font-size: 1.05rem;
-      color: #d9e5fb;
-      margin-top: 18px;
     }
 
     .hero-side {
@@ -383,8 +372,6 @@
     }
 
     .hero-card p,
-    .card p,
-    .newsletter-card p,
     .footer-note {
       margin: 0;
       color: var(--muted);
@@ -592,159 +579,28 @@
     }
 
     .newsletter-shell::before {
-      width: 280px;
-      height: 280px;
-      left: -40px;
-      top: 20px;
-      background: rgba(124,196,255,0.14);
+      width: 240px;
+      height: 240px;
+      left: -50px;
+      top: 40px;
+      background: rgba(124,196,255,0.10);
     }
 
     .newsletter-shell::after {
-      width: 240px;
-      height: 240px;
-      right: 0;
-      bottom: 20px;
-      background: rgba(184,239,111,0.08);
+      width: 220px;
+      height: 220px;
+      right: -10px;
+      bottom: 30px;
+      background: rgba(184,239,111,0.06);
     }
 
     .newsletter-grid {
       position: relative;
       z-index: 1;
       display: grid;
-      grid-template-columns: 0.95fr 1.05fr;
-      gap: 34px;
+      grid-template-columns: 1fr 1fr;
+      gap: 54px;
       align-items: start;
-    }
-
-    .newsletter-card {
-      position: relative;
-      padding: 30px;
-      border-radius: 28px;
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04)),
-        rgba(8,18,34,0.82);
-      border: 1px solid rgba(255,255,255,0.12);
-      box-shadow: 0 28px 90px rgba(0,0,0,0.28);
-      overflow: hidden;
-    }
-
-    .newsletter-card::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(circle at top left, rgba(124,196,255,0.18), transparent 35%),
-        linear-gradient(180deg, rgba(255,255,255,0.02), transparent 40%);
-      pointer-events: none;
-    }
-
-    .newsletter-card > * {
-      position: relative;
-      z-index: 1;
-    }
-
-    .newsletter-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 8px 14px;
-      border-radius: 999px;
-      margin-bottom: 18px;
-      background: rgba(124,196,255,0.08);
-      border: 1px solid rgba(124,196,255,0.18);
-      color: var(--accent);
-      font-size: 0.88rem;
-      font-weight: 600;
-    }
-
-    .newsletter-title {
-      font-size: clamp(1.65rem, 2.2vw, 2.2rem);
-      letter-spacing: -0.04em;
-      line-height: 1.05;
-      color: #ffffff;
-    }
-
-    .newsletter-intro {
-      margin-top: 12px;
-      color: #dce7fb;
-      font-size: 1rem;
-      line-height: 1.7;
-    }
-
-    .newsletter-form {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 14px;
-      margin-top: 24px;
-    }
-
-    .field {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .field-full {
-      grid-column: 1 / -1;
-    }
-
-    .field label {
-      font-size: 0.9rem;
-      color: var(--muted);
-    }
-
-    .field input {
-      width: 100%;
-      min-height: 56px;
-      border-radius: 16px;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(255,255,255,0.04);
-      color: var(--text);
-      padding: 0 16px;
-      outline: none;
-      transition:
-        border-color .25s ease,
-        background .25s ease,
-        transform .25s ease,
-        box-shadow .25s ease;
-    }
-
-    .field input::placeholder {
-      color: rgba(156,176,210,0.72);
-    }
-
-    .field input:focus {
-      border-color: rgba(124,196,255,0.55);
-      background: rgba(255,255,255,0.06);
-      box-shadow: 0 0 0 4px rgba(124,196,255,0.08);
-      transform: translateY(-1px);
-    }
-
-    .newsletter-actions {
-      grid-column: 1 / -1;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-top: 4px;
-    }
-
-    .newsletter-actions .btn {
-      width: 100%;
-      min-height: 56px;
-      font-size: 0.98rem;
-    }
-
-    .footer-note {
-      font-size: 0.92rem;
-      color: var(--muted);
-    }
-
-    .newsletter-content {
-      padding: 6px 4px 6px 10px;
-    }
-
-    .newsletter-content .eyebrow {
-      margin-bottom: 18px;
     }
 
     .newsletter-content h2 {
@@ -766,20 +622,79 @@
       max-width: 60ch;
     }
 
-    .newsletter-highlight {
-      margin-top: 22px;
-      padding: 20px 22px;
-      border-radius: 22px;
-      border: 1px solid rgba(255,255,255,0.08);
-      background: rgba(255,255,255,0.04);
-      box-shadow: var(--shadow-soft);
-      color: #edf4ff;
-      font-size: 1rem;
-      line-height: 1.7;
+    .newsletter-form-wrap {
+      padding-top: 12px;
     }
 
-    .newsletter-highlight strong {
-      color: var(--accent);
+    .newsletter-form-title {
+      font-size: 1.5rem;
+      letter-spacing: -0.03em;
+      color: #ffffff;
+      margin-bottom: 10px;
+    }
+
+    .newsletter-form-intro {
+      margin: 0 0 26px;
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.7;
+      max-width: 50ch;
+    }
+
+    .newsletter-form {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px 16px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .field-full {
+      grid-column: 1 / -1;
+    }
+
+    .field label {
+      font-size: 0.92rem;
+      color: #d7e5ff;
+    }
+
+    .field input {
+      width: 100%;
+      min-height: 54px;
+      border: none;
+      border-bottom: 1px solid rgba(255,255,255,0.18);
+      background: transparent;
+      color: var(--text);
+      padding: 0 2px;
+      outline: none;
+      font-size: 0.98rem;
+      transition: border-color .25s ease, box-shadow .25s ease;
+    }
+
+    .field input::placeholder {
+      color: rgba(156,176,210,0.72);
+    }
+
+    .field input:focus {
+      border-bottom-color: rgba(124,196,255,0.9);
+      box-shadow: inset 0 -1px 0 rgba(124,196,255,0.9);
+    }
+
+    .newsletter-actions {
+      grid-column: 1 / -1;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 14px;
+      align-items: flex-start;
+    }
+
+    .newsletter-actions .btn {
+      min-width: 260px;
     }
 
     .site-footer {
@@ -792,8 +707,12 @@
     }
 
     .footer-content {
-      display: grid;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       gap: 14px;
+      text-align: center;
     }
 
     .footer-company {
@@ -839,20 +758,13 @@
 
       .newsletter-grid {
         grid-template-columns: 1fr;
-      }
-
-      .newsletter-content {
-        padding: 0;
+        gap: 34px;
       }
     }
 
     @media (max-width: 1024px) {
       .hero-grid {
         grid-template-columns: 1fr;
-      }
-
-      .nav-links {
-        display: none;
       }
 
       .hero-side,
@@ -883,6 +795,36 @@
       }
     }
 
+    @media (max-width: 900px) {
+      .nav {
+        flex-wrap: wrap;
+        justify-content: center;
+        padding: 14px 0;
+      }
+
+      .brand {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .nav-right {
+        width: 100%;
+        flex-direction: column;
+        margin-left: 0;
+        gap: 14px;
+      }
+
+      .nav-links {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 18px;
+      }
+
+      .header-buttons {
+        margin-left: 0;
+      }
+    }
+
     @media (max-width: 720px) {
       .container {
         width: min(var(--container), calc(100% - 24px));
@@ -890,7 +832,7 @@
 
       .section {
         min-height: auto;
-        padding: 110px 0 64px;
+        padding: 138px 0 64px;
       }
 
       .solutions-section,
@@ -899,22 +841,19 @@
       }
 
       .solutions-cta,
-      .nav-actions {
+      .header-buttons {
         flex-direction: column;
-      }
-
-      .btn,
-      .solutions-cta .btn {
         width: 100%;
       }
 
-      .nav-actions .btn-secondary {
-        display: none;
+      .btn,
+      .solutions-cta .btn,
+      .header-buttons .btn {
+        width: 100%;
       }
 
       .hero-card,
-      .solution-panel,
-      .newsletter-card {
+      .solution-panel {
         padding: 22px;
       }
 
@@ -922,12 +861,13 @@
         border-radius: 22px;
       }
 
-      .newsletter-card {
-        border-radius: 24px;
-      }
-
       .newsletter-form {
         grid-template-columns: 1fr;
+      }
+
+      .newsletter-actions .btn {
+        width: 100%;
+        min-width: 0;
       }
 
       h1 {
@@ -998,25 +938,27 @@
 
   <header class="site-header" id="header">
     <div class="container nav">
-      <a href="#top" class="brand">
-        <span class="brand-mark"></span>
+      <a href="index.html" class="brand">
+        <img src="logo.png" alt="Logo Priam Solutions" class="brand-logo" />
         <span>Priam Solutions</span>
       </a>
 
-      <nav class="nav-links" aria-label="Navigation principale">
-        <a href="#top">Accueil</a>
-        <a href="#solutions">Équipe</a>
-        <a href="#newsletter">Recherche</a>
-      </nav>
+      <div class="nav-right">
+        <nav class="nav-links" aria-label="Navigation principale">
+          <a href="index.html">Accueil</a>
+          <a href="a-propos.html">Équipe</a>
+          <a href="recherche.html">Recherche</a>
+        </nav>
 
-      <div class="nav-actions">
-        <a href="#newsletter" class="btn btn-primary">Nous contacter</a>
-        <a href="#newsletter" class="btn btn-secondary">Se connecter</a>
+        <div class="header-buttons">
+          <a href="contact.html" class="btn btn-primary">Nous contacter</a>
+          <a href="#" class="btn btn-secondary" onclick="return false;">Se connecter</a>
+        </div>
       </div>
     </div>
   </header>
 
-  <main id="top">
+  <main>
     <section class="section" id="intro">
       <div class="container hero-grid">
         <div class="reveal">
@@ -1032,7 +974,7 @@
 
           <p class="lead">
             Nous concevons pour les
-            <strong class="accent-strong">Family offices</strong>,
+            <strong class="accent-strong">family offices</strong>,
             <strong class="accent-strong">banques privées</strong>
             et
             <strong class="accent-strong">asset managers indépendants</strong>
@@ -1127,8 +1069,8 @@
         </div>
 
         <div class="solutions-cta reveal">
-          <a href="/a-propos" class="btn btn-secondary">Découvrir Priam</a>
-          <a href="/nous-contacter" class="btn btn-primary">Construire sur mesure</a>
+          <a href="a-propos.html" class="btn btn-secondary">Découvrir Priam</a>
+          <a href="contact.html" class="btn btn-primary">Construire sur mesure</a>
         </div>
       </div>
     </section>
@@ -1136,11 +1078,35 @@
     <section class="section newsletter-section" id="newsletter">
       <div class="container newsletter-shell">
         <div class="newsletter-grid">
-          <div class="newsletter-card reveal parallax" data-speed="0.05">
+          <div class="newsletter-content reveal">
+            <h2>
+              <span class="accent-word">Comprendre</span> les marchés, <span class="accent-word">anticiper</span> les tendances
+            </h2>
 
-            <h3 class="newsletter-title">Recevoir nos analyses de marché</h3>
+            <div class="newsletter-copy">
+              <p>
+                Naviguer dans l’univers des <strong>crypto-actifs</strong> exige plus que de l’intuition :
+                il faut une information <strong>fiable</strong>, <strong>précise</strong> et <strong>exploitable</strong>.
+                Nous diffusons désormais nos analyses via une <strong>newsletter hebdomadaire</strong> :
+                un condensé clair des dynamiques de marché pour <strong>gagner du temps</strong>
+                sans rien perdre en profondeur.
+              </p>
 
-            <p class="newsletter-intro">
+              <p>
+                Au programme chaque semaine : <strong>récapitulatif des mouvements clés</strong>,
+                lecture de la <strong>volatilité</strong> et des <strong>flux techniques</strong>,
+                angles de <strong>structuration</strong> et <strong>signaux actionnables</strong>
+                pour vos décisions. Une approche <strong>quantitative</strong> croisée à une lecture
+                <strong>macro</strong> pour identifier les <strong>fenêtres d’opportunité</strong>,
+                ajuster les <strong>allocations</strong> et renforcer la pertinence du
+                <strong>conseil client</strong>.
+              </p>
+            </div>
+          </div>
+
+          <div class="newsletter-form-wrap reveal parallax" data-speed="0.05">
+            <h3 class="newsletter-form-title">Recevoir nos analyses de marché</h3>
+            <p class="newsletter-form-intro">
               Une lecture claire, structurée et directement exploitable des dynamiques de marché.
             </p>
 
@@ -1173,33 +1139,6 @@
               </div>
             </form>
           </div>
-
-          <div class="newsletter-content reveal">
-
-            <h2>
-              <span class="accent-word">Comprendre</span> les marchés, <span class="accent-word">anticiper</span> les tendances
-            </h2>
-
-            <div class="newsletter-copy">
-              <p>
-                Naviguer dans l’univers des <strong>crypto-actifs</strong> exige plus que de l’intuition :
-                il faut une information <strong>fiable</strong>, <strong>précise</strong> et <strong>exploitable</strong>.
-                Nous diffusons désormais nos analyses via une <strong>newsletter hebdomadaire</strong> :
-                un condensé clair des dynamiques de marché pour <strong>gagner du temps</strong>
-                sans rien perdre en profondeur.
-              </p>
-
-              <p>
-                Au programme chaque semaine : <strong>récap des mouvements clés</strong>,
-                lecture de la <strong>volatilité</strong> et des <strong>flux techniques</strong>,
-                angles de <strong>structuration</strong> et <strong>signaux actionnables</strong>
-                pour vos décisions. Une approche <strong>quantitative</strong> croisée à une lecture
-                <strong>macro</strong> pour identifier les <strong>fenêtres d’opportunité</strong>,
-                ajuster les <strong>allocations</strong> et renforcer la pertinence du
-                <strong>conseil client</strong>.
-              </p>
-            </div>
-          </div>
         </div>
       </div>
     </section>
@@ -1223,14 +1162,14 @@
     const parallaxEls = document.querySelectorAll('.parallax');
 
     const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
+      entries.forEach((entry) => {
         if (entry.isIntersecting) {
           entry.target.classList.add('show');
         }
       });
     }, { threshold: 0.18 });
 
-    revealEls.forEach(el => observer.observe(el));
+    revealEls.forEach((el) => observer.observe(el));
 
     const updateScrollEffects = () => {
       const scrollTop = window.scrollY;
@@ -1240,7 +1179,7 @@
       progress.style.transform = `scaleX(${ratio})`;
       header.classList.toggle('scrolled', scrollTop > 20);
 
-      parallaxEls.forEach(el => {
+      parallaxEls.forEach((el) => {
         const speed = parseFloat(el.dataset.speed || '0.06');
         const rect = el.getBoundingClientRect();
         const centerOffset = rect.top - window.innerHeight / 2;

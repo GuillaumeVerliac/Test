@@ -2,23 +2,985 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>À propos – Priam Solutions</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="assets/css/reset.css" />
-  <link rel="stylesheet" href="assets/css/style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Priam Solutions — À propos</title>
+  <style>
+    :root {
+      --bg: #07101d;
+      --bg-soft: #0b1730;
+      --surface: rgba(255,255,255,0.06);
+      --border: rgba(255,255,255,0.11);
+      --text: #eef4ff;
+      --muted: #9cb0d2;
+      --accent: #7cc4ff;
+      --accent-2: #b8ef6f;
+      --shadow: 0 24px 90px rgba(0,0,0,0.30);
+      --radius: 26px;
+      --container: 1180px;
+      --ease: cubic-bezier(.22,.84,.24,1);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 12% 12%, rgba(124,196,255,0.13), transparent 22%),
+        radial-gradient(circle at 88% 42%, rgba(184,239,111,0.08), transparent 20%),
+        linear-gradient(180deg, #06101b 0%, #091424 36%, #0b1730 68%, #07101d 100%);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.06;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+      background-size: 84px 84px;
+      mask-image: radial-gradient(circle at center, black 36%, transparent 90%);
+      z-index: 0;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .container {
+      width: min(var(--container), calc(100% - 40px));
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      z-index: 100;
+      transform-origin: left;
+      transform: scaleX(0);
+      background: linear-gradient(90deg, var(--accent), #88a8ff, var(--accent-2));
+    }
+
+    .site-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 50;
+      backdrop-filter: blur(16px);
+      background: rgba(6, 12, 22, 0.42);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      transition: background .3s ease, border-color .3s ease;
+    }
+
+    .site-header.scrolled {
+      background: rgba(6, 12, 22, 0.82);
+      border-bottom-color: rgba(255,255,255,0.11);
+    }
+
+    .nav {
+      min-height: 84px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      flex-shrink: 0;
+    }
+
+    .brand-logo {
+      width: 50px;
+      height: 50px;
+      object-fit: contain;
+      display: block;
+      flex-shrink: 0;
+    }
+
+    .nav-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 16px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    .nav-links a {
+      position: relative;
+      padding: 6px 0;
+      transition: color .25s ease;
+    }
+
+    .nav-links a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -4px;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), transparent);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform .3s var(--ease);
+    }
+
+    .nav-links a:hover,
+    .nav-links a.is-active {
+      color: var(--text);
+    }
+
+    .nav-links a:hover::after,
+    .nav-links a.is-active::after {
+      transform: scaleX(1);
+    }
+
+    .header-buttons {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-left: 10px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 13px 18px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      font-weight: 600;
+      cursor: pointer;
+      transition:
+        transform .3s var(--ease),
+        box-shadow .3s var(--ease),
+        background .3s ease,
+        border-color .3s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), #91a5ff);
+      color: #06101b;
+      box-shadow: 0 18px 42px rgba(124,196,255,0.24);
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.04);
+      border-color: rgba(255,255,255,0.12);
+      color: var(--text);
+    }
+
+    .btn-secondary:hover {
+      border-color: rgba(124,196,255,0.32);
+      background: rgba(255,255,255,0.07);
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+    }
+
+    .section {
+      position: relative;
+      padding: 96px 0 80px;
+      overflow: hidden;
+    }
+
+    .section + .section {
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .section-heading {
+      text-align: center;
+      max-width: 820px;
+      margin: 0 auto 34px;
+    }
+
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(124,196,255,0.08);
+      border: 1px solid rgba(124,196,255,0.14);
+      color: var(--accent);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .section-label::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: 0 0 18px rgba(124,196,255,0.45);
+    }
+
+    h1, h2, h3 {
+      margin: 0;
+      letter-spacing: -0.05em;
+      line-height: 1.05;
+    }
+
+    h1 {
+      margin-top: 16px;
+      font-size: clamp(2rem, 4vw, 3.5rem);
+    }
+
+    h2 {
+      margin-top: 16px;
+      font-size: clamp(1.7rem, 3vw, 2.6rem);
+    }
+
+    h3 {
+      font-size: 1.18rem;
+      line-height: 1.15;
+    }
+
+    .accent-word,
+    .accent-strong {
+      color: var(--accent);
+    }
+
+    .section-intro {
+      margin: 16px auto 0;
+      max-width: 64ch;
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.75;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(42px);
+      transition: opacity .85s var(--ease), transform .85s var(--ease);
+      will-change: transform, opacity;
+    }
+
+    .reveal.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .vision-section {
+      padding-top: 142px;
+    }
+
+    .vision-grid {
+      display: grid;
+      grid-template-columns: 1.08fr 0.92fr;
+      gap: 30px;
+      align-items: center;
+    }
+
+    .vision-left p {
+      margin: 0;
+      color: #dce8fd;
+      font-size: 1rem;
+      line-height: 1.82;
+    }
+
+    .vision-left p + p {
+      margin-top: 14px;
+    }
+
+    .hero-orbit-wrap {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 395px;
+    }
+
+    .hero-orbit {
+      position: relative;
+      width: min(100%, 388px);
+      aspect-ratio: 1 / 1;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.08);
+      background:
+        radial-gradient(circle at 50% 50%, rgba(124,196,255,0.15), transparent 42%),
+        radial-gradient(circle at 64% 38%, rgba(184,239,111,0.08), transparent 18%),
+        linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+      box-shadow:
+        inset 0 0 70px rgba(124,196,255,0.06),
+        0 24px 90px rgba(0,0,0,0.28);
+      overflow: visible;
+    }
+
+    .hero-orbit::before,
+    .hero-orbit::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .hero-orbit::before {
+      inset: 10%;
+      border: 1px dashed rgba(255,255,255,0.10);
+    }
+
+    .hero-orbit::after {
+      inset: 24%;
+      border: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .hero-core {
+      position: absolute;
+      inset: 50%;
+      transform: translate(-50%, -50%);
+      width: 146px;
+      height: 146px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 16px;
+      font-size: 1rem;
+      font-weight: 700;
+      line-height: 1.18;
+      letter-spacing: -0.03em;
+      color: #ffffff;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(255,255,255,0.16), transparent 30%),
+        linear-gradient(145deg, rgba(124,196,255,0.22), rgba(145,165,255,0.12));
+      border: 1px solid rgba(255,255,255,0.14);
+      box-shadow:
+        inset 0 0 40px rgba(255,255,255,0.05),
+        0 18px 50px rgba(0,0,0,0.25);
+      z-index: 5;
+    }
+
+    .orbit-system {
+      position: absolute;
+      inset: 0;
+      animation: orbit-spin 20s linear infinite;
+    }
+
+    .satellite {
+      --angle: 0deg;
+      --radius: 182px;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%) rotate(var(--angle)) translateY(calc(-1 * var(--radius)));
+    }
+
+    .satellite:nth-child(1) { --angle: 0deg; }
+    .satellite:nth-child(2) { --angle: 120deg; }
+    .satellite:nth-child(3) { --angle: 240deg; }
+
+    .satellite span {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 40px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(7,16,29,0.86);
+      border: 1px solid rgba(255,255,255,0.10);
+      backdrop-filter: blur(14px);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.18);
+      color: #dfe9fb;
+      font-size: 0.84rem;
+      white-space: nowrap;
+      transform: rotate(calc(-1 * var(--angle)));
+      animation: orbit-counter 20s linear infinite;
+    }
+
+    @keyframes orbit-spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes orbit-counter {
+      from { transform: rotate(calc(-1 * var(--angle))) rotate(0deg); }
+      to { transform: rotate(calc(-1 * var(--angle))) rotate(-360deg); }
+    }
+
+    .founders-grid {
+      max-width: 1040px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .founder {
+      display: grid;
+      grid-template-columns: 86px 1fr;
+      gap: 20px;
+      align-items: start;
+      padding: 24px 24px 26px;
+    }
+
+    .founder-photo {
+      width: 78px;
+      height: 78px;
+      border-radius: 50%;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+      border: 2px solid rgba(255,255,255,0.12);
+      box-shadow: 0 14px 40px rgba(0,0,0,0.22);
+      background: rgba(255,255,255,0.04);
+    }
+
+    .founder-name {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .founder-name h3 {
+      font-size: 1.3rem;
+      color: #ffffff;
+    }
+
+    .founder-role {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--accent);
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      font-size: 0.95rem;
+    }
+
+    .founder-role::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 14px rgba(124,196,255,0.50);
+    }
+
+    .founder-bio {
+      display: grid;
+      gap: 12px;
+    }
+
+    .founder-bio p {
+      margin: 0;
+      color: #dce8fd;
+      font-size: 1rem;
+      line-height: 1.8;
+    }
+
+    .engagements-wrap {
+      max-width: 940px;
+      margin: 0 auto;
+      display: grid;
+      gap: 22px;
+    }
+
+    .engagement-item {
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      gap: 24px;
+      align-items: start;
+      padding: 0 0 22px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .engagement-item:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .engagement-title {
+      color: #ffffff;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .engagement-item p {
+      margin: 0;
+      color: #dce8fd;
+      font-size: 1rem;
+      line-height: 1.82;
+    }
+
+    .solutions-simple {
+      max-width: 840px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .solutions-simple p {
+      margin: 0;
+      color: #dce8fd;
+      font-size: 1rem;
+      line-height: 1.82;
+    }
+
+    .solutions-simple p + p {
+      margin-top: 14px;
+    }
+
+    .solutions-note {
+      margin: 26px auto 0;
+      max-width: 700px;
+      padding-top: 18px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      color: var(--muted);
+      font-size: 0.98rem;
+      line-height: 1.75;
+    }
+
+    .solutions-actions {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 28px;
+    }
+
+    .site-footer {
+      position: relative;
+      z-index: 1;
+      padding: 36px 0 42px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      background: rgba(4, 10, 18, 0.72);
+      backdrop-filter: blur(14px);
+    }
+
+    .footer-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      text-align: center;
+    }
+
+    .footer-company {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #ffffff;
+      line-height: 1.5;
+    }
+
+    .footer-address,
+    .footer-copy,
+    .footer-disclaimer {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .footer-copy {
+      font-size: 0.95rem;
+    }
+
+    .footer-disclaimer {
+      max-width: 90ch;
+      font-size: 0.92rem;
+      line-height: 1.7;
+    }
+
+    @media (max-width: 1080px) {
+      .vision-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-orbit-wrap {
+        min-height: auto;
+        margin-top: 8px;
+      }
+    }
+
+    @media (max-width: 980px) {
+      .founders-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .engagement-item {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .nav {
+        flex-wrap: wrap;
+        justify-content: center;
+        padding: 14px 0;
+      }
+
+      .brand {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .nav-right {
+        width: 100%;
+        flex-direction: column;
+        margin-left: 0;
+        gap: 14px;
+      }
+
+      .nav-links {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 18px;
+      }
+
+      .header-buttons {
+        margin-left: 0;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .container {
+        width: min(var(--container), calc(100% - 24px));
+      }
+
+      .section {
+        padding: 88px 0 66px;
+      }
+
+      .vision-section {
+        padding-top: 124px;
+      }
+
+      .header-buttons,
+      .solutions-actions {
+        flex-direction: column;
+        width: 100%;
+      }
+
+      .btn,
+      .header-buttons .btn,
+      .solutions-actions .btn {
+        width: 100%;
+      }
+
+      h1 {
+        font-size: clamp(1.8rem, 8vw, 2.7rem);
+      }
+
+      h2 {
+        font-size: clamp(1.6rem, 7vw, 2.2rem);
+      }
+
+      .section-intro,
+      .vision-left p,
+      .founder-bio p,
+      .engagement-item p,
+      .solutions-simple p,
+      .solutions-note {
+        font-size: 0.98rem;
+      }
+
+      .hero-orbit {
+        width: min(100%, 320px);
+      }
+
+      .hero-core {
+        width: 122px;
+        height: 122px;
+        font-size: 0.9rem;
+      }
+
+      .satellite {
+        --radius: 150px;
+      }
+
+      .satellite span {
+        font-size: 0.78rem;
+        padding: 8px 12px;
+        max-width: 122px;
+        white-space: normal;
+        text-align: center;
+      }
+
+      .founder {
+        grid-template-columns: 1fr;
+        padding: 22px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+        scroll-behavior: auto !important;
+      }
+
+      .reveal {
+        opacity: 1 !important;
+        transform: none !important;
+      }
+    }
+  </style>
 </head>
-
 <body>
-  <div id="site-header"></div>
+  <div class="progress" aria-hidden="true"></div>
 
-  <main class="container" style="padding-top:120px; text-align:center;">
-    <h1>À propos</h1>
-    <p>Petite page pour tester le layout.</p>
+  <header class="site-header" id="header">
+    <div class="container nav">
+      <a href="index.html" class="brand">
+        <img src="logo.png" alt="Logo Priam Solutions" class="brand-logo" />
+        <span>Priam Solutions</span>
+      </a>
+
+      <div class="nav-right">
+        <nav class="nav-links" aria-label="Navigation principale">
+          <a href="index.html">Accueil</a>
+          <a href="a-propos.html" class="is-active">Équipe</a>
+          <a href="recherche.html">Recherche</a>
+        </nav>
+
+        <div class="header-buttons">
+          <a href="contact.html" class="btn btn-primary">Nous contacter</a>
+          <a href="#" class="btn btn-secondary" onclick="return false;">Se connecter</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="section vision-section" id="vision">
+      <div class="container">
+        <div class="vision-grid">
+          <div class="vision-left reveal">
+            <span class="section-label">Notre vision</span>
+            <h1>
+              Donner un cadre plus <span class="accent-word">clair</span> aux marchés les plus <span class="accent-word">volatils</span>
+            </h1>
+            <p class="section-intro" style="margin:16px 0 0; max-width:58ch;">
+              Priam Solutions accompagne les professionnels qui souhaitent aborder les actifs et secteurs volatils avec davantage de rigueur, de lisibilité et de maîtrise.
+            </p>
+            <div style="margin-top:22px; display:grid; gap:14px;">
+              <p>
+                Nous pensons que ces marchés doivent être analysés avec méthode, et non seulement à travers leur dimension spéculative.
+              </p>
+              <p>
+                Nous développons ainsi une lecture structurée des solutions d’investissement appliquées aux crypto-actifs, à la technologie, à l’intelligence artificielle et à d’autres thématiques de croissance.
+              </p>
+            </div>
+          </div>
+
+          <div class="hero-orbit-wrap reveal" aria-hidden="true">
+            <div class="hero-orbit">
+              <div class="hero-core">
+                Priam<br>
+                Solutions
+              </div>
+
+              <div class="orbit-system">
+                <div class="satellite"><span>Analyse indépendante</span></div>
+                <div class="satellite"><span>Lecture des risques</span></div>
+                <div class="satellite"><span>Structuration sur mesure</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="fondateurs">
+      <div class="container">
+        <div class="section-heading reveal">
+          <span class="section-label">Les fondateurs</span>
+          <h2>
+            Deux expertises complémentaires au service des <span class="accent-word">actifs volatils</span>
+          </h2>
+        </div>
+
+        <div class="founders-grid">
+          <article class="panel founder reveal">
+            <img src="guillaume.jpg" alt="Photo de Guillaume" class="founder-photo" />
+            <div>
+              <div class="founder-name">
+                <h3>Guillaume</h3>
+                <div class="founder-role">Cofondateur</div>
+              </div>
+              <div class="founder-bio">
+                <p>
+                  Diplômé de Centrale et titulaire d’un master en mathématiques financières, Guillaume a commencé chez Kepler Cheuvreux comme Quantitative Risk Manager sur les produits structurés, avant de poursuivre en structuration hybrides chez Natixis.
+                </p>
+                <p>
+                  Chez Priam Solutions, il apporte une lecture précise des mécanismes de structuration, du rendement et du risque, avec une approche conçue pour rester utile et lisible pour les professionnels de la gestion.
+                </p>
+              </div>
+            </div>
+          </article>
+
+          <article class="panel founder reveal">
+            <img src="antoine.jpg" alt="Photo de Antoine" class="founder-photo" />
+            <div>
+              <div class="founder-name">
+                <h3>Antoine</h3>
+                <div class="founder-role">Cofondateur</div>
+              </div>
+              <div class="founder-bio">
+                <p>
+                  Diplômé de Centrale, Antoine a développé son expérience dans des entreprises américaines du secteur technologique, avec une spécialisation en analyse de données à grande échelle.
+                </p>
+                <p>
+                  Chez Priam Solutions, il supervise la qualité des données, la cohérence des valorisations et la robustesse des outils quantitatifs utilisés dans nos analyses, afin de garantir une lecture de marché fiable et cohérente dans le temps.
+                </p>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="engagements">
+      <div class="container">
+        <div class="section-heading reveal">
+          <span class="section-label">Nos engagements</span>
+          <h2>
+            Une approche <span class="accent-word">simple</span>, <span class="accent-word">sérieuse</span> et <span class="accent-word">lisible</span>
+          </h2>
+          <p class="section-intro">
+            Nous cherchons à produire une information utile pour analyser, comparer et concevoir des solutions structurées sans complexité inutile.
+          </p>
+        </div>
+
+        <div class="engagements-wrap reveal">
+          <div class="engagement-item">
+            <div class="engagement-title">Clarté de lecture</div>
+            <p>
+              Nous privilégions des analyses compréhensibles, avec des niveaux et des scénarios qui permettent d’identifier rapidement les points essentiels d’une structure. L’idée est d’aider nos clients à gagner en lisibilité, sans perdre la profondeur nécessaire à une vraie prise de décision.
+            </p>
+          </div>
+
+          <div class="engagement-item">
+            <div class="engagement-title">Indépendance</div>
+            <p>
+              Nos recommandations reposent sur une approche neutre et transparente. Nous ne cherchons pas à promouvoir une solution pour des raisons commerciales, mais à offrir un cadre d’analyse honnête, utile et directement exploitable dans un environnement souvent complexe.
+            </p>
+          </div>
+
+          <div class="engagement-item">
+            <div class="engagement-title">Exigence utile</div>
+            <p>
+              Nous mettons l’accent sur la qualité de la donnée, la cohérence des valorisations et l’équilibre entre coût, lisibilité et efficacité. Cette exigence doit rester concrète : mieux comprendre les mécanismes, mieux comparer les structures et mieux calibrer les solutions retenues.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="solutions">
+      <div class="container">
+        <div class="section-heading reveal">
+          <span class="section-label">Nos solutions</span>
+          <h2>
+            Des solutions conçues pour des marchés plus <span class="accent-word">instables</span> et plus <span class="accent-word">exigeants</span>
+          </h2>
+        </div>
+
+        <div class="solutions-simple reveal">
+          <p>
+            Nous accompagnons les professionnels dans la compréhension et la conception de produits structurés sur actifs volatils, avec une lecture claire des paramètres, des scénarios et des configurations possibles.
+          </p>
+          <p>
+            Notre objectif est de construire des solutions plus lisibles, mieux calibrées et adaptées à la réalité du marché comme au profil du client final.
+          </p>
+
+          <div class="solutions-note">
+            Nous intervenons notamment sur des solutions de rendement, de protection partielle ou renforcée, ainsi que sur des approches exploitant les régimes de volatilité.
+          </div>
+
+          <div class="solutions-actions">
+            <a href="contact.html" class="btn btn-primary">Créer une solution sur-mesure</a>
+            <a href="recherche.html" class="btn btn-secondary">Découvrir notre recherche</a>
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
 
-  <div id="site-footer"></div>
+  <footer class="site-footer">
+    <div class="container footer-content">
+      <div class="footer-company">Priam Solutions</div>
+      <p class="footer-address">4 rue Hérold, 75001 Paris</p>
+      <p class="footer-copy">© 2025 Priam Solutions — Plateforme indépendante dédiée aux produits structurés sur crypto-actifs</p>
+      <p class="footer-disclaimer">
+        Toutes les informations fournies sur cette plateforme le sont à titre informatif et ne constituent en aucun cas une recommandation financière, juridique ou fiscale.
+      </p>
+    </div>
+  </footer>
 
-  <script src="assets/js/main.js"></script>
+  <script>
+    const progress = document.querySelector('.progress');
+    const header = document.getElementById('header');
+    const revealEls = document.querySelectorAll('.reveal');
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('show');
+        }
+      });
+    }, { threshold: 0.16 });
+
+    revealEls.forEach((el) => observer.observe(el));
+
+    const updateScrollEffects = () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const ratio = docHeight > 0 ? scrollTop / docHeight : 0;
+
+      progress.style.transform = `scaleX(${ratio})`;
+      header.classList.toggle('scrolled', scrollTop > 20);
+    };
+
+    updateScrollEffects();
+    window.addEventListener('scroll', updateScrollEffects, { passive: true });
+    window.addEventListener('resize', updateScrollEffects);
+  </script>
 </body>
 </html>
 

@@ -122,6 +122,48 @@
       flex-shrink: 0;
     }
 
+    .nav-toggle {
+      display: none;
+      width: 48px;
+      height: 48px;
+      padding: 0;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 14px;
+      background: rgba(255,255,255,0.04);
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      transition: background .25s ease, border-color .25s ease, transform .25s ease;
+    }
+
+    .nav-toggle:hover {
+      background: rgba(255,255,255,0.07);
+      border-color: rgba(124,196,255,0.28);
+    }
+
+    .nav-toggle span {
+      display: block;
+      width: 18px;
+      height: 2px;
+      border-radius: 999px;
+      background: #ffffff;
+      transition: transform .25s ease, opacity .25s ease;
+    }
+
+    .nav-toggle.is-open span:nth-child(1) {
+      transform: translateY(7px) rotate(45deg);
+    }
+
+    .nav-toggle.is-open span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .nav-toggle.is-open span:nth-child(3) {
+      transform: translateY(-7px) rotate(-45deg);
+    }
+
     .nav-right {
       margin-left: auto;
       display: flex;
@@ -157,11 +199,13 @@
       transition: transform .3s var(--ease);
     }
 
-    .nav-links a:hover {
+    .nav-links a:hover,
+    .nav-links a.is-active {
       color: var(--text);
     }
 
-    .nav-links a:hover::after {
+    .nav-links a:hover::after,
+    .nav-links a.is-active::after {
       transform: scaleX(1);
     }
 
@@ -797,31 +841,74 @@
 
     @media (max-width: 900px) {
       .nav {
-        flex-wrap: wrap;
-        justify-content: center;
-        padding: 14px 0;
+        min-height: 84px;
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: center;
+        gap: 16px;
+        padding: 16px 0;
       }
 
       .brand {
-        width: 100%;
-        justify-content: center;
+        width: auto;
+        justify-content: flex-start;
+      }
+
+      .nav-toggle {
+        display: inline-flex;
+        justify-self: end;
       }
 
       .nav-right {
+        grid-column: 1 / -1;
         width: 100%;
-        flex-direction: column;
         margin-left: 0;
-        gap: 14px;
+        display: grid;
+        gap: 18px;
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(-8px);
+        transition:
+          max-height .35s var(--ease),
+          opacity .25s ease,
+          transform .25s ease;
+      }
+
+      .site-header.menu-open .nav-right {
+        max-height: 420px;
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateY(0);
+        padding-top: 8px;
       }
 
       .nav-links {
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 18px;
+        width: 100%;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 14px;
+        padding: 18px 18px 6px;
+        border-radius: 22px;
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.08);
+      }
+
+      .nav-links a {
+        width: 100%;
+        padding: 8px 0;
       }
 
       .header-buttons {
+        width: 100%;
         margin-left: 0;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .header-buttons .btn {
+        width: 100%;
       }
     }
 
@@ -840,15 +927,13 @@
         padding: 110px 0 72px;
       }
 
-      .solutions-cta,
-      .header-buttons {
+      .solutions-cta {
         flex-direction: column;
         width: 100%;
       }
 
       .btn,
-      .solutions-cta .btn,
-      .header-buttons .btn {
+      .solutions-cta .btn {
         width: 100%;
       }
 
@@ -943,9 +1028,22 @@
         <span>Priam Solutions</span>
       </a>
 
-      <div class="nav-right">
+      <button
+        class="nav-toggle"
+        id="navToggle"
+        aria-label="Ouvrir le menu"
+        aria-expanded="false"
+        aria-controls="mobileMenu"
+        type="button"
+      >
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <div class="nav-right" id="mobileMenu">
         <nav class="nav-links" aria-label="Navigation principale">
-          <a href="index.html">Accueil</a>
+          <a href="index.html" class="is-active">Accueil</a>
           <a href="a-propos.html">Équipe</a>
           <a href="recherche.html">Recherche</a>
         </nav>
@@ -1160,6 +1258,9 @@
     const header = document.getElementById('header');
     const revealEls = document.querySelectorAll('.reveal');
     const parallaxEls = document.querySelectorAll('.parallax');
+    const navToggle = document.getElementById('navToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const menuLinks = mobileMenu ? mobileMenu.querySelectorAll('a') : [];
 
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
@@ -1170,6 +1271,37 @@
     }, { threshold: 0.18 });
 
     revealEls.forEach((el) => observer.observe(el));
+
+    const closeMenu = () => {
+      header.classList.remove('menu-open');
+      navToggle.classList.remove('is-open');
+      navToggle.setAttribute('aria-expanded', 'false');
+    };
+
+    const openMenu = () => {
+      header.classList.add('menu-open');
+      navToggle.classList.add('is-open');
+      navToggle.setAttribute('aria-expanded', 'true');
+    };
+
+    if (navToggle) {
+      navToggle.addEventListener('click', () => {
+        const isOpen = header.classList.contains('menu-open');
+        if (isOpen) {
+          closeMenu();
+        } else {
+          openMenu();
+        }
+      });
+    }
+
+    menuLinks.forEach((link) => {
+      link.addEventListener('click', () => {
+        if (window.innerWidth <= 900) {
+          closeMenu();
+        }
+      });
+    });
 
     const updateScrollEffects = () => {
       const scrollTop = window.scrollY;
@@ -1190,8 +1322,16 @@
 
     updateScrollEffects();
     window.addEventListener('scroll', updateScrollEffects, { passive: true });
-    window.addEventListener('resize', updateScrollEffects);
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 900) {
+        closeMenu();
+      }
+      updateScrollEffects();
+    });
   </script>
+</body>
+</html>
 </body>
 </html>
 

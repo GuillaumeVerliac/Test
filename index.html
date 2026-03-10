@@ -863,6 +863,16 @@
       color: #ff8f8f;
     }
 
+    .honeypot {
+      position: absolute !important;
+      left: -9999px !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+      height: 0 !important;
+      width: 0 !important;
+      overflow: hidden !important;
+    }
+
     .site-footer {
       position: relative;
       z-index: 1;
@@ -1704,6 +1714,11 @@
                 <input id="email" name="email" type="email" placeholder="Adresse e-mail" required />
               </div>
 
+              <div class="honeypot" aria-hidden="true">
+                <label for="website">Website</label>
+                <input id="website" name="website" type="text" tabindex="-1" autocomplete="off" />
+              </div>
+
               <div class="newsletter-actions">
                 <button type="submit" class="btn btn-primary" id="newsletterSubmitBtn">
                   S’inscrire à la newsletter
@@ -2028,11 +2043,13 @@
       const lastnameInput = document.getElementById('lastname');
       const companyInput = document.getElementById('company');
       const emailInput = document.getElementById('email');
+      const websiteInput = document.getElementById('website');
 
       const firstname = firstnameInput ? firstnameInput.value.trim() : '';
       const lastname = lastnameInput ? lastnameInput.value.trim() : '';
       const company = companyInput ? companyInput.value.trim() : '';
       const email = emailInput ? emailInput.value.trim() : '';
+      const website = websiteInput ? websiteInput.value.trim() : '';
 
       if (!firstname || !lastname || !email) {
         setNewsletterMessage('Merci de renseigner le prénom, le nom et l’e-mail.', 'error');
@@ -2046,23 +2063,32 @@
       setNewsletterMessage('Envoi en cours...');
 
       try {
-        const response = await fetch('/api/newsletter', {
+        const response = await fetch('send_newsletter.php', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
           },
           body: JSON.stringify({
             firstname,
             lastname,
             company,
-            email
+            email,
+            website
           })
         });
 
-        const result = await response.json();
+        const rawText = await response.text();
+
+        let result;
+        try {
+          result = JSON.parse(rawText);
+        } catch (parseError) {
+          throw new Error("La réponse du serveur n'est pas au format JSON.");
+        }
 
         if (!response.ok) {
-          throw new Error(result.message || 'Une erreur est survenue.');
+          throw new Error(result.message || "Une erreur est survenue.");
         }
 
         setNewsletterMessage('Inscription envoyée avec succès.', 'success');
@@ -2072,9 +2098,10 @@
         }
       } catch (error) {
         setNewsletterMessage(
-          error.message || 'Impossible d’envoyer la demande pour le moment.',
+          error.message || "Impossible d’envoyer la demande pour le moment.",
           'error'
         );
+        console.error(error);
       } finally {
         if (newsletterSubmitBtn) {
           newsletterSubmitBtn.disabled = false;

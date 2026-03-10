@@ -79,7 +79,7 @@ $subjectLabels = [
 $subjectLabel = $subjectLabels[$subject] ?? $subject;
 
 // À ADAPTER SI BESOIN
-$toEmail   = 'guillaume.verliac@priam-solutions.com';
+$toEmail   = 'guillaume.verliac@priam-solutions.com, antoine.delcambre@priam-solutions.com';
 $fromEmail = 'guillaume.verliac@priam-solutions.com';
 $fromName  = 'Site Priam Solutions';
 

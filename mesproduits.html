@@ -1,0 +1,2013 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mes produits - Priam Solutions</title>
+  <meta name="description" content="Produits structurés Priam Solutions en portefeuille." />
+
+  <style>
+    :root {
+      --bg: #07101d;
+      --bg-soft: #0b1730;
+      --surface: rgba(255,255,255,0.05);
+      --surface-strong: rgba(255,255,255,0.08);
+      --border: rgba(255,255,255,0.10);
+      --text: #eef4ff;
+      --muted: #9cb0d2;
+      --accent: #7cc4ff;
+      --accent-2: #b8ef6f;
+      --accent-3: #ffca72;
+      --danger: #ff8f8f;
+      --success: #7df2b8;
+      --shadow: 0 24px 90px rgba(0,0,0,0.30);
+      --radius: 26px;
+      --container: 1180px;
+      --ease: cubic-bezier(.22,.84,.24,1);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 12% 12%, rgba(124,196,255,0.13), transparent 22%),
+        radial-gradient(circle at 88% 42%, rgba(184,239,111,0.08), transparent 20%),
+        linear-gradient(180deg, #06101b 0%, #091424 36%, #0b1730 68%, #07101d 100%);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.06;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+      background-size: 84px 84px;
+      mask-image: radial-gradient(circle at center, black 36%, transparent 90%);
+      z-index: 0;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; }
+    [hidden] { display: none !important; }
+
+    .container {
+      width: min(var(--container), calc(100% - 40px));
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      z-index: 100;
+      transform-origin: left;
+      transform: scaleX(0);
+      background: linear-gradient(90deg, var(--accent), #88a8ff, var(--accent-2));
+    }
+
+    .site-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 50;
+      backdrop-filter: blur(16px);
+      background: rgba(6, 12, 22, 0.42);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      transition: background .3s ease, border-color .3s ease;
+    }
+
+    .site-header.scrolled {
+      background: rgba(6, 12, 22, 0.82);
+      border-bottom-color: rgba(255,255,255,0.11);
+    }
+
+    .nav {
+      min-height: 84px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      flex-shrink: 0;
+    }
+
+    .brand-logo {
+      width: 50px;
+      height: 50px;
+      object-fit: contain;
+      display: block;
+      flex-shrink: 0;
+    }
+
+    .nav-toggle {
+      display: none;
+      width: 48px;
+      height: 48px;
+      padding: 0;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 14px;
+      background: rgba(255,255,255,0.04);
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      transition: background .25s ease, border-color .25s ease, transform .25s ease;
+    }
+
+    .nav-toggle:hover {
+      background: rgba(255,255,255,0.07);
+      border-color: rgba(124,196,255,0.28);
+    }
+
+    .nav-toggle span {
+      display: block;
+      width: 18px;
+      height: 2px;
+      border-radius: 999px;
+      background: #ffffff;
+      transition: transform .25s ease, opacity .25s ease;
+    }
+
+    .nav-toggle.is-open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-toggle.is-open span:nth-child(2) { opacity: 0; }
+    .nav-toggle.is-open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    .nav-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 16px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    .nav-links a {
+      position: relative;
+      padding: 6px 0;
+      transition: color .25s ease;
+    }
+
+    .nav-links a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -4px;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), transparent);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform .3s var(--ease);
+    }
+
+    .nav-links a:hover,
+    .nav-links a.is-active {
+      color: var(--text);
+    }
+
+    .nav-links a:hover::after,
+    .nav-links a.is-active::after {
+      transform: scaleX(1);
+    }
+
+    .header-buttons {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-left: 10px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 13px 18px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      font-weight: 600;
+      cursor: pointer;
+      transition:
+        transform .3s var(--ease),
+        box-shadow .3s var(--ease),
+        background .3s ease,
+        border-color .3s ease,
+        opacity .3s ease;
+    }
+
+    .btn:hover { transform: translateY(-2px); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), #91a5ff);
+      color: #06101b;
+      box-shadow: 0 18px 42px rgba(124,196,255,0.24);
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.04);
+      border-color: rgba(255,255,255,0.12);
+      color: var(--text);
+    }
+
+    .btn-secondary:hover {
+      border-color: rgba(124,196,255,0.32);
+      background: rgba(255,255,255,0.07);
+    }
+
+    .profile-menu {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .profile-avatar-btn {
+      width: 48px;
+      height: 48px;
+      min-width: 48px;
+      border: 1px solid rgba(124,196,255,0.30);
+      border-radius: 999px;
+      background: linear-gradient(135deg, rgba(124,196,255,0.20), rgba(145,165,255,0.20));
+      color: #ffffff;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 14px 34px rgba(124,196,255,0.18);
+      transition:
+        transform .3s var(--ease),
+        border-color .3s ease,
+        background .3s ease,
+        box-shadow .3s ease;
+    }
+
+    .profile-avatar-btn:hover {
+      transform: translateY(-2px);
+      border-color: rgba(124,196,255,0.48);
+      background: linear-gradient(135deg, rgba(124,196,255,0.28), rgba(145,165,255,0.28));
+    }
+
+    .profile-dropdown {
+      position: absolute;
+      top: calc(100% + 12px);
+      right: 0;
+      min-width: 250px;
+      padding: 10px;
+      border-radius: 20px;
+      background: rgba(8, 17, 32, 0.98);
+      border: 1px solid rgba(255,255,255,0.16);
+      box-shadow: 0 24px 80px rgba(0,0,0,0.42);
+      backdrop-filter: blur(16px);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transform: translateY(10px);
+      transition: opacity .25s ease, visibility .25s ease, transform .25s ease;
+      z-index: 60;
+    }
+
+    .profile-menu.is-open .profile-dropdown {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    .profile-dropdown a,
+    .profile-dropdown button {
+      display: block;
+      width: 100%;
+      padding: 11px 14px;
+      border-radius: 14px;
+      color: #e8f1ff;
+      background: transparent;
+      border: none;
+      text-align: left;
+      cursor: pointer;
+      transition: background .25s ease, color .25s ease;
+    }
+
+    .profile-dropdown a:hover,
+    .profile-dropdown button:hover {
+      background: rgba(255,255,255,0.08);
+      color: #ffffff;
+    }
+
+    .profile-logout {
+      margin-top: 6px;
+      border-top: 1px solid rgba(255,255,255,0.10) !important;
+      padding-top: 14px !important;
+      color: #ffd3d3 !important;
+    }
+
+    .page-shell {
+      padding: 126px 0 60px;
+      min-height: 100vh;
+      position: relative;
+      z-index: 1;
+    }
+
+    .dashboard-layout {
+      display: grid;
+      grid-template-columns: 220px minmax(0, 1fr);
+      gap: 56px;
+      align-items: start;
+    }
+
+    .side-nav {
+      position: sticky;
+      top: 50%;
+      transform: translateY(-50%);
+      align-self: start;
+    }
+
+    .side-nav-links {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    .side-nav-links a {
+      position: relative;
+      display: inline-block;
+      padding: 6px 0;
+      transition: color .25s ease;
+    }
+
+    .side-nav-links a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -4px;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), transparent);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform .3s var(--ease);
+    }
+
+    .side-nav-links a:hover,
+    .side-nav-links a.is-active {
+      color: var(--text);
+    }
+
+    .side-nav-links a:hover::after,
+    .side-nav-links a.is-active::after {
+      transform: scaleX(1);
+    }
+
+    .content { width: 100%; }
+
+    h1, h2, h3, h4 {
+      margin: 0;
+      letter-spacing: -0.04em;
+      line-height: 1.12;
+    }
+
+    h1 { font-size: clamp(2rem, 4vw, 3.05rem); }
+    h2 { font-size: clamp(1.35rem, 3vw, 1.9rem); }
+    h3 { font-size: 1.18rem; line-height: 1.35; }
+
+    .intro { margin-bottom: 30px; }
+
+    .intro-subtle {
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 0.98rem;
+      line-height: 1.8;
+      max-width: 78ch;
+    }
+
+    .products-stack {
+      display: grid;
+      gap: 24px;
+      margin-top: 30px;
+    }
+
+    .product-item {
+      position: relative;
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      gap: 24px;
+      padding: 24px;
+      border-radius: 26px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background:
+        radial-gradient(circle at top right, rgba(124,196,255,0.12), transparent 24%),
+        rgba(255,255,255,0.04);
+      box-shadow: 0 24px 60px rgba(0,0,0,0.20);
+      cursor: pointer;
+      transition: transform .3s var(--ease), border-color .3s ease, background .3s ease, box-shadow .3s ease;
+      overflow: hidden;
+    }
+
+    .product-item:hover {
+      transform: translateY(-4px);
+      border-color: rgba(124,196,255,0.22);
+      background:
+        radial-gradient(circle at top right, rgba(124,196,255,0.14), transparent 24%),
+        rgba(255,255,255,0.05);
+      box-shadow: 0 28px 64px rgba(0,0,0,0.25);
+    }
+
+    .product-visual {
+      position: relative;
+      min-height: 210px;
+      border-radius: 22px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.08);
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255,255,255,0.12), transparent 18%),
+        linear-gradient(135deg, rgba(124,196,255,0.18), rgba(145,165,255,0.12), rgba(184,239,111,0.10));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+    }
+
+    .product-visual.wof {
+      background:
+        radial-gradient(circle at 76% 18%, rgba(255,255,255,0.12), transparent 18%),
+        linear-gradient(135deg, rgba(184,239,111,0.14), rgba(124,196,255,0.12), rgba(255,202,114,0.12));
+    }
+
+    .visual-grid {
+      position: absolute;
+      inset: 0;
+      opacity: 0.18;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.22) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.22) 1px, transparent 1px);
+      background-size: 32px 32px;
+      mask-image: linear-gradient(180deg, black, transparent);
+    }
+
+    .visual-wave,
+    .visual-wave-2 {
+      position: absolute;
+      left: -12%;
+      right: -12%;
+      height: 120px;
+      border-radius: 999px;
+      filter: blur(9px);
+    }
+
+    .visual-wave {
+      bottom: 18px;
+      background: linear-gradient(90deg, rgba(124,196,255,0.12), rgba(124,196,255,0.55), rgba(184,239,111,0.20));
+      transform: rotate(-8deg);
+    }
+
+    .visual-wave-2 {
+      bottom: 58px;
+      background: linear-gradient(90deg, rgba(255,202,114,0.08), rgba(145,165,255,0.24), rgba(255,255,255,0.06));
+      transform: rotate(7deg);
+    }
+
+    .visual-badge {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(7,16,29,0.72);
+      border: 1px solid rgba(255,255,255,0.10);
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #ffffff;
+      backdrop-filter: blur(12px);
+    }
+
+    .visual-metric {
+      position: absolute;
+      right: 16px;
+      bottom: 16px;
+      min-width: 118px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: rgba(7,16,29,0.72);
+      border: 1px solid rgba(255,255,255,0.10);
+      backdrop-filter: blur(12px);
+    }
+
+    .visual-metric span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.8rem;
+      margin-bottom: 4px;
+    }
+
+    .visual-metric strong {
+      display: block;
+      font-size: 1.08rem;
+      color: #ffffff;
+    }
+
+    .product-kicker {
+      color: var(--accent);
+      font-size: 0.92rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .product-title {
+      font-size: 1.34rem;
+      color: #ffffff;
+      margin-bottom: 14px;
+    }
+
+    .product-copy {
+      color: #dfe9fb;
+      font-size: 1rem;
+      line-height: 1.82;
+      margin: 0 0 18px;
+      max-width: 70ch;
+    }
+
+    .product-keyline {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px 22px;
+      color: var(--muted);
+      font-size: 0.92rem;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .product-keyline strong {
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    .product-link {
+      margin-top: 18px;
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    .detail-view {
+      display: none;
+      padding-top: 8px;
+    }
+
+    .detail-view.is-visible {
+      display: block;
+    }
+
+    .detail-back {
+      margin-bottom: 22px;
+    }
+
+    .detail-card {
+      border-radius: 26px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background:
+        radial-gradient(circle at top right, rgba(124,196,255,0.12), transparent 28%),
+        rgba(255,255,255,0.04);
+      box-shadow: 0 22px 54px rgba(0,0,0,0.20);
+      padding: 28px;
+      margin-bottom: 24px;
+    }
+
+    .detail-meta {
+      color: var(--accent);
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 14px;
+    }
+
+    .detail-text {
+      margin-top: 18px;
+      color: #dfe9fb;
+      font-size: 1.02rem;
+      line-height: 1.88;
+      max-width: 80ch;
+    }
+
+    .detail-spec-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 24px;
+      padding-top: 18px;
+      border-top: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .detail-spec-card {
+      position: relative;
+      padding: 16px 16px 15px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.07);
+      background: rgba(255,255,255,0.03);
+      overflow: hidden;
+    }
+
+    .detail-spec-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), rgba(124,196,255,0));
+    }
+
+    .detail-spec-label {
+      display: block;
+      color: var(--muted);
+      font-size: 0.82rem;
+      margin-bottom: 8px;
+    }
+
+    .detail-spec-value {
+      display: block;
+      color: #ffffff;
+      font-size: 0.98rem;
+      line-height: 1.45;
+      font-weight: 600;
+    }
+
+    .scenario-toolbar {
+      margin-bottom: 18px;
+    }
+
+    .scenario-switch {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding: 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .scenario-btn {
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--muted);
+      padding: 10px 16px;
+      border-radius: 999px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .25s ease, color .25s ease, border-color .25s ease;
+    }
+
+    .scenario-btn:hover {
+      color: #ffffff;
+      background: rgba(255,255,255,0.05);
+    }
+
+    .scenario-btn.is-active {
+      color: #06101b;
+      background: linear-gradient(135deg, var(--accent), #91a5ff);
+      box-shadow: 0 14px 28px rgba(124,196,255,0.18);
+    }
+
+    .chart-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      margin-bottom: 24px;
+    }
+
+    .chart-block {
+      padding: 22px 20px 18px;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 22px;
+      background: rgba(255,255,255,0.03);
+      box-shadow: 0 18px 46px rgba(0,0,0,0.18);
+    }
+
+    .chart-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .chart-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .chart-note {
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.7;
+      max-width: 74ch;
+    }
+
+    .chart-canvas {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.02);
+    }
+
+    .projection-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 26px;
+    }
+
+    .projection-card {
+      padding: 20px 18px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.035);
+    }
+
+    .projection-card.is-selected {
+      border-color: rgba(124,196,255,0.24);
+      background: rgba(255,255,255,0.05);
+      box-shadow: 0 16px 42px rgba(0,0,0,0.15);
+    }
+
+    .projection-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .projection-head h4 {
+      margin: 0;
+      font-size: 1rem;
+      color: #ffffff;
+    }
+
+    .projection-tag {
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .projection-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .projection-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .projection-row:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .projection-label {
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .projection-value {
+      color: #ffffff;
+      font-size: 0.95rem;
+      text-align: right;
+    }
+
+    .projection-copy {
+      color: #dbe7ff;
+      font-size: 0.93rem;
+      line-height: 1.75;
+      margin: 14px 0 0;
+    }
+
+    .return-positive { color: var(--success); }
+    .return-negative { color: var(--danger); }
+    .return-neutral { color: var(--accent); }
+
+    .scenario-method {
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.84;
+      margin-top: 6px;
+    }
+
+    .scenario-method strong {
+      color: #ffffff;
+    }
+
+    .scenario-method p {
+      margin: 0 0 14px;
+    }
+
+    .scenario-method p:last-child {
+      margin-bottom: 0;
+    }
+
+    .empty-state {
+      padding: 24px 22px;
+      border-radius: 22px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--muted);
+    }
+
+    @media (max-width: 1160px) {
+      .chart-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .detail-spec-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 1024px) {
+      .dashboard-layout {
+        grid-template-columns: 180px minmax(0, 1fr);
+        gap: 36px;
+      }
+
+      .product-item {
+        grid-template-columns: 1fr;
+      }
+
+      .projection-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .nav {
+        min-height: 84px;
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: center;
+        gap: 16px;
+        padding: 16px 0;
+      }
+
+      .brand {
+        width: auto;
+        justify-content: flex-start;
+      }
+
+      .nav-toggle {
+        display: inline-flex;
+        justify-self: end;
+      }
+
+      .nav-right {
+        grid-column: 1 / -1;
+        width: 100%;
+        margin-left: 0;
+        display: grid;
+        gap: 18px;
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(-8px);
+        transition: max-height .35s var(--ease), opacity .25s ease, transform .25s ease;
+      }
+
+      .site-header.menu-open .nav-right {
+        max-height: 700px;
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateY(0);
+        padding-top: 8px;
+      }
+
+      .nav-links {
+        width: 100%;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 14px;
+        padding: 18px 18px 6px;
+        border-radius: 22px;
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.08);
+      }
+
+      .nav-links a {
+        width: 100%;
+        padding: 8px 0;
+      }
+
+      .header-buttons {
+        width: 100%;
+        margin-left: 0;
+        flex-direction: column;
+        gap: 12px;
+        align-items: stretch;
+      }
+
+      .header-buttons .btn {
+        width: 100%;
+      }
+
+      .profile-menu {
+        width: 100%;
+        display: block;
+      }
+
+      .profile-avatar-btn {
+        width: 100%;
+        height: 52px;
+        border-radius: 18px;
+      }
+
+      .profile-dropdown {
+        position: static;
+        top: auto;
+        right: auto;
+        min-width: 0;
+        width: 100%;
+        margin-top: 10px;
+        transform: none;
+        box-shadow: 0 18px 50px rgba(0,0,0,0.28);
+        display: none;
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+      }
+
+      .profile-menu.is-open .profile-dropdown {
+        display: block;
+      }
+
+      .dashboard-layout {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+
+      .side-nav {
+        display: none;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .container {
+        width: min(var(--container), calc(100% - 24px));
+      }
+
+      .page-shell {
+        padding: 118px 0 40px;
+      }
+
+      .product-item,
+      .detail-card,
+      .chart-block {
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+
+      h1 {
+        font-size: clamp(2rem, 8vw, 3rem);
+      }
+
+      .scenario-switch {
+        width: 100%;
+      }
+
+      .scenario-btn {
+        flex: 1 1 auto;
+      }
+
+      .detail-spec-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="progress" aria-hidden="true"></div>
+
+  <header class="site-header" id="header">
+    <div class="container nav">
+      <a href="index.html" class="brand">
+        <img src="logo.png" alt="Logo Priam Solutions" class="brand-logo" />
+        <span>Priam Solutions</span>
+      </a>
+
+      <button
+        class="nav-toggle"
+        id="navToggle"
+        aria-label="Ouvrir le menu"
+        aria-expanded="false"
+        aria-controls="mobileMenu"
+        type="button"
+      >
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <div class="nav-right" id="mobileMenu">
+        <nav class="nav-links" aria-label="Navigation principale">
+          <a href="index.html">Accueil</a>
+          <a href="a-propos.html">Équipe</a>
+          <a href="recherche.html">Recherche</a>
+        </nav>
+
+        <div class="header-buttons">
+          <a href="contact.html" class="btn btn-primary">Nous contacter</a>
+
+          <button type="button" class="btn btn-secondary" id="loginTrigger" hidden>
+            Se connecter
+          </button>
+
+          <div class="profile-menu" id="profileMenu">
+            <button
+              type="button"
+              class="profile-avatar-btn"
+              id="profileMenuTrigger"
+              aria-label="Ouvrir le menu utilisateur"
+              aria-haspopup="true"
+              aria-expanded="false"
+              aria-controls="profileDropdown"
+            >
+              UT
+            </button>
+
+            <div class="profile-dropdown" id="profileDropdown" role="menu" aria-label="Menu utilisateur">
+              <a href="monespace.html" role="menuitem">Mon espace</a>
+              <a href="marecherche.html" role="menuitem">Ma recherche</a>
+              <a href="mesproduits.html" role="menuitem">Mes produits</a>
+              <a href="messimulations.html" role="menuitem">Mes simulations</a>
+              <button type="button" id="logoutBtn" class="profile-logout" role="menuitem">
+                Déconnexion
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-shell">
+    <div class="container dashboard-layout">
+      <aside class="side-nav" aria-label="Navigation espace utilisateur">
+        <nav class="side-nav-links">
+          <a href="monespace.html">Mon espace</a>
+          <a href="marecherche.html">Ma recherche</a>
+          <a href="mesproduits.html" class="is-active">Mes produits</a>
+          <a href="messimulations.html">Mes simulations</a>
+        </nav>
+      </aside>
+
+      <section class="content">
+        <div id="productsListView">
+          <div class="intro">
+            <h1>Vos produits Priam en portefeuille</h1>
+            <p class="intro-subtle">
+              Sélectionnez un produit pour afficher son suivi détaillé, ses barrières,
+              son échéancier de coupons et ses projections par scénario.
+            </p>
+          </div>
+
+          <div class="products-stack">
+            <article class="product-item" data-product="btc-autocall" tabindex="0" role="button" aria-label="Voir le détail du produit Autocall Bitcoin ETF">
+              <div class="product-visual">
+                <div class="visual-grid"></div>
+                <div class="visual-wave"></div>
+                <div class="visual-wave-2"></div>
+                <div class="visual-badge">ETF spot Bitcoin</div>
+                <div class="visual-metric">
+                  <span>Niveau actuel</span>
+                  <strong>95 % du strike</strong>
+                </div>
+              </div>
+
+              <div>
+                <div class="product-kicker">Autocall trimestriel</div>
+                <h2 class="product-title">Autocall Bitcoin ETF Strategy 2028</h2>
+                <p class="product-copy">
+                  Produit de rendement avec observation trimestrielle, coupon conditionnel
+                  et possibilité de remboursement anticipé dès que le sous-jacent repasse
+                  au moins au niveau initial à date d’observation.
+                </p>
+
+                <div class="product-keyline">
+                  <span>Coupon : <strong>3,20 % / trimestre</strong></span>
+                  <span>Barrière coupon / capital : <strong>70 % / 70 %</strong></span>
+                  <span>Nominal détenu : <strong>500 000 €</strong></span>
+                  <span>Maturité : <strong>15/01/2028</strong></span>
+                </div>
+
+                <div class="product-link">Voir le suivi détaillé →</div>
+              </div>
+            </article>
+
+            <article class="product-item" data-product="wof-rc" tabindex="0" role="button" aria-label="Voir le détail du produit Reverse Convertible Worst-Of Crypto">
+              <div class="product-visual wof">
+                <div class="visual-grid"></div>
+                <div class="visual-wave"></div>
+                <div class="visual-wave-2"></div>
+                <div class="visual-badge">ETF worst-of iShares / BlackRock</div>
+                <div class="visual-metric">
+                  <span>Niveau actuel</span>
+                  <strong>81 % du strike</strong>
+                </div>
+              </div>
+
+              <div>
+                <div class="product-kicker">Reverse Convertible</div>
+                <h2 class="product-title">Reverse Convertible Worst-Of Crypto 2028</h2>
+                <p class="product-copy">
+                  Reverse Convertible sur ETF worst-of crypto iShares / BlackRock,
+                  avec coupon conditionnel à chaque observation et remboursement
+                  dépendant du niveau final du sous-jacent par rapport à la barrière capital.
+                </p>
+
+                <div class="product-keyline">
+                  <span>Coupon : <strong>4,10 % / trimestre</strong></span>
+                  <span>Barrière coupon / capital : <strong>65 % / 55 %</strong></span>
+                  <span>Nominal détenu : <strong>700 000 €</strong></span>
+                  <span>Maturité : <strong>30/03/2028</strong></span>
+                </div>
+
+                <div class="product-link">Voir le suivi détaillé →</div>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <section id="productDetailView" class="detail-view" aria-live="polite"></section>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const progress = document.querySelector('.progress');
+    const header = document.getElementById('header');
+    const navToggle = document.getElementById('navToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const menuLinks = mobileMenu ? mobileMenu.querySelectorAll('a') : [];
+
+    const loginTrigger = document.getElementById('loginTrigger');
+    const profileMenu = document.getElementById('profileMenu');
+    const profileMenuTrigger = document.getElementById('profileMenuTrigger');
+    const profileDropdown = document.getElementById('profileDropdown');
+    const profileDropdownLinks = profileDropdown.querySelectorAll('a');
+    const logoutBtn = document.getElementById('logoutBtn');
+
+    const productsListView = document.getElementById('productsListView');
+    const productCards = document.querySelectorAll('.product-item');
+    const productDetailView = document.getElementById('productDetailView');
+
+    const AUTH_KEY = 'priam_demo_user_authenticated';
+
+    const PRODUCTS = {
+      'btc-autocall': {
+        id: 'btc-autocall',
+        title: 'Autocall Bitcoin ETF Strategy 2028',
+        type: 'Autocall',
+        structure: 'Autocall trimestriel',
+        underlying: 'ETF spot Bitcoin',
+        couponLabel: '3,20 % par trimestre',
+        couponRate: 3.2,
+        couponBarrier: 70,
+        capitalBarrier: 70,
+        autocallBarrier: 100,
+        nominalHeld: '500 000 €',
+        issueDate: '15/03/2025',
+        maturityDate: '15/01/2028',
+        nextObservation: '15/06/2026',
+        currentLevel: 95,
+        overview: 'Autocall sur ETF spot Bitcoin avec coupon conditionnel trimestriel. Le remboursement peut intervenir par anticipation dès qu’une observation trimestrielle se fait au moins au niveau initial.',
+        chartNote: 'Historique illustratif du sous-jacent puis projection sur les dates d’observation contractuelles.',
+        couponNote: 'L’échéancier intègre les coupons déjà distribués depuis l’émission ainsi que les coupons futurs estimés selon le scénario choisi.',
+        historyLabels: ['Mai 25','Juin 25','Juil 25','Août 25','Sept 25','Oct 25','Nov 25','Déc 25','Jan 26','Fév 26','Mars 26'],
+        historyLevels: [104, 99, 95, 92, 96, 103, 108, 101, 98, 94, 95],
+        pastCoupons: [
+          { label: 'T1', date: '15/06/2025', level: 96, payment: 3.2 },
+          { label: 'T2', date: '15/09/2025', level: 93, payment: 3.2 },
+          { label: 'T3', date: '15/12/2025', level: 90, payment: 3.2 },
+          { label: 'T4', date: '15/03/2026', level: 95, payment: 3.2 }
+        ],
+        futureLabels: ['T5','T6','T7','T8','T9','T10','T11'],
+        futureDates: ['15/06/2026','15/09/2026','15/12/2026','15/03/2027','15/06/2027','15/09/2027','15/12/2027'],
+        scales: {
+          yMin: 50,
+          yMax: 140,
+          couponMax: 42
+        },
+        scenarios: {
+          positif: {
+            label: 'Positif',
+            projectedLevels: [102, 108, 114, 119, 124, 128, 132],
+            copy: 'Retour rapide du sous-jacent au-dessus du strike, avec rappel anticipé dès la première observation future.'
+          },
+          neutre: {
+            label: 'Neutre',
+            projectedLevels: [91, 89, 90, 92, 94, 96, 98],
+            copy: 'Scénario central prudent, avec un biais légèrement baissier puis une stabilisation progressive, sans retour immédiat vers le strike.'
+          },
+          negatif: {
+            label: 'Négatif',
+            projectedLevels: [86, 81, 76, 71, 68, 64, 59],
+            copy: 'Trajectoire de marché dégradée, avec extinction graduelle des coupons et remboursement final potentiellement affecté.'
+          }
+        },
+        scenarioMethod: {
+          intro: "Le moteur de projection combine une base quantitative de volatilité et de régimes de marché à une lecture discrétionnaire des facteurs crypto, ETF et macro.",
+          positif: "Le scénario positif suppose une normalisation du risque, un retour des flux sur les ETF spot Bitcoin, une amélioration de la liquidité secondaire, un apaisement réglementaire relatif et un environnement macro moins contraignant pour les actifs risqués.",
+          neutre: "Le scénario neutre retient un marché encore hésitant, avec une pression résiduelle sur les flux, une volatilité présente mais ordonnée, une sélection accrue des investisseurs et l’absence d’élément extra-financier suffisamment favorable pour provoquer un rebond franc.",
+          negatif: "Le scénario négatif intègre une combinaison de stress exogènes possibles : regain d’aversion au risque, tensions réglementaires, dégradation de la liquidité, choc macro ou géopolitique, ralentissement des flux ETF et hausse de la corrélation entre actifs numériques et autres segments risqués."
+        }
+      },
+
+      'wof-rc': {
+        id: 'wof-rc',
+        title: 'Reverse Convertible Worst-Of Crypto 2028',
+        type: 'Reverse Convertible',
+        structure: 'Reverse Convertible trimestriel',
+        underlying: 'ETF worst-of crypto iShares / BlackRock',
+        couponLabel: '4,10 % par trimestre',
+        couponRate: 4.1,
+        couponBarrier: 65,
+        capitalBarrier: 55,
+        autocallBarrier: null,
+        nominalHeld: '700 000 €',
+        issueDate: '30/03/2025',
+        maturityDate: '30/03/2028',
+        nextObservation: '30/06/2026',
+        currentLevel: 81,
+        overview: 'Reverse Convertible sur ETF worst-of crypto iShares / BlackRock, avec coupon conditionnel à chaque observation et remboursement dépendant du niveau final du sous-jacent par rapport à la barrière capital.',
+        chartNote: 'Sous-jacent worst-of normalisé base 100 au strike, avec affichage des barrières coupon et capital jusqu’à la maturité.',
+        couponNote: 'Le retour total estimé additionne les coupons déjà versés, les coupons futurs estimés et le remboursement du nominal à maturité.',
+        historyLabels: ['Mai 25','Juin 25','Juil 25','Août 25','Sept 25','Oct 25','Nov 25','Déc 25','Jan 26','Fév 26','Mars 26'],
+        historyLevels: [101, 97, 93, 89, 86, 90, 92, 88, 84, 82, 81],
+        pastCoupons: [
+          { label: 'T1', date: '30/06/2025', level: 90, payment: 4.1 },
+          { label: 'T2', date: '30/09/2025', level: 87, payment: 4.1 },
+          { label: 'T3', date: '30/12/2025', level: 84, payment: 4.1 },
+          { label: 'T4', date: '30/03/2026', level: 81, payment: 4.1 }
+        ],
+        futureLabels: ['T5','T6','T7','T8','T9','T10','T11'],
+        futureDates: ['30/06/2026','30/09/2026','30/12/2026','30/03/2027','30/06/2027','30/09/2027','30/12/2027'],
+        scales: {
+          yMin: 40,
+          yMax: 125,
+          couponMax: 58
+        },
+        scenarios: {
+          positif: {
+            label: 'Positif',
+            projectedLevels: [84, 88, 92, 96, 100, 104, 108],
+            copy: 'Reprise progressive du panier, avec coupons servis tout au long de la vie du produit et remboursement intégral du nominal.'
+          },
+          neutre: {
+            label: 'Neutre',
+            projectedLevels: [79, 77, 75, 73, 72, 71, 70],
+            copy: 'Scénario central prudent, marqué par une érosion régulière du panier sans rupture brutale, avec un portage encore présent mais moins confortable.'
+          },
+          negatif: {
+            label: 'Négatif',
+            projectedLevels: [72, 66, 61, 57, 54, 50, 46],
+            copy: 'Affaiblissement prolongé du panier, avec pression sur les coupons conditionnels et sur le remboursement final du nominal.'
+          }
+        },
+        scenarioMethod: {
+          intro: "Le moteur de projection prend en compte la dispersion du worst-of, les corrélations entre compartiments crypto, la volatilité implicite, les régimes de liquidité et des hypothèses de marché non purement directionnelles.",
+          positif: "Le scénario positif suppose une meilleure synchronisation des composantes du panier, un resserrement des dispersions, une détente sur le risque réglementaire, un retour des acheteurs sur les véhicules listés et l’absence de choc extra-financier pénalisant pour les grandes plateformes ou pour la liquidité des ETF.",
+          neutre: "Le scénario neutre intègre une usure graduelle du panier, des flux modérés, une dispersion toujours présente entre les composantes du worst-of, un bruit réglementaire sans rupture et un environnement macro seulement peu porteur pour un rerating.",
+          negatif: "Le scénario négatif retient une combinaison plus sévère : dégradation de la profondeur de marché, élargissement des écarts entre composantes du worst-of, événements exogènes défavorables, pression réglementaire ou contentieuse, et maintien d’un contexte macro qui pèse durablement sur les actifs numériques les plus volatils."
+        }
+      }
+    };
+
+    function closeMenu() {
+      header.classList.remove('menu-open');
+      navToggle.classList.remove('is-open');
+      navToggle.setAttribute('aria-expanded', 'false');
+    }
+
+    function openMenu() {
+      header.classList.add('menu-open');
+      navToggle.classList.add('is-open');
+      navToggle.setAttribute('aria-expanded', 'true');
+    }
+
+    if (navToggle) {
+      navToggle.addEventListener('click', () => {
+        const isOpen = header.classList.contains('menu-open');
+        if (isOpen) closeMenu();
+        else openMenu();
+      });
+    }
+
+    function updateScrollEffects() {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const ratio = docHeight > 0 ? scrollTop / docHeight : 0;
+      progress.style.transform = `scaleX(${ratio})`;
+      header.classList.toggle('scrolled', scrollTop > 20);
+    }
+
+    function isLoggedIn() {
+      return sessionStorage.getItem(AUTH_KEY) === 'true';
+    }
+
+    function renderAuthState() {
+      const loggedIn = isLoggedIn();
+      loginTrigger.hidden = loggedIn;
+      profileMenu.hidden = !loggedIn;
+    }
+
+    function openProfileDropdown() {
+      if (profileMenu.hidden) return;
+      profileMenu.classList.add('is-open');
+      profileMenuTrigger.setAttribute('aria-expanded', 'true');
+    }
+
+    function closeProfileDropdown() {
+      profileMenu.classList.remove('is-open');
+      profileMenuTrigger.setAttribute('aria-expanded', 'false');
+    }
+
+    function toggleProfileDropdown() {
+      if (profileMenu.classList.contains('is-open')) closeProfileDropdown();
+      else openProfileDropdown();
+    }
+
+    function logout() {
+      sessionStorage.removeItem(AUTH_KEY);
+      closeProfileDropdown();
+      renderAuthState();
+      window.location.href = 'index.html';
+    }
+
+    function formatPercent(value, digits = 1) {
+      return `${Number(value).toLocaleString('fr-FR', {
+        minimumFractionDigits: digits,
+        maximumFractionDigits: digits
+      })} %`;
+    }
+
+    function getReturnClass(value) {
+      if (value > 0.5) return 'return-positive';
+      if (value < -0.5) return 'return-negative';
+      return 'return-neutral';
+    }
+
+    function sumPayments(items) {
+      return items.reduce((acc, item) => acc + (item.payment || 0), 0);
+    }
+
+    function computeScenarioOutcome(product, scenarioKey) {
+      const scenario = product.scenarios[scenarioKey];
+      const futureLevels = scenario.projectedLevels;
+      const couponTimeline = product.pastCoupons.map((item) => ({
+        ...item,
+        status: 'realised'
+      }));
+
+      const alreadyPaid = sumPayments(product.pastCoupons);
+      let futureCoupons = 0;
+      let principal = 100;
+      let redemptionIndex = couponTimeline.length + futureLevels.length;
+      let redemptionLabel = 'Maturité';
+
+      if (product.autocallBarrier !== null) {
+        let called = false;
+
+        futureLevels.forEach((level, index) => {
+          const label = product.futureLabels[index];
+          const date = product.futureDates[index];
+
+          if (called) {
+            couponTimeline.push({
+              label,
+              date,
+              level,
+              payment: 0,
+              status: 'inactive'
+            });
+            return;
+          }
+
+          if (level >= product.autocallBarrier) {
+            couponTimeline.push({
+              label,
+              date,
+              level,
+              payment: product.couponRate,
+              status: 'projected'
+            });
+            futureCoupons += product.couponRate;
+            principal = 100;
+            redemptionIndex = product.pastCoupons.length + index + 1;
+            redemptionLabel = `Rappel ${label}`;
+            called = true;
+            return;
+          }
+
+          if (level >= product.couponBarrier) {
+            couponTimeline.push({
+              label,
+              date,
+              level,
+              payment: product.couponRate,
+              status: 'projected'
+            });
+            futureCoupons += product.couponRate;
+          } else {
+            couponTimeline.push({
+              label,
+              date,
+              level,
+              payment: 0,
+              status: 'missed'
+            });
+          }
+        });
+
+        if (redemptionLabel === 'Maturité') {
+          const lastLevel = futureLevels[futureLevels.length - 1];
+          principal = lastLevel >= product.capitalBarrier ? 100 : lastLevel;
+        }
+      } else {
+        futureLevels.forEach((level, index) => {
+          const label = product.futureLabels[index];
+          const date = product.futureDates[index];
+          const payment = level >= product.couponBarrier ? product.couponRate : 0;
+
+          couponTimeline.push({
+            label,
+            date,
+            level,
+            payment,
+            status: payment > 0 ? 'projected' : 'missed'
+          });
+
+          futureCoupons += payment;
+        });
+
+        const lastLevel = futureLevels[futureLevels.length - 1];
+        principal = lastLevel >= product.capitalBarrier ? 100 : lastLevel;
+      }
+
+      const totalCoupons = alreadyPaid + futureCoupons;
+      const totalReturn = Number((totalCoupons + principal - 100).toFixed(1));
+
+      return {
+        couponTimeline,
+        alreadyPaid: Number(alreadyPaid.toFixed(1)),
+        futureCoupons: Number(futureCoupons.toFixed(1)),
+        totalCoupons: Number(totalCoupons.toFixed(1)),
+        principal: Number(principal.toFixed(1)),
+        totalReturn,
+        redemptionIndex,
+        redemptionLabel
+      };
+    }
+
+    function renderProjectionCards(product, selectedScenario) {
+      return ['positif', 'neutre', 'negatif'].map((scenarioKey) => {
+        const outcome = computeScenarioOutcome(product, scenarioKey);
+        const isSelected = scenarioKey === selectedScenario;
+        const returnClass = getReturnClass(outcome.totalReturn);
+
+        return `
+          <div class="projection-card ${isSelected ? 'is-selected' : ''}">
+            <div class="projection-head">
+              <h4>${product.scenarios[scenarioKey].label}</h4>
+              <span class="projection-tag">${outcome.redemptionLabel}</span>
+            </div>
+
+            <div class="projection-list">
+              <div class="projection-row">
+                <div class="projection-label">Coupons déjà versés</div>
+                <div class="projection-value">${formatPercent(outcome.alreadyPaid, 1)}</div>
+              </div>
+              <div class="projection-row">
+                <div class="projection-label">Coupons futurs estimés</div>
+                <div class="projection-value">${formatPercent(outcome.futureCoupons, 1)}</div>
+              </div>
+              <div class="projection-row">
+                <div class="projection-label">Remboursement nominal</div>
+                <div class="projection-value">${formatPercent(outcome.principal, 1)}</div>
+              </div>
+              <div class="projection-row">
+                <div class="projection-label">Retour total estimé</div>
+                <div class="projection-value ${returnClass}">${formatPercent(outcome.totalReturn, 1)}</div>
+              </div>
+            </div>
+
+            <p class="projection-copy">${product.scenarios[scenarioKey].copy}</p>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderScenarioMethod(product) {
+      return `
+        <div class="scenario-method">
+          <p><strong>Construction des scénarios :</strong> ${product.scenarioMethod.intro}</p>
+          <p><strong>Positif :</strong> ${product.scenarioMethod.positif}</p>
+          <p><strong>Neutre :</strong> ${product.scenarioMethod.neutre}</p>
+          <p><strong>Négatif :</strong> ${product.scenarioMethod.negatif}</p>
+        </div>
+      `;
+    }
+
+    function showProductsList() {
+      productDetailView.classList.remove('is-visible');
+      productDetailView.innerHTML = '';
+      productsListView.style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function renderProductDetail(productId, scenarioKey = 'neutre', preserveScroll = false) {
+      const product = PRODUCTS[productId];
+      const currentScroll = window.scrollY;
+
+      if (!product) {
+        productDetailView.innerHTML = `<div class="empty-state">Impossible de charger le détail du produit demandé.</div>`;
+        productDetailView.classList.add('is-visible');
+        productsListView.style.display = 'none';
+        return;
+      }
+
+      productDetailView.innerHTML = `
+        <div class="detail-back">
+          <button class="btn btn-secondary" id="backToProducts" type="button">Retour aux produits</button>
+        </div>
+
+        <div class="detail-card">
+          <div class="detail-meta">${product.structure} — ${product.underlying}</div>
+          <h1>${product.title}</h1>
+          <p class="detail-text">${product.overview}</p>
+
+          <div class="detail-spec-grid">
+            <div class="detail-spec-card">
+              <span class="detail-spec-label">Type</span>
+              <span class="detail-spec-value">${product.type}</span>
+            </div>
+            <div class="detail-spec-card">
+              <span class="detail-spec-label">Sous-jacent</span>
+              <span class="detail-spec-value">${product.underlying}</span>
+            </div>
+            <div class="detail-spec-card">
+              <span class="detail-spec-label">Coupon</span>
+              <span class="detail-spec-value">${product.couponLabel}</span>
+            </div>
+            <div class="detail-spec-card">
+              <span class="detail-spec-label">Barrière coupon</span>
+              <span class="detail-spec-value">${formatPercent(product.couponBarrier, 0)}</span>
+            </div>
+            <div class="detail-spec-card">
+              <span class="detail-spec-label">Barrière capital</span>
+              <span class="detail-spec-value">${formatPercent(product.capitalBarrier, 0)}</span>
+            </div>
+            <div class="detail-spec-card">
+              <span class="detail-spec-label">Barrière autocall</span>
+              <span class="detail-spec-value">${product.autocallBarrier !== null ? formatPercent(product.autocallBarrier, 0) : 'Non applicable'}</span>
+            </div>
+            <div class="detail-spec-card">
+              <span class="detail-spec-label">Nominal détenu</span>
+              <span class="detail-spec-value">${product.nominalHeld}</span>
+            </div>
+            <div class="detail-spec-card">
+              <span class="detail-spec-label">Niveau actuel</span>
+              <span class="detail-spec-value">${formatPercent(product.currentLevel, 0)} du strike</span>
+            </div>
+            <div class="detail-spec-card">
+              <span class="detail-spec-label">Calendrier</span>
+              <span class="detail-spec-value">${product.nextObservation} → ${product.maturityDate}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="scenario-toolbar">
+          <div class="scenario-switch" role="tablist" aria-label="Choix du scénario">
+            <button type="button" class="scenario-btn ${scenarioKey === 'positif' ? 'is-active' : ''}" data-scenario="positif">Positif</button>
+            <button type="button" class="scenario-btn ${scenarioKey === 'neutre' ? 'is-active' : ''}" data-scenario="neutre">Neutre</button>
+            <button type="button" class="scenario-btn ${scenarioKey === 'negatif' ? 'is-active' : ''}" data-scenario="negatif">Négatif</button>
+          </div>
+        </div>
+
+        <div class="chart-grid">
+          <div class="chart-block">
+            <div class="chart-head">
+              <div>
+                <div class="chart-title">Évolution du sous-jacent face aux barrières</div>
+                <div class="chart-note">${product.chartNote}</div>
+              </div>
+            </div>
+            <canvas id="underlyingChart" class="chart-canvas" width="980" height="370"></canvas>
+          </div>
+
+          <div class="chart-block">
+            <div class="chart-head">
+              <div>
+                <div class="chart-title">Échéancier complet des coupons</div>
+                <div class="chart-note">${product.couponNote}</div>
+              </div>
+            </div>
+            <canvas id="couponChart" class="chart-canvas" width="980" height="370"></canvas>
+          </div>
+        </div>
+
+        <div class="projection-grid">
+          ${renderProjectionCards(product, scenarioKey)}
+        </div>
+
+        ${renderScenarioMethod(product)}
+      `;
+
+      productsListView.style.display = 'none';
+      productDetailView.classList.add('is-visible');
+
+      document.getElementById('backToProducts').addEventListener('click', showProductsList);
+
+      productDetailView.querySelectorAll('.scenario-btn').forEach((button) => {
+        button.addEventListener('click', () => {
+          renderProductDetail(productId, button.dataset.scenario, true);
+        });
+      });
+
+      drawUnderlyingChart('underlyingChart', product, scenarioKey);
+      drawCouponChart('couponChart', product, scenarioKey);
+
+      if (preserveScroll) {
+        window.scrollTo({ top: currentScroll, behavior: 'auto' });
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+
+    function drawUnderlyingChart(canvasId, product, scenarioKey) {
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) return;
+
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width;
+      const h = canvas.height;
+      ctx.clearRect(0, 0, w, h);
+
+      const history = product.historyLevels;
+      const future = product.scenarios[scenarioKey].projectedLevels;
+      const labels = [...product.historyLabels, ...product.futureLabels];
+
+      const minVal = product.scales.yMin;
+      const maxVal = product.scales.yMax;
+      const range = maxVal - minVal;
+
+      const padding = { top: 34, right: 26, bottom: 62, left: 54 };
+      const chartW = w - padding.left - padding.right;
+      const chartH = h - padding.top - padding.bottom;
+
+      const getX = (index, total) => padding.left + (chartW / (total - 1)) * index;
+      const getY = (value) => padding.top + ((maxVal - value) / range) * chartH;
+
+      ctx.strokeStyle = 'rgba(255,255,255,0.10)';
+      ctx.lineWidth = 1;
+
+      for (let i = 0; i <= 5; i++) {
+        const y = padding.top + (chartH / 5) * i;
+        const value = maxVal - (range / 5) * i;
+
+        ctx.beginPath();
+        ctx.moveTo(padding.left, y);
+        ctx.lineTo(w - padding.right, y);
+        ctx.stroke();
+
+        ctx.fillStyle = 'rgba(156,176,210,0.95)';
+        ctx.font = '12px Inter, sans-serif';
+        ctx.fillText(`${Math.round(value)}%`, 8, y + 4);
+      }
+
+      function drawBarrier(level, color, label) {
+        const y = getY(level);
+        ctx.save();
+        ctx.setLineDash([6, 6]);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(padding.left, y);
+        ctx.lineTo(w - padding.right, y);
+        ctx.stroke();
+        ctx.restore();
+
+        ctx.fillStyle = color;
+        ctx.font = '12px Inter, sans-serif';
+        ctx.fillText(label, w - padding.right - 160, y - 8);
+      }
+
+      drawBarrier(product.couponBarrier, '#7df2b8', 'Barrière coupon');
+      drawBarrier(product.capitalBarrier, '#ff8f8f', 'Barrière capital');
+
+      if (product.autocallBarrier !== null) {
+        drawBarrier(product.autocallBarrier, '#ffca72', 'Barrière autocall');
+      }
+
+      const totalPoints = labels.length;
+      const splitX = getX(history.length - 1, totalPoints);
+
+      ctx.save();
+      ctx.setLineDash([4, 6]);
+      ctx.strokeStyle = 'rgba(255,255,255,0.18)';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(splitX, padding.top);
+      ctx.lineTo(splitX, h - padding.bottom);
+      ctx.stroke();
+      ctx.restore();
+
+      ctx.fillStyle = 'rgba(156,176,210,0.95)';
+      ctx.font = '12px Inter, sans-serif';
+      ctx.fillText('Aujourd’hui', splitX - 26, padding.top - 10);
+
+      function drawSeries(data, offset, stroke, fill) {
+        ctx.beginPath();
+        data.forEach((value, index) => {
+          const absoluteIndex = offset + index;
+          const x = getX(absoluteIndex, totalPoints);
+          const y = getY(value);
+          if (index === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        });
+
+        ctx.strokeStyle = stroke;
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        ctx.lineTo(getX(offset + data.length - 1, totalPoints), padding.top + chartH);
+        ctx.lineTo(getX(offset, totalPoints), padding.top + chartH);
+        ctx.closePath();
+
+        ctx.globalAlpha = 0.10;
+        ctx.fillStyle = fill;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+
+        data.forEach((value, index) => {
+          const absoluteIndex = offset + index;
+          const x = getX(absoluteIndex, totalPoints);
+          const y = getY(value);
+          ctx.beginPath();
+          ctx.arc(x, y, 3.8, 0, Math.PI * 2);
+          ctx.fillStyle = stroke;
+          ctx.fill();
+        });
+      }
+
+      drawSeries(history, 0, '#7cc4ff', '#7cc4ff');
+
+      const projectionColor =
+        scenarioKey === 'positif' ? '#b8ef6f' :
+        scenarioKey === 'negatif' ? '#ff8f8f' :
+        '#91a5ff';
+
+      drawSeries([history[history.length - 1], ...future], history.length - 1, projectionColor, projectionColor);
+
+      labels.forEach((label, index) => {
+        if (index < history.length && index % 2 !== 0) return;
+        const x = getX(index, totalPoints);
+        ctx.fillStyle = 'rgba(156,176,210,0.95)';
+        ctx.font = '11px Inter, sans-serif';
+        ctx.fillText(label, x - 16, h - 22);
+      });
+
+      ctx.fillStyle = '#7cc4ff';
+      ctx.fillRect(padding.left, 14, 18, 3);
+      ctx.fillStyle = '#eef4ff';
+      ctx.font = '13px Inter, sans-serif';
+      ctx.fillText('Historique', padding.left + 24, 19);
+
+      ctx.fillStyle = projectionColor;
+      ctx.fillRect(padding.left + 124, 14, 18, 3);
+      ctx.fillStyle = '#eef4ff';
+      ctx.fillText(`Projection ${product.scenarios[scenarioKey].label.toLowerCase()}`, padding.left + 148, 19);
+    }
+
+    function drawCouponChart(canvasId, product, scenarioKey) {
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) return;
+
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width;
+      const h = canvas.height;
+      ctx.clearRect(0, 0, w, h);
+
+      const outcome = computeScenarioOutcome(product, scenarioKey);
+      const payments = outcome.couponTimeline.map(item => item.payment || 0);
+      const labels = outcome.couponTimeline.map(item => item.label);
+      const dates = outcome.couponTimeline.map(item => item.date);
+
+      let running = 0;
+      const cumulative = payments.map((value) => {
+        running += value;
+        return Number(running.toFixed(1));
+      });
+
+      const maxVal = product.scales.couponMax;
+      const padding = { top: 34, right: 28, bottom: 72, left: 54 };
+      const chartW = w - padding.left - padding.right;
+      const chartH = h - padding.top - padding.bottom;
+      const slotW = chartW / labels.length;
+      const getX = (index) => padding.left + slotW * index + slotW / 2;
+      const getY = (value) => padding.top + ((maxVal - value) / maxVal) * chartH;
+
+      ctx.strokeStyle = 'rgba(255,255,255,0.10)';
+      ctx.lineWidth = 1;
+
+      for (let i = 0; i <= 4; i++) {
+        const y = padding.top + (chartH / 4) * i;
+        const value = maxVal - (maxVal / 4) * i;
+
+        ctx.beginPath();
+        ctx.moveTo(padding.left, y);
+        ctx.lineTo(w - padding.right, y);
+        ctx.stroke();
+
+        ctx.fillStyle = 'rgba(156,176,210,0.95)';
+        ctx.font = '12px Inter, sans-serif';
+        ctx.fillText(`${value.toFixed(0)}%`, 10, y + 4);
+      }
+
+      const barWidth = Math.min(40, slotW * 0.48);
+
+      outcome.couponTimeline.forEach((item, index) => {
+        const x = getX(index);
+        const y = getY(item.payment || 0);
+        const baseY = getY(0);
+
+        let barColor = 'rgba(255,255,255,0.12)';
+        if (item.status === 'realised') barColor = '#7df2b8';
+        if (item.status === 'projected') barColor = '#7cc4ff';
+        if (item.status === 'inactive') barColor = 'rgba(255,255,255,0.08)';
+
+        ctx.fillStyle = barColor;
+        ctx.fillRect(x - barWidth / 2, y, barWidth, baseY - y);
+
+        if ((item.payment || 0) > 0) {
+          ctx.fillStyle = '#eef4ff';
+          ctx.font = '11px Inter, sans-serif';
+          ctx.fillText(`${item.payment.toFixed(1)}%`, x - 14, y - 8);
+        }
+
+        ctx.fillStyle = 'rgba(156,176,210,0.95)';
+        ctx.font = '11px Inter, sans-serif';
+        ctx.fillText(labels[index], x - 10, h - 34);
+
+        if (index % 2 === 0) {
+          ctx.fillText(dates[index], x - 28, h - 18);
+        }
+      });
+
+      ctx.beginPath();
+      cumulative.forEach((value, index) => {
+        const x = getX(index);
+        const y = getY(value);
+        if (index === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      ctx.strokeStyle = '#ffca72';
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+
+      cumulative.forEach((value, index) => {
+        const x = getX(index);
+        const y = getY(value);
+        ctx.beginPath();
+        ctx.arc(x, y, 4, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffca72';
+        ctx.fill();
+      });
+
+      const redeemX = getX(outcome.redemptionIndex - 1);
+      ctx.save();
+      ctx.setLineDash([4, 5]);
+      ctx.strokeStyle = '#ff8f8f';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(redeemX, padding.top);
+      ctx.lineTo(redeemX, h - padding.bottom);
+      ctx.stroke();
+      ctx.restore();
+
+      ctx.fillStyle = '#ff8f8f';
+      ctx.font = '12px Inter, sans-serif';
+      ctx.fillText(outcome.redemptionLabel, redeemX - 30, padding.top - 10);
+      ctx.fillText(`Nominal : ${outcome.principal.toFixed(0)}%`, redeemX - 35, padding.top + 8);
+
+      ctx.fillStyle = '#7df2b8';
+      ctx.fillRect(padding.left, 14, 18, 3);
+      ctx.fillStyle = '#eef4ff';
+      ctx.font = '13px Inter, sans-serif';
+      ctx.fillText('Déjà versés', padding.left + 24, 19);
+
+      ctx.fillStyle = '#7cc4ff';
+      ctx.fillRect(padding.left + 124, 14, 18, 3);
+      ctx.fillStyle = '#eef4ff';
+      ctx.fillText('Futurs estimés', padding.left + 148, 19);
+
+      ctx.fillStyle = '#ffca72';
+      ctx.fillRect(padding.left + 266, 14, 18, 3);
+      ctx.fillStyle = '#eef4ff';
+      ctx.fillText('Cumul coupons', padding.left + 290, 19);
+
+      ctx.fillStyle = '#ff8f8f';
+      ctx.fillRect(padding.left + 414, 14, 18, 3);
+      ctx.fillStyle = '#eef4ff';
+      ctx.fillText('Remboursement nominal', padding.left + 438, 19);
+    }
+
+    productCards.forEach((card) => {
+      const openProduct = () => {
+        renderProductDetail(card.dataset.product, 'neutre', false);
+      };
+
+      card.addEventListener('click', openProduct);
+
+      card.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          openProduct();
+        }
+      });
+    });
+
+    profileMenuTrigger.addEventListener('click', (event) => {
+      event.stopPropagation();
+      toggleProfileDropdown();
+    });
+
+    logoutBtn.addEventListener('click', logout);
+
+    profileDropdownLinks.forEach((link) => {
+      link.addEventListener('click', () => {
+        closeProfileDropdown();
+        if (window.innerWidth <= 900) closeMenu();
+      });
+    });
+
+    menuLinks.forEach((link) => {
+      link.addEventListener('click', () => {
+        if (window.innerWidth <= 900) closeMenu();
+        closeProfileDropdown();
+      });
+    });
+
+    document.addEventListener('click', (event) => {
+      if (!profileMenu.hidden && !profileMenu.contains(event.target)) {
+        closeProfileDropdown();
+      }
+    });
+
+    renderAuthState();
+    updateScrollEffects();
+
+    window.addEventListener('scroll', updateScrollEffects, { passive: true });
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 900) closeMenu();
+      closeProfileDropdown();
+      updateScrollEffects();
+    });
+  </script>
+</body>
+</html>

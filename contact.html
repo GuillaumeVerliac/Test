@@ -251,6 +251,12 @@
       transform: translateY(-2px);
     }
 
+    .btn:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+    }
+
     .btn-primary {
       background: linear-gradient(135deg, var(--accent), #91a5ff);
       color: #06101b;
@@ -362,20 +368,6 @@
       padding: 138px 0 84px;
       position: relative;
       z-index: 1;
-    }
-
-    .contact-hero {
-      margin-bottom: 30px;
-    }
-
-    .contact-intro {
-      margin: 0;
-      width: 100%;
-      max-width: none;
-      font-size: clamp(1.55rem, 2.7vw, 2.4rem);
-      line-height: 1.18;
-      letter-spacing: -0.04em;
-      color: #ffffff;
     }
 
     .card {
@@ -495,6 +487,24 @@
       margin: 0;
       color: var(--muted);
       font-size: 0.94rem;
+    }
+
+    #contactMessage.success {
+      color: #b8ef6f;
+    }
+
+    #contactMessage.error {
+      color: #ff8f8f;
+    }
+
+    .honeypot {
+      position: absolute !important;
+      left: -9999px !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+      height: 0 !important;
+      width: 0 !important;
+      overflow: hidden !important;
     }
 
     .bottom-cards {
@@ -1115,11 +1125,10 @@
     <section class="section">
       <div class="container">
         <article class="card form-card">
-          <span class="chip">Formulaire</span>
           <h1>Contactez-nous pour toute demande.</h1>
           <p class="form-subtitle">Renseignez votre demande via le formulaire ci-dessous.</p>
 
-          <form class="contact-form" action="#" method="post">
+          <form class="contact-form" id="contactForm" novalidate>
             <div class="field">
               <label for="firstname">Prénom *</label>
               <input id="firstname" name="firstname" type="text" placeholder="Votre prénom" required />
@@ -1159,9 +1168,16 @@
               <textarea id="message" name="message" placeholder="Votre message" required></textarea>
             </div>
 
+            <div class="honeypot" aria-hidden="true">
+              <label for="website">Website</label>
+              <input id="website" name="website" type="text" tabindex="-1" autocomplete="off" />
+            </div>
+
             <div class="form-actions">
-              <button type="submit" class="btn btn-primary">Envoyer</button>
-              <p class="form-note">Les champs marqués d’un * sont obligatoires.</p>
+              <button type="submit" class="btn btn-primary" id="contactSubmitBtn">Envoyer</button>
+              <p class="form-note" id="contactMessage" aria-live="polite">
+                Les champs marqués d’un * sont obligatoires.
+              </p>
             </div>
           </form>
         </article>
@@ -1235,8 +1251,12 @@
     const mobileMenu = document.getElementById('mobileMenu');
     const menuLinks = mobileMenu ? mobileMenu.querySelectorAll('a') : [];
 
+    const contactForm = document.getElementById('contactForm');
+    const contactMessage = document.getElementById('contactMessage');
+    const contactSubmitBtn = document.getElementById('contactSubmitBtn');
+
     const disclaimerOverlay = document.getElementById('proDisclaimer');
-    const disclaimerBox = disclaimerOverlay.querySelector('.disclaimer-box');
+    const disclaimerBox = disclaimerOverlay ? disclaimerOverlay.querySelector('.disclaimer-box') : null;
     const acceptDisclaimerBtn = document.getElementById('acceptDisclaimer');
     const declineDisclaimerBtn = document.getElementById('declineDisclaimer');
 
@@ -1251,7 +1271,7 @@
     const profileMenu = document.getElementById('profileMenu');
     const profileMenuTrigger = document.getElementById('profileMenuTrigger');
     const profileDropdown = document.getElementById('profileDropdown');
-    const profileDropdownLinks = profileDropdown.querySelectorAll('a');
+    const profileDropdownLinks = profileDropdown ? profileDropdown.querySelectorAll('a') : [];
     const logoutBtn = document.getElementById('logoutBtn');
 
     const DISCLAIMER_KEY = 'priam_professional_investor_verified';
@@ -1261,12 +1281,14 @@
     const VALID_PASSWORD = 'Test01';
 
     const closeMenu = () => {
+      if (!header || !navToggle) return;
       header.classList.remove('menu-open');
       navToggle.classList.remove('is-open');
       navToggle.setAttribute('aria-expanded', 'false');
     };
 
     const openMenu = () => {
+      if (!header || !navToggle) return;
       header.classList.add('menu-open');
       navToggle.classList.add('is-open');
       navToggle.setAttribute('aria-expanded', 'true');
@@ -1288,26 +1310,34 @@
       const docHeight = document.documentElement.scrollHeight - window.innerHeight;
       const ratio = docHeight > 0 ? scrollTop / docHeight : 0;
 
-      progress.style.transform = `scaleX(${ratio})`;
-      header.classList.toggle('scrolled', scrollTop > 20);
+      if (progress) {
+        progress.style.transform = `scaleX(${ratio})`;
+      }
+
+      if (header) {
+        header.classList.toggle('scrolled', scrollTop > 20);
+      }
     };
 
     const updateBodyLock = () => {
-      const disclaimerVisible = disclaimerOverlay.classList.contains('is-visible');
-      const loginVisible = loginOverlay.classList.contains('is-visible');
-      document.body.classList.toggle('disclaimer-locked', disclaimerVisible || loginVisible);
+      const disclaimerVisible = disclaimerOverlay && disclaimerOverlay.classList.contains('is-visible');
+      const loginVisible = loginOverlay && loginOverlay.classList.contains('is-visible');
+      document.body.classList.toggle('disclaimer-locked', Boolean(disclaimerVisible || loginVisible));
     };
 
     const showDisclaimer = () => {
+      if (!disclaimerOverlay || !disclaimerBox) return;
       disclaimerOverlay.classList.add('is-visible');
       disclaimerOverlay.setAttribute('aria-hidden', 'false');
       updateBodyLock();
+
       setTimeout(() => {
         disclaimerBox.focus();
       }, 50);
     };
 
     const hideDisclaimer = () => {
+      if (!disclaimerOverlay) return;
       disclaimerOverlay.classList.remove('is-visible');
       disclaimerOverlay.setAttribute('aria-hidden', 'true');
       updateBodyLock();
@@ -1350,11 +1380,14 @@
     };
 
     const setLoginError = (message = '') => {
-      loginError.textContent = message;
+      if (loginError) {
+        loginError.textContent = message;
+      }
     };
 
     const openLoginModal = () => {
-      if (disclaimerOverlay.classList.contains('is-visible')) return;
+      if (!loginOverlay || !loginUsername) return;
+      if (disclaimerOverlay && disclaimerOverlay.classList.contains('is-visible')) return;
 
       setLoginError('');
       loginOverlay.classList.add('is-visible');
@@ -1368,23 +1401,26 @@
     };
 
     const closeLoginModal = () => {
+      if (!loginOverlay) return;
       loginOverlay.classList.remove('is-visible');
       loginOverlay.setAttribute('aria-hidden', 'true');
       updateBodyLock();
     };
 
     const openProfileDropdown = () => {
-      if (profileMenu.hidden) return;
+      if (!profileMenu || !profileMenuTrigger || profileMenu.hidden) return;
       profileMenu.classList.add('is-open');
       profileMenuTrigger.setAttribute('aria-expanded', 'true');
     };
 
     const closeProfileDropdown = () => {
+      if (!profileMenu || !profileMenuTrigger) return;
       profileMenu.classList.remove('is-open');
       profileMenuTrigger.setAttribute('aria-expanded', 'false');
     };
 
     const toggleProfileDropdown = () => {
+      if (!profileMenu) return;
       if (profileMenu.classList.contains('is-open')) {
         closeProfileDropdown();
       } else {
@@ -1395,8 +1431,13 @@
     const renderAuthState = () => {
       const loggedIn = isLoggedIn();
 
-      loginTrigger.hidden = loggedIn;
-      profileMenu.hidden = !loggedIn;
+      if (loginTrigger) {
+        loginTrigger.hidden = loggedIn;
+      }
+
+      if (profileMenu) {
+        profileMenu.hidden = !loggedIn;
+      }
 
       if (!loggedIn) {
         closeProfileDropdown();
@@ -1406,8 +1447,8 @@
     const handleLoginSubmit = (event) => {
       event.preventDefault();
 
-      const username = loginUsername.value.trim();
-      const password = loginPassword.value;
+      const username = loginUsername ? loginUsername.value.trim() : '';
+      const password = loginPassword ? loginPassword.value : '';
 
       if (username === VALID_USERNAME && password === VALID_PASSWORD) {
         sessionStorage.setItem(AUTH_KEY, 'true');
@@ -1419,8 +1460,11 @@
       }
 
       setLoginError('Mauvais identifiant ou mot de passe.');
-      loginPassword.value = '';
-      loginPassword.focus();
+
+      if (loginPassword) {
+        loginPassword.value = '';
+        loginPassword.focus();
+      }
     };
 
     const logout = () => {
@@ -1431,6 +1475,8 @@
     };
 
     const trapFocus = (event, scopeElement) => {
+      if (!scopeElement) return;
+
       const focusableElements = scopeElement.querySelectorAll(
         'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
       );
@@ -1453,24 +1499,130 @@
       }
     };
 
-    acceptDisclaimerBtn.addEventListener('click', grantAccess);
-    declineDisclaimerBtn.addEventListener('click', leaveSite);
+    const setContactMessage = (message, type = '') => {
+      if (!contactMessage) return;
 
-    loginTrigger.addEventListener('click', openLoginModal);
-    closeLoginModalBtn.addEventListener('click', closeLoginModal);
-    loginForm.addEventListener('submit', handleLoginSubmit);
-    logoutBtn.addEventListener('click', logout);
+      contactMessage.textContent = message;
+      contactMessage.classList.remove('success', 'error');
 
-    loginOverlay.addEventListener('click', (event) => {
-      if (event.target === loginOverlay) {
-        closeLoginModal();
+      if (type) {
+        contactMessage.classList.add(type);
       }
-    });
+    };
 
-    profileMenuTrigger.addEventListener('click', (event) => {
-      event.stopPropagation();
-      toggleProfileDropdown();
-    });
+    const handleContactSubmit = async (event) => {
+      event.preventDefault();
+
+      const firstname = document.getElementById('firstname')?.value.trim() || '';
+      const lastname = document.getElementById('lastname')?.value.trim() || '';
+      const email = document.getElementById('email')?.value.trim() || '';
+      const phone = document.getElementById('phone')?.value.trim() || '';
+      const subject = document.getElementById('subject')?.value || '';
+      const message = document.getElementById('message')?.value.trim() || '';
+      const website = document.getElementById('website')?.value.trim() || '';
+
+      if (!firstname || !lastname || !email || !subject || !message) {
+        setContactMessage('Merci de remplir tous les champs obligatoires.', 'error');
+        return;
+      }
+
+      if (contactSubmitBtn) {
+        contactSubmitBtn.disabled = true;
+      }
+
+      setContactMessage('Envoi en cours...');
+
+      try {
+        const response = await fetch('send_contact.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({
+            firstname,
+            lastname,
+            email,
+            phone,
+            subject,
+            message,
+            website
+          })
+        });
+
+        const rawText = await response.text();
+
+        let result;
+        try {
+          result = JSON.parse(rawText);
+        } catch (error) {
+          throw new Error("La réponse du serveur n'est pas au format JSON.");
+        }
+
+        if (!response.ok) {
+          throw new Error(result.message || "Une erreur est survenue.");
+        }
+
+        setContactMessage('Votre message a bien été envoyé.', 'success');
+
+        if (contactForm) {
+          contactForm.reset();
+        }
+      } catch (error) {
+        setContactMessage(
+          error.message || "Impossible d’envoyer votre message pour le moment.",
+          'error'
+        );
+        console.error(error);
+      } finally {
+        if (contactSubmitBtn) {
+          contactSubmitBtn.disabled = false;
+        }
+      }
+    };
+
+    if (acceptDisclaimerBtn) {
+      acceptDisclaimerBtn.addEventListener('click', grantAccess);
+    }
+
+    if (declineDisclaimerBtn) {
+      declineDisclaimerBtn.addEventListener('click', leaveSite);
+    }
+
+    if (loginTrigger) {
+      loginTrigger.addEventListener('click', openLoginModal);
+    }
+
+    if (closeLoginModalBtn) {
+      closeLoginModalBtn.addEventListener('click', closeLoginModal);
+    }
+
+    if (loginForm) {
+      loginForm.addEventListener('submit', handleLoginSubmit);
+    }
+
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', logout);
+    }
+
+    if (contactForm) {
+      contactForm.addEventListener('submit', handleContactSubmit);
+    }
+
+    if (loginOverlay) {
+      loginOverlay.addEventListener('click', (event) => {
+        if (event.target === loginOverlay) {
+          closeLoginModal();
+        }
+      });
+    }
+
+    if (profileMenuTrigger) {
+      profileMenuTrigger.addEventListener('click', (event) => {
+        event.stopPropagation();
+        toggleProfileDropdown();
+      });
+    }
 
     profileDropdownLinks.forEach((link) => {
       link.addEventListener('click', () => {
@@ -1491,13 +1643,13 @@
     });
 
     document.addEventListener('click', (event) => {
-      if (!profileMenu.hidden && !profileMenu.contains(event.target)) {
+      if (profileMenu && !profileMenu.hidden && !profileMenu.contains(event.target)) {
         closeProfileDropdown();
       }
     });
 
     window.addEventListener('keydown', (event) => {
-      if (disclaimerOverlay.classList.contains('is-visible')) {
+      if (disclaimerOverlay && disclaimerOverlay.classList.contains('is-visible')) {
         if (event.key === 'Escape') {
           event.preventDefault();
         }
@@ -1509,7 +1661,7 @@
         return;
       }
 
-      if (loginOverlay.classList.contains('is-visible')) {
+      if (loginOverlay && loginOverlay.classList.contains('is-visible')) {
         if (event.key === 'Escape') {
           event.preventDefault();
           closeLoginModal();

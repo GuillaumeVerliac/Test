@@ -4,6 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Priam Solutions — Structuration sur actifs volatils</title>
+  <meta
+    name="description"
+    content="Priam Solutions conçoit des solutions structurées sur crypto-actifs, intelligence artificielle, technologie et autres thématiques de croissance pour investisseurs professionnels."
+  />
+
   <style>
     :root {
       --bg: #07101d;
@@ -16,7 +21,6 @@
       --accent: #7cc4ff;
       --accent-2: #b8ef6f;
       --shadow: 0 24px 90px rgba(0,0,0,0.30);
-      --shadow-soft: 0 18px 50px rgba(0,0,0,0.22);
       --radius: 26px;
       --container: 1180px;
       --ease: cubic-bezier(.22,.84,.24,1);
@@ -56,9 +60,17 @@
       z-index: 0;
     }
 
+    body.disclaimer-locked {
+      overflow: hidden;
+    }
+
     a {
       color: inherit;
       text-decoration: none;
+    }
+
+    button {
+      font: inherit;
     }
 
     .container {
@@ -788,6 +800,91 @@
       transition: transform .15s linear;
     }
 
+    /* Disclaimer */
+    .disclaimer-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px;
+      background: rgba(3, 7, 14, 0.78);
+      backdrop-filter: blur(14px);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity .35s ease, visibility .35s ease;
+    }
+
+    .disclaimer-overlay.is-visible {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    .disclaimer-box {
+      width: min(100%, 1200px);
+      padding: 48px 56px;
+      border-radius: 30px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04)),
+        rgba(7,16,29,0.94);
+      box-shadow: 0 28px 110px rgba(0,0,0,0.40);
+      text-align: center;
+      transform: translateY(16px) scale(0.98);
+      transition: transform .35s var(--ease);
+    }
+
+    .disclaimer-overlay.is-visible .disclaimer-box {
+      transform: translateY(0) scale(1);
+    }
+
+    .disclaimer-title {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 3.4rem);
+      line-height: 1.05;
+      letter-spacing: -0.05em;
+      max-width: none;
+    }
+
+    .disclaimer-text {
+      margin: 22px auto 0;
+      max-width: 980px;
+      color: #dce8fc;
+      font-size: 1.08rem;
+      line-height: 1.9;
+    }
+
+    .disclaimer-text strong {
+      color: #ffffff;
+    }
+
+    .disclaimer-actions {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-top: 30px;
+    }
+
+    .disclaimer-actions .btn {
+      min-width: 260px;
+    }
+
+    .disclaimer-secondary {
+      background: rgba(255,255,255,0.04);
+      border-color: rgba(255,255,255,0.14);
+      color: var(--text);
+    }
+
+    .disclaimer-secondary:hover {
+      background: rgba(255,255,255,0.07);
+      border-color: rgba(255,255,255,0.22);
+    }
+
     @media (max-width: 1200px) {
       .solutions-title,
       .solutions-intro {
@@ -933,7 +1030,8 @@
       }
 
       .btn,
-      .solutions-cta .btn {
+      .solutions-cta .btn,
+      .disclaimer-actions .btn {
         width: 100%;
       }
 
@@ -993,6 +1091,15 @@
       .footer-disclaimer {
         font-size: 0.95rem;
       }
+
+      .disclaimer-box {
+        padding: 28px 22px;
+      }
+
+      .disclaimer-text {
+        font-size: 0.98rem;
+        line-height: 1.8;
+      }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -1020,6 +1127,39 @@
 </head>
 <body>
   <div class="progress" aria-hidden="true"></div>
+
+  <div class="disclaimer-overlay" id="proDisclaimer" aria-hidden="true">
+    <div
+      class="disclaimer-box"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="disclaimerTitle"
+      aria-describedby="disclaimerText"
+      tabindex="-1"
+    >
+<h2 class="disclaimer-title" id="disclaimerTitle">
+  Accès réservé aux investisseurs qualifiés
+</h2>
+
+<p class="disclaimer-text" id="disclaimerText">
+  Les informations présentées sur ce site sont exclusivement destinées à une clientèle
+  professionnelle et ne s’adressent pas au public. En accédant à ce site, vous reconnaissez
+  agir en tant qu’<strong>investisseur qualifié</strong> au sens des dispositions applicables,
+  notamment en qualité de <strong>family office</strong>, <strong>société de gestion</strong>,
+  <strong>banque privée</strong>, <strong>investisseur institutionnel</strong>
+  ou <strong>CGPI</strong>.
+</p>
+
+<div class="disclaimer-actions">
+  <button type="button" class="btn btn-primary" id="acceptDisclaimer">
+    Je suis un professionnel
+  </button>
+  <button type="button" class="btn disclaimer-secondary" id="declineDisclaimer">
+    Je ne suis pas un professionnel
+  </button>
+</div>
+    </div>
+  </div>
 
   <header class="site-header" id="header">
     <div class="container nav">
@@ -1067,7 +1207,8 @@
           </h1>
 
           <p class="sublead">
-            Produits structurés dédiés aux actifs et secteurs à forte volatilité : crypto-actifs, intelligence artificielle, technologie et autres thématiques de croissance.
+            Produits structurés dédiés aux actifs et secteurs à forte volatilité :
+            crypto-actifs, intelligence artificielle, technologie et autres thématiques de croissance.
           </p>
 
           <p class="lead">
@@ -1076,7 +1217,8 @@
             <strong class="accent-strong">banques privées</strong>
             et
             <strong class="accent-strong">asset managers indépendants</strong>
-            des solutions structurées sur mesure permettant d’aborder les marchés les plus volatils avec davantage de lisibilité, de discipline et de maîtrise du risque.
+            des solutions structurées sur mesure permettant d’aborder les marchés les plus volatils
+            avec davantage de lisibilité, de discipline et de maîtrise du risque.
           </p>
         </div>
 
@@ -1117,7 +1259,8 @@
             Nos produits structurés sur <span class="accent-word">crypto-actifs</span>
           </h2>
           <p class="solutions-intro">
-            Des solutions conçues pour donner un cadre plus <strong>lisible</strong>, plus <strong>rigoureux</strong> et plus <strong>maîtrisé</strong> aux marchés numériques.
+            Des solutions conçues pour donner un cadre plus <strong>lisible</strong>,
+            plus <strong>rigoureux</strong> et plus <strong>maîtrisé</strong> aux marchés numériques.
           </p>
         </div>
 
@@ -1178,7 +1321,8 @@
         <div class="newsletter-grid">
           <div class="newsletter-content reveal">
             <h2>
-              <span class="accent-word">Comprendre</span> les marchés, <span class="accent-word">anticiper</span> les tendances
+              <span class="accent-word">Comprendre</span> les marchés,
+              <span class="accent-word">anticiper</span> les tendances
             </h2>
 
             <div class="newsletter-copy">
@@ -1191,7 +1335,8 @@
               </p>
 
               <p>
-                Au programme chaque semaine : <strong>récapitulatif des mouvements clés</strong>,
+                Au programme chaque semaine :
+                <strong>récapitulatif des mouvements clés</strong>,
                 lecture de la <strong>volatilité</strong> et des <strong>flux techniques</strong>,
                 angles de <strong>structuration</strong> et <strong>signaux actionnables</strong>
                 pour vos décisions. Une approche <strong>quantitative</strong> croisée à une lecture
@@ -1232,7 +1377,8 @@
               <div class="newsletter-actions">
                 <button type="submit" class="btn btn-primary">S’inscrire à la newsletter</button>
                 <p class="footer-note">
-                  En vous inscrivant, vous recevez chaque semaine notre lecture des marchés et des opportunités de structuration.
+                  En vous inscrivant, vous recevez chaque semaine notre lecture des marchés
+                  et des opportunités de structuration.
                 </p>
               </div>
             </form>
@@ -1246,9 +1392,12 @@
     <div class="container footer-content">
       <div class="footer-company">Priam Solutions</div>
       <p class="footer-address">4 rue Hérold, 75001 Paris</p>
-      <p class="footer-copy">© 2025 Priam Solutions — Plateforme indépendante dédiée aux produits structurés sur crypto-actifs</p>
+      <p class="footer-copy">
+        © 2025 Priam Solutions — Plateforme indépendante dédiée aux produits structurés sur crypto-actifs
+      </p>
       <p class="footer-disclaimer">
-        Toutes les informations fournies sur cette plateforme le sont à titre informatif et ne constituent en aucun cas une recommandation financière, juridique ou fiscale.
+        Toutes les informations fournies sur cette plateforme le sont à titre informatif
+        et ne constituent en aucun cas une recommandation financière, juridique ou fiscale.
       </p>
     </div>
   </footer>
@@ -1261,6 +1410,13 @@
     const navToggle = document.getElementById('navToggle');
     const mobileMenu = document.getElementById('mobileMenu');
     const menuLinks = mobileMenu ? mobileMenu.querySelectorAll('a') : [];
+
+    const disclaimerOverlay = document.getElementById('proDisclaimer');
+    const disclaimerBox = disclaimerOverlay.querySelector('.disclaimer-box');
+    const acceptDisclaimerBtn = document.getElementById('acceptDisclaimer');
+    const declineDisclaimerBtn = document.getElementById('declineDisclaimer');
+
+    const DISCLAIMER_KEY = 'priam_professional_investor_verified';
 
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
@@ -1320,6 +1476,93 @@
       });
     };
 
+    const lockPage = () => {
+      document.body.classList.add('disclaimer-locked');
+    };
+
+    const unlockPage = () => {
+      document.body.classList.remove('disclaimer-locked');
+    };
+
+    const showDisclaimer = () => {
+      disclaimerOverlay.classList.add('is-visible');
+      disclaimerOverlay.setAttribute('aria-hidden', 'false');
+      lockPage();
+      setTimeout(() => disclaimerBox.focus(), 50);
+    };
+
+    const hideDisclaimer = () => {
+      disclaimerOverlay.classList.remove('is-visible');
+      disclaimerOverlay.setAttribute('aria-hidden', 'true');
+      unlockPage();
+    };
+
+    const userAlreadyVerified = () => {
+      return localStorage.getItem(DISCLAIMER_KEY) === 'true';
+    };
+
+    const grantAccess = () => {
+      localStorage.setItem(DISCLAIMER_KEY, 'true');
+      hideDisclaimer();
+    };
+
+    const leaveSite = () => {
+      const referrer = document.referrer;
+      const hasHistory = window.history.length > 1;
+
+      if (hasHistory) {
+        window.history.back();
+
+        setTimeout(() => {
+          if (!document.hidden) {
+            if (referrer) {
+              window.location.href = referrer;
+            } else {
+              window.location.href = 'https://www.google.com/';
+            }
+          }
+        }, 500);
+      } else if (referrer) {
+        window.location.href = referrer;
+      } else {
+        window.location.href = 'https://www.google.com/';
+      }
+    };
+
+    acceptDisclaimerBtn.addEventListener('click', grantAccess);
+    declineDisclaimerBtn.addEventListener('click', leaveSite);
+
+    window.addEventListener('keydown', (event) => {
+      if (!disclaimerOverlay.classList.contains('is-visible')) return;
+
+      if (event.key === 'Escape') {
+        event.preventDefault();
+      }
+
+      if (event.key === 'Tab') {
+        const focusableElements = disclaimerOverlay.querySelectorAll(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+
+        const focusable = Array.from(focusableElements).filter(
+          (el) => !el.hasAttribute('disabled')
+        );
+
+        if (!focusable.length) return;
+
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      }
+    });
+
     updateScrollEffects();
     window.addEventListener('scroll', updateScrollEffects, { passive: true });
 
@@ -1329,9 +1572,13 @@
       }
       updateScrollEffects();
     });
+
+    window.addEventListener('load', () => {
+      if (!userAlreadyVerified()) {
+        showDisclaimer();
+      }
+    });
   </script>
-</body>
-</html>
 </body>
 </html>
 

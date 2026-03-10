@@ -1,0 +1,3053 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mes simulations - Priam Solutions</title>
+  <meta name="description" content="Simulateur interactif de produits structurés Priam Solutions." />
+
+  <style>
+    :root {
+      --bg: #07101d;
+      --bg-soft: #0b1730;
+      --surface: rgba(255,255,255,0.05);
+      --surface-strong: rgba(255,255,255,0.08);
+      --border: rgba(255,255,255,0.10);
+      --text: #eef4ff;
+      --muted: #9cb0d2;
+      --accent: #7cc4ff;
+      --accent-2: #b8ef6f;
+      --accent-3: #ffca72;
+      --danger: #ff8f8f;
+      --success: #7df2b8;
+      --shadow: 0 24px 90px rgba(0,0,0,0.30);
+      --radius: 26px;
+      --container: 1220px;
+      --ease: cubic-bezier(.22,.84,.24,1);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 12% 12%, rgba(124,196,255,0.13), transparent 22%),
+        radial-gradient(circle at 88% 42%, rgba(184,239,111,0.08), transparent 20%),
+        linear-gradient(180deg, #06101b 0%, #091424 36%, #0b1730 68%, #07101d 100%);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.06;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+      background-size: 84px 84px;
+      mask-image: radial-gradient(circle at center, black 36%, transparent 90%);
+      z-index: 0;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button, input, select { font: inherit; }
+    [hidden] { display: none !important; }
+
+    .container {
+      width: min(var(--container), calc(100% - 40px));
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      z-index: 100;
+      transform-origin: left;
+      transform: scaleX(0);
+      background: linear-gradient(90deg, var(--accent), #88a8ff, var(--accent-2));
+    }
+
+    .site-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 50;
+      backdrop-filter: blur(16px);
+      background: rgba(6, 12, 22, 0.42);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      transition: background .3s ease, border-color .3s ease;
+    }
+
+    .site-header.scrolled {
+      background: rgba(6, 12, 22, 0.82);
+      border-bottom-color: rgba(255,255,255,0.11);
+    }
+
+    .nav {
+      min-height: 84px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      flex-shrink: 0;
+    }
+
+    .brand-logo {
+      width: 50px;
+      height: 50px;
+      object-fit: contain;
+      display: block;
+      flex-shrink: 0;
+    }
+
+    .nav-toggle {
+      display: none;
+      width: 48px;
+      height: 48px;
+      padding: 0;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 14px;
+      background: rgba(255,255,255,0.04);
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      transition: background .25s ease, border-color .25s ease, transform .25s ease;
+    }
+
+    .nav-toggle:hover {
+      background: rgba(255,255,255,0.07);
+      border-color: rgba(124,196,255,0.28);
+    }
+
+    .nav-toggle span {
+      display: block;
+      width: 18px;
+      height: 2px;
+      border-radius: 999px;
+      background: #ffffff;
+      transition: transform .25s ease, opacity .25s ease;
+    }
+
+    .nav-toggle.is-open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-toggle.is-open span:nth-child(2) { opacity: 0; }
+    .nav-toggle.is-open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    .nav-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 16px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    .nav-links a {
+      position: relative;
+      padding: 6px 0;
+      transition: color .25s ease;
+    }
+
+    .nav-links a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -4px;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), transparent);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform .3s var(--ease);
+    }
+
+    .nav-links a:hover,
+    .nav-links a.is-active {
+      color: var(--text);
+    }
+
+    .nav-links a:hover::after,
+    .nav-links a.is-active::after {
+      transform: scaleX(1);
+    }
+
+    .header-buttons {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-left: 10px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 13px 18px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      font-weight: 600;
+      cursor: pointer;
+      transition:
+        transform .3s var(--ease),
+        box-shadow .3s var(--ease),
+        background .3s ease,
+        border-color .3s ease,
+        opacity .3s ease;
+    }
+
+    .btn:hover { transform: translateY(-2px); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), #91a5ff);
+      color: #06101b;
+      box-shadow: 0 18px 42px rgba(124,196,255,0.24);
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.04);
+      border-color: rgba(255,255,255,0.12);
+      color: var(--text);
+    }
+
+    .btn-secondary:hover {
+      border-color: rgba(124,196,255,0.32);
+      background: rgba(255,255,255,0.07);
+    }
+
+    .profile-menu {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .profile-avatar-btn {
+      width: 48px;
+      height: 48px;
+      min-width: 48px;
+      border: 1px solid rgba(124,196,255,0.30);
+      border-radius: 999px;
+      background: linear-gradient(135deg, rgba(124,196,255,0.20), rgba(145,165,255,0.20));
+      color: #ffffff;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 14px 34px rgba(124,196,255,0.18);
+      transition:
+        transform .3s var(--ease),
+        border-color .3s ease,
+        background .3s ease,
+        box-shadow .3s ease;
+    }
+
+    .profile-avatar-btn:hover {
+      transform: translateY(-2px);
+      border-color: rgba(124,196,255,0.48);
+      background: linear-gradient(135deg, rgba(124,196,255,0.28), rgba(145,165,255,0.28));
+    }
+
+    .profile-dropdown {
+      position: absolute;
+      top: calc(100% + 12px);
+      right: 0;
+      min-width: 250px;
+      padding: 10px;
+      border-radius: 20px;
+      background: rgba(8, 17, 32, 0.98);
+      border: 1px solid rgba(255,255,255,0.16);
+      box-shadow: 0 24px 80px rgba(0,0,0,0.42);
+      backdrop-filter: blur(16px);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transform: translateY(10px);
+      transition: opacity .25s ease, visibility .25s ease, transform .25s ease;
+      z-index: 60;
+    }
+
+    .profile-menu.is-open .profile-dropdown {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    .profile-dropdown a,
+    .profile-dropdown button {
+      display: block;
+      width: 100%;
+      padding: 11px 14px;
+      border-radius: 14px;
+      color: #e8f1ff;
+      background: transparent;
+      border: none;
+      text-align: left;
+      cursor: pointer;
+      transition: background .25s ease, color .25s ease;
+    }
+
+    .profile-dropdown a:hover,
+    .profile-dropdown button:hover {
+      background: rgba(255,255,255,0.08);
+      color: #ffffff;
+    }
+
+    .profile-logout {
+      margin-top: 6px;
+      border-top: 1px solid rgba(255,255,255,0.10) !important;
+      padding-top: 14px !important;
+      color: #ffd3d3 !important;
+    }
+
+    .page-shell {
+      padding: 126px 0 70px;
+      min-height: 100vh;
+      position: relative;
+      z-index: 1;
+    }
+
+    .dashboard-layout {
+      display: grid;
+      grid-template-columns: 220px minmax(0, 1fr);
+      gap: 56px;
+      align-items: start;
+    }
+
+    .side-nav {
+      position: sticky;
+      top: 50%;
+      transform: translateY(-50%);
+      align-self: start;
+    }
+
+    .side-nav-links {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    .side-nav-links a {
+      position: relative;
+      display: inline-block;
+      padding: 6px 0;
+      transition: color .25s ease;
+    }
+
+    .side-nav-links a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -4px;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), transparent);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform .3s var(--ease);
+    }
+
+    .side-nav-links a:hover,
+    .side-nav-links a.is-active {
+      color: var(--text);
+    }
+
+    .side-nav-links a:hover::after,
+    .side-nav-links a.is-active::after {
+      transform: scaleX(1);
+    }
+
+    .content { width: 100%; }
+
+    h1, h2, h3, h4 {
+      margin: 0;
+      letter-spacing: -0.04em;
+      line-height: 1.12;
+    }
+
+    h1 { font-size: clamp(2rem, 4vw, 3.1rem); }
+    h2 { font-size: clamp(1.35rem, 3vw, 1.9rem); }
+    h3 { font-size: 1.08rem; }
+
+    .intro {
+      margin-bottom: 28px;
+    }
+
+    .intro-subtle {
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 0.98rem;
+      line-height: 1.85;
+      max-width: 82ch;
+    }
+
+    .builder-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.12fr) minmax(320px, .88fr);
+      gap: 24px;
+      align-items: start;
+    }
+
+    .builder-column {
+      display: grid;
+      gap: 18px;
+    }
+
+    .builder-card,
+    .preview-panel,
+    .chart-block,
+    .scenario-card {
+      border-radius: 28px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background:
+        radial-gradient(circle at top right, rgba(124,196,255,0.11), transparent 26%),
+        rgba(255,255,255,0.04);
+      box-shadow: 0 22px 54px rgba(0,0,0,0.20);
+    }
+
+    .builder-card {
+      padding: 24px;
+    }
+
+    .section-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(124,196,255,0.12);
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 0.84rem;
+      letter-spacing: 0.02em;
+    }
+
+    .section-copy {
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.8;
+      margin: 12px 0 0;
+      max-width: 75ch;
+    }
+
+    .choice-group {
+      margin-top: 22px;
+    }
+
+    .choice-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 12px;
+    }
+
+    .choice-subtitle {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin: -2px 0 12px;
+      line-height: 1.7;
+    }
+
+    .sector-grid,
+    .asset-grid,
+    .payoff-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .select-card {
+      position: relative;
+      width: 100%;
+      padding: 18px;
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.03);
+      color: var(--text);
+      text-align: left;
+      cursor: pointer;
+      transition:
+        transform .28s var(--ease),
+        border-color .28s ease,
+        background .28s ease,
+        box-shadow .28s ease;
+      overflow: hidden;
+    }
+
+    .select-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(124,196,255,0.24);
+      background: rgba(255,255,255,0.05);
+    }
+
+    .select-card.is-active {
+      border-color: rgba(124,196,255,0.30);
+      background:
+        linear-gradient(135deg, rgba(124,196,255,0.12), rgba(145,165,255,0.05)),
+        rgba(255,255,255,0.05);
+      box-shadow: 0 18px 42px rgba(0,0,0,0.16);
+    }
+
+    .select-card::before {
+      content: "";
+      position: absolute;
+      inset: auto 0 0 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), transparent);
+      opacity: 0;
+      transition: opacity .25s ease;
+    }
+
+    .select-card.is-active::before {
+      opacity: 1;
+    }
+
+    .select-title {
+      display: block;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 7px;
+      font-size: 1rem;
+    }
+
+    .select-note {
+      display: block;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.7;
+    }
+
+    .asset-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .asset-pill {
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 0.78rem;
+    }
+
+    .controls-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .control-card {
+      padding: 16px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.07);
+      background: rgba(255,255,255,0.03);
+    }
+
+    .control-label-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .control-label {
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 0.92rem;
+    }
+
+    .control-value {
+      color: var(--accent);
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-align: right;
+    }
+
+    .control-note {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 0.84rem;
+      line-height: 1.7;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      appearance: none;
+      height: 6px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(124,196,255,0.6), rgba(145,165,255,0.18));
+      outline: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 999px;
+      border: 2px solid #ffffff;
+      background: linear-gradient(135deg, var(--accent), #91a5ff);
+      box-shadow: 0 6px 18px rgba(124,196,255,0.35);
+      cursor: pointer;
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      border: 2px solid #ffffff;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--accent), #91a5ff);
+      box-shadow: 0 6px 18px rgba(124,196,255,0.35);
+      cursor: pointer;
+    }
+
+    select {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(7,16,29,0.78);
+      color: #ffffff;
+      outline: none;
+    }
+
+    .toggle-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .switch {
+      position: relative;
+      width: 58px;
+      height: 32px;
+      flex-shrink: 0;
+    }
+
+    .switch input {
+      position: absolute;
+      opacity: 0;
+      inset: 0;
+      cursor: pointer;
+    }
+
+    .switch-track {
+      position: absolute;
+      inset: 0;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.10);
+      border: 1px solid rgba(255,255,255,0.12);
+      transition: background .25s ease, border-color .25s ease;
+    }
+
+    .switch-thumb {
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      background: #ffffff;
+      transition: transform .25s ease;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.22);
+    }
+
+    .switch input:checked + .switch-track {
+      background: linear-gradient(135deg, rgba(124,196,255,0.55), rgba(145,165,255,0.35));
+      border-color: rgba(124,196,255,0.28);
+    }
+
+    .switch input:checked + .switch-track .switch-thumb {
+      transform: translateX(26px);
+    }
+
+    .actions-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+
+    .preview-column {
+      position: relative;
+    }
+
+    .preview-panel {
+      position: sticky;
+      top: 104px;
+      padding: 24px;
+      overflow: hidden;
+    }
+
+    .preview-panel::after {
+      content: "";
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      top: -72px;
+      right: -64px;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(124,196,255,0.18), transparent 68%);
+      pointer-events: none;
+    }
+
+    .preview-kicker {
+      color: var(--accent);
+      font-size: 0.88rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      margin-bottom: 8px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .preview-title {
+      position: relative;
+      z-index: 1;
+      margin-bottom: 12px;
+      font-size: clamp(1.4rem, 2vw, 2rem);
+    }
+
+    .preview-subtitle {
+      position: relative;
+      z-index: 1;
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.8;
+      margin: 0 0 20px;
+      max-width: 46ch;
+    }
+
+    .coupon-hero {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 18px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .coupon-big-label {
+      color: var(--muted);
+      font-size: 0.86rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .coupon-big-value {
+      font-size: clamp(2.2rem, 5vw, 3.4rem);
+      line-height: 1;
+      font-weight: 800;
+      letter-spacing: -0.05em;
+      color: #ffffff;
+      margin-bottom: 10px;
+    }
+
+    .coupon-big-caption {
+      color: var(--muted);
+      font-size: 0.94rem;
+      line-height: 1.75;
+      max-width: 28ch;
+    }
+
+    .risk-ring {
+      position: relative;
+      width: 118px;
+      height: 118px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      background: conic-gradient(var(--accent) 0deg, rgba(255,255,255,0.08) 0deg);
+      padding: 8px;
+      flex-shrink: 0;
+    }
+
+    .risk-ring::before {
+      content: "";
+      position: absolute;
+      inset: 8px;
+      border-radius: 999px;
+      background: rgba(7,16,29,0.98);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .risk-ring-content {
+      position: relative;
+      text-align: center;
+    }
+
+    .risk-ring-value {
+      display: block;
+      font-size: 1.35rem;
+      font-weight: 800;
+      line-height: 1;
+      color: #ffffff;
+      margin-bottom: 6px;
+    }
+
+    .risk-ring-label {
+      display: block;
+      color: var(--muted);
+      font-size: 0.78rem;
+      line-height: 1.3;
+      max-width: 70px;
+    }
+
+    .live-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      position: relative;
+      z-index: 1;
+      margin-bottom: 18px;
+    }
+
+    .tag {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: #ffffff;
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .tag.muted {
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .preview-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      position: relative;
+      z-index: 1;
+      margin-bottom: 18px;
+    }
+
+    .preview-stat {
+      padding: 14px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .preview-stat span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.82rem;
+      margin-bottom: 6px;
+    }
+
+    .preview-stat strong {
+      display: block;
+      color: #ffffff;
+      font-size: 0.98rem;
+      line-height: 1.45;
+    }
+
+    .preview-flow {
+      position: relative;
+      z-index: 1;
+      color: #dbe7ff;
+      font-size: 0.95rem;
+      line-height: 1.9;
+    }
+
+    .preview-flow strong {
+      color: #ffffff;
+    }
+
+    .preview-divider {
+      height: 1px;
+      background: rgba(255,255,255,0.08);
+      margin: 18px 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .floating-coupon {
+      position: fixed;
+      top: 98px;
+      right: 18px;
+      z-index: 70;
+      pointer-events: none;
+    }
+
+    .floating-coupon-inner {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: 999px;
+      background: rgba(7,16,29,0.88);
+      border: 1px solid rgba(124,196,255,0.24);
+      box-shadow: 0 16px 42px rgba(0,0,0,0.28);
+      backdrop-filter: blur(16px);
+    }
+
+    .floating-coupon-kicker {
+      color: var(--muted);
+      font-size: 0.84rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .floating-coupon-value {
+      color: #ffffff;
+      font-size: 1.14rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1;
+    }
+
+    .floating-coupon-caption {
+      color: var(--accent);
+      font-size: 0.82rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .charts-zone {
+      margin-top: 28px;
+    }
+
+    .scenario-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin: 0 0 16px;
+      flex-wrap: wrap;
+    }
+
+    .scenario-switch {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding: 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .scenario-btn {
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--muted);
+      padding: 10px 16px;
+      border-radius: 999px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .25s ease, color .25s ease, border-color .25s ease;
+    }
+
+    .scenario-btn:hover {
+      color: #ffffff;
+      background: rgba(255,255,255,0.05);
+    }
+
+    .scenario-btn.is-active {
+      color: #06101b;
+      background: linear-gradient(135deg, var(--accent), #91a5ff);
+      box-shadow: 0 14px 28px rgba(124,196,255,0.18);
+    }
+
+    .scenario-helper {
+      color: var(--muted);
+      font-size: 0.93rem;
+      line-height: 1.7;
+    }
+
+    .chart-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      margin-bottom: 24px;
+    }
+
+    .chart-block {
+      padding: 22px 20px 18px;
+      background: rgba(255,255,255,0.03);
+      box-shadow: 0 18px 46px rgba(0,0,0,0.18);
+    }
+
+    .chart-block.full-span {
+      grid-column: 1 / -1;
+    }
+
+    .chart-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .chart-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .chart-note {
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.7;
+      max-width: 78ch;
+    }
+
+    .chart-canvas {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.02);
+    }
+
+    .scenario-cards {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .scenario-card {
+      padding: 20px 18px;
+      background: rgba(255,255,255,0.035);
+    }
+
+    .scenario-card.is-selected {
+      border-color: rgba(124,196,255,0.24);
+      background: rgba(255,255,255,0.05);
+      box-shadow: 0 16px 42px rgba(0,0,0,0.15);
+    }
+
+    .scenario-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 12px;
+    }
+
+    .scenario-tag {
+      color: var(--muted);
+      font-size: 0.84rem;
+    }
+
+    .scenario-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .scenario-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .scenario-row:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .scenario-label {
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .scenario-value {
+      color: #ffffff;
+      font-size: 0.95rem;
+      text-align: right;
+    }
+
+    .scenario-copy {
+      color: #dbe7ff;
+      font-size: 0.92rem;
+      line-height: 1.75;
+      margin: 14px 0 0;
+    }
+
+    .explanation-flow {
+      margin-top: 14px;
+      padding-top: 6px;
+    }
+
+    .explanation-flow h2 {
+      margin-bottom: 18px;
+    }
+
+    .explanation-flow p {
+      margin: 0 0 18px;
+      color: #dbe7ff;
+      font-size: 0.98rem;
+      line-height: 1.95;
+      max-width: 100ch;
+    }
+
+    .explanation-flow strong {
+      color: #ffffff;
+    }
+
+    .text-label {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .return-positive { color: var(--success); }
+    .return-negative { color: var(--danger); }
+    .return-neutral { color: var(--accent); }
+
+    @media (max-width: 1180px) {
+      .builder-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .preview-panel {
+        position: static;
+      }
+
+      .chart-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .scenario-cards {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 1024px) {
+      .dashboard-layout {
+        grid-template-columns: 180px minmax(0, 1fr);
+        gap: 36px;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .nav {
+        min-height: 84px;
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: center;
+        gap: 16px;
+        padding: 16px 0;
+      }
+
+      .brand {
+        width: auto;
+        justify-content: flex-start;
+      }
+
+      .nav-toggle {
+        display: inline-flex;
+        justify-self: end;
+      }
+
+      .nav-right {
+        grid-column: 1 / -1;
+        width: 100%;
+        margin-left: 0;
+        display: grid;
+        gap: 18px;
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(-8px);
+        transition: max-height .35s var(--ease), opacity .25s ease, transform .25s ease;
+      }
+
+      .site-header.menu-open .nav-right {
+        max-height: 700px;
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateY(0);
+        padding-top: 8px;
+      }
+
+      .nav-links {
+        width: 100%;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 14px;
+        padding: 18px 18px 6px;
+        border-radius: 22px;
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.08);
+      }
+
+      .nav-links a {
+        width: 100%;
+        padding: 8px 0;
+      }
+
+      .header-buttons {
+        width: 100%;
+        margin-left: 0;
+        flex-direction: column;
+        gap: 12px;
+        align-items: stretch;
+      }
+
+      .header-buttons .btn {
+        width: 100%;
+      }
+
+      .profile-menu {
+        width: 100%;
+        display: block;
+      }
+
+      .profile-avatar-btn {
+        width: 100%;
+        height: 52px;
+        border-radius: 18px;
+      }
+
+      .profile-dropdown {
+        position: static;
+        top: auto;
+        right: auto;
+        min-width: 0;
+        width: 100%;
+        margin-top: 10px;
+        transform: none;
+        box-shadow: 0 18px 50px rgba(0,0,0,0.28);
+        display: none;
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+      }
+
+      .profile-menu.is-open .profile-dropdown {
+        display: block;
+      }
+
+      .dashboard-layout {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+
+      .side-nav {
+        display: none;
+      }
+
+      .controls-grid,
+      .sector-grid,
+      .asset-grid,
+      .payoff-grid,
+      .preview-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .floating-coupon {
+        top: auto;
+        right: 12px;
+        left: 12px;
+        bottom: 12px;
+      }
+
+      .floating-coupon-inner {
+        width: 100%;
+        justify-content: space-between;
+        border-radius: 18px;
+        padding: 14px 16px;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .container {
+        width: min(var(--container), calc(100% - 24px));
+      }
+
+      .page-shell {
+        padding: 118px 0 86px;
+      }
+
+      .builder-card,
+      .preview-panel,
+      .chart-block,
+      .scenario-card {
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+
+      h1 {
+        font-size: clamp(2rem, 8vw, 3rem);
+      }
+
+      .actions-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .actions-row .btn {
+        width: 100%;
+      }
+
+      .coupon-hero {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="progress" aria-hidden="true"></div>
+
+  <header class="site-header" id="header">
+    <div class="container nav">
+      <a href="index.html" class="brand">
+        <img src="logo.png" alt="Logo Priam Solutions" class="brand-logo" />
+        <span>Priam Solutions</span>
+      </a>
+
+      <button
+        class="nav-toggle"
+        id="navToggle"
+        aria-label="Ouvrir le menu"
+        aria-expanded="false"
+        aria-controls="mobileMenu"
+        type="button"
+      >
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <div class="nav-right" id="mobileMenu">
+        <nav class="nav-links" aria-label="Navigation principale">
+          <a href="index.html">Accueil</a>
+          <a href="a-propos.html">Équipe</a>
+          <a href="recherche.html">Recherche</a>
+        </nav>
+
+        <div class="header-buttons">
+          <a href="contact.html" class="btn btn-primary">Nous contacter</a>
+
+          <button type="button" class="btn btn-secondary" id="loginTrigger" hidden>
+            Se connecter
+          </button>
+
+          <div class="profile-menu" id="profileMenu">
+            <button
+              type="button"
+              class="profile-avatar-btn"
+              id="profileMenuTrigger"
+              aria-label="Ouvrir le menu utilisateur"
+              aria-haspopup="true"
+              aria-expanded="false"
+              aria-controls="profileDropdown"
+            >
+              UT
+            </button>
+
+            <div class="profile-dropdown" id="profileDropdown" role="menu" aria-label="Menu utilisateur">
+              <a href="monespace.html" role="menuitem">Mon espace</a>
+              <a href="marecherche.html" role="menuitem">Ma recherche</a>
+              <a href="mesproduits.html" role="menuitem">Mes produits</a>
+              <a href="messimulations.html" role="menuitem">Mes simulations</a>
+              <button type="button" id="logoutBtn" class="profile-logout" role="menuitem">
+                Déconnexion
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="floating-coupon" id="floatingCoupon" aria-live="polite">
+    <div class="floating-coupon-inner">
+      <span class="floating-coupon-kicker">Coupon indicatif</span>
+      <strong class="floating-coupon-value" id="floatingCouponValue">10,4 %</strong>
+      <span class="floating-coupon-caption">per annum</span>
+    </div>
+  </div>
+
+  <main class="page-shell">
+    <div class="container dashboard-layout">
+      <aside class="side-nav" aria-label="Navigation espace utilisateur">
+        <nav class="side-nav-links">
+          <a href="monespace.html">Mon espace</a>
+          <a href="marecherche.html">Ma recherche</a>
+          <a href="mesproduits.html">Mes produits</a>
+          <a href="messimulations.html" class="is-active">Mes simulations</a>
+        </nav>
+      </aside>
+
+      <section class="content">
+        <div class="intro">
+          <h1>Construisez votre produit en temps réel</h1>
+          <p class="intro-subtle">
+            Cette page est pensée comme un vrai espace de construction : à gauche, vous paramétrez
+            la structure ; à droite, vous voyez en continu le produit en train de se former, avec
+            son <strong>coupon indicatif per annum</strong>, sa logique de payoff et sa lecture de risque.
+            Le coupon reste visible pendant tout le scroll pour garder le produit sous les yeux à chaque étape.
+          </p>
+        </div>
+
+        <div class="builder-layout">
+          <div class="builder-column">
+            <section class="builder-card">
+              <div class="section-kicker">Étape 1</div>
+              <h2>Choisissez l’univers de risque</h2>
+              <p class="section-copy">
+                Le moteur part d’un secteur à forte volatilité, puis d’un sous-jacent précis.
+                Cette base conditionne la prime monétisable, la dispersion attendue et la capacité
+                du produit à offrir du coupon.
+              </p>
+
+              <div class="choice-group">
+                <div class="choice-title">Secteur</div>
+                <div class="sector-grid" id="sectorGrid">
+                  <button type="button" class="select-card is-active" data-sector="digital">
+                    <span class="select-title">Actifs numériques</span>
+                    <span class="select-note">
+                      Prime de volatilité plus élevée, sensibilité aux flux ETF, à la liquidité
+                      et au sentiment de marché.
+                    </span>
+                  </button>
+
+                  <button type="button" class="select-card" data-sector="disruption">
+                    <span class="select-title">Technologie de rupture</span>
+                    <span class="select-note">
+                      Sensibilité aux taux, au rerating de croissance, aux semi-conducteurs et
+                      à la dispersion sectorielle.
+                    </span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="choice-group">
+                <div class="choice-title">Sous-jacent</div>
+                <div class="choice-subtitle" id="sectorHelper"></div>
+                <div class="asset-grid" id="assetGrid"></div>
+              </div>
+            </section>
+
+            <section class="builder-card">
+              <div class="section-kicker">Étape 2</div>
+              <h2>Définissez le payoff et la protection</h2>
+              <p class="section-copy">
+                Vous choisissez ici le type de structure et ses grands paramètres économiques.
+                Chaque réglage modifie instantanément le produit affiché dans la colonne de droite.
+              </p>
+
+              <div class="choice-group">
+                <div class="choice-title">Payoff</div>
+                <div class="payoff-grid" id="payoffGrid">
+                  <button type="button" class="select-card is-active" data-payoff="autocall">
+                    <span class="select-title">Autocall</span>
+                    <span class="select-note">
+                      Coupon conditionnel, dates d’observation régulières et rappel possible
+                      si le sous-jacent retrouve un niveau suffisant.
+                    </span>
+                  </button>
+
+                  <button type="button" class="select-card" data-payoff="twinwin">
+                    <span class="select-title">Twin Win</span>
+                    <span class="select-note">
+                      Coupon plus défensif avec corridor et participation illustrée dans une zone
+                      symétrique définie par la borne haute.
+                    </span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="controls-grid">
+                <div class="control-card">
+                  <div class="control-label-row">
+                    <span class="control-label">Horizon</span>
+                    <span class="control-value" id="tenorValue">3 ans</span>
+                  </div>
+                  <input type="range" min="1" max="5" step="1" value="3" id="tenorRange" />
+                  <div class="control-note">
+                    Davantage de temps permet généralement de monétiser plus de valeur, mais accroît aussi l’exposition.
+                  </div>
+                </div>
+
+                <div class="control-card">
+                  <div class="control-label-row">
+                    <span class="control-label" id="protectionLabel">Barrière de protection</span>
+                    <span class="control-value" id="protectionValue">70 %</span>
+                  </div>
+                  <input type="range" min="55" max="90" step="5" value="70" id="protectionRange" />
+                  <div class="control-note" id="protectionNote">
+                    Plus la protection demandée est haute, plus le coupon indicatif se compresse.
+                  </div>
+                </div>
+
+                <div class="control-card">
+                  <div class="control-label-row">
+                    <span class="control-label">Rythme d’observation</span>
+                    <span class="control-value" id="observationValue">Trimestriel</span>
+                  </div>
+                  <select id="observationSelect">
+                    <option value="monthly">Mensuel</option>
+                    <option value="quarterly" selected>Trimestriel</option>
+                    <option value="semiannual">Semestriel</option>
+                    <option value="annual">Annuel</option>
+                  </select>
+                  <div class="control-note">
+                    Le rythme modifie la fréquence des coupons, la probabilité de rappel et la dynamique de portage.
+                  </div>
+                </div>
+
+                <div class="control-card">
+                  <div class="control-label-row">
+                    <span class="control-label">Biais de construction</span>
+                    <span class="control-value" id="aggressivenessValue">Équilibré</span>
+                  </div>
+                  <input type="range" min="1" max="5" step="1" value="3" id="aggressivenessRange" />
+                  <div class="control-note">
+                    De prudente à offensive : vous décidez ici jusqu’où aller chercher du coupon au prix d’un risque plus marqué.
+                  </div>
+                </div>
+
+                <div class="control-card" id="dynamicControlCard">
+                  <div class="control-label-row">
+                    <span class="control-label" id="dynamicControlLabel">Barrière de rappel</span>
+                    <span class="control-value" id="dynamicControlValue">100 %</span>
+                  </div>
+                  <input type="range" min="90" max="105" step="5" value="100" id="dynamicRange" />
+                  <div class="control-note" id="dynamicControlNote">
+                    Une barrière de rappel plus haute laisse plus de prime dans le produit, mais réduit la probabilité de remboursement anticipé.
+                  </div>
+                </div>
+
+                <div class="control-card toggle-card" id="memoryCard">
+                  <div>
+                    <div class="control-label">Mémoire de coupon</div>
+                    <div class="control-note">
+                      Les coupons non servis peuvent être récupérés plus tard si la condition redevient satisfaite.
+                    </div>
+                  </div>
+                  <label class="switch" aria-label="Activer ou désactiver la mémoire de coupon">
+                    <input type="checkbox" id="memoryToggle" checked />
+                    <span class="switch-track">
+                      <span class="switch-thumb"></span>
+                    </span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="actions-row">
+                <button type="button" class="btn btn-secondary" id="resetBtn">Réinitialiser</button>
+                <button type="button" class="btn btn-primary" id="simulateBtn">Actualiser la simulation</button>
+              </div>
+            </section>
+          </div>
+
+          <aside class="preview-column">
+            <section class="preview-panel" aria-live="polite">
+              <div class="preview-kicker">Produit construit en temps réel</div>
+              <h2 class="preview-title" id="liveTitle">Autocall BTC ETF Strategy 2029</h2>
+              <p class="preview-subtitle" id="liveSubtitle">
+                Structure en cours de construction sur ETF spot Bitcoin, avec coupon conditionnel et rappel anticipé possible.
+              </p>
+
+              <div class="coupon-hero">
+                <div>
+                  <span class="coupon-big-label">Coupon indicatif</span>
+                  <div class="coupon-big-value" id="couponDisplay">10,4 %</div>
+                  <div class="coupon-big-caption" id="couponCaption">
+                    Valeur purement indicative, exprimée per annum et recalculée à chaque modification.
+                  </div>
+                </div>
+
+                <div class="risk-ring" id="riskRing">
+                  <div class="risk-ring-content">
+                    <span class="risk-ring-value" id="riskValue">58</span>
+                    <span class="risk-ring-label" id="riskLabel">Risque soutenu</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="live-tags" id="liveTags"></div>
+
+              <div class="preview-grid">
+                <div class="preview-stat">
+                  <span>Structure</span>
+                  <strong id="summaryStructure">Autocall trimestriel</strong>
+                </div>
+
+                <div class="preview-stat">
+                  <span>Zone favorable indicative</span>
+                  <strong id="summaryZone">56 %</strong>
+                </div>
+
+                <div class="preview-stat">
+                  <span>Point d’attention</span>
+                  <strong id="summaryWatch">Protection plus élevée = coupon plus serré</strong>
+                </div>
+
+                <div class="preview-stat">
+                  <span>Lecture centrale</span>
+                  <strong id="summaryObservation">Rappel plutôt tardif ou maturité</strong>
+                </div>
+              </div>
+
+              <div class="preview-flow" id="liveNarrative">
+                Le produit affiché ici se reconstruit à chaque changement de paramètre. Vous voyez donc
+                en continu le sous-jacent choisi, le payoff, la protection retenue et le coupon indicatif
+                qui en découle.
+              </div>
+
+              <div class="preview-divider"></div>
+
+              <div class="preview-flow" id="whyCouponBox">
+                <strong>Pourquoi ce coupon ?</strong><br />
+                Il reflète un arbitrage entre prime de volatilité, temps, niveau de protection et
+                options structurelles retenues.
+              </div>
+            </section>
+          </aside>
+        </div>
+
+        <section class="charts-zone">
+          <div class="scenario-toolbar">
+            <div class="scenario-switch" role="tablist" aria-label="Choix du scénario">
+              <button type="button" class="scenario-btn" data-scenario="positif">Positif</button>
+              <button type="button" class="scenario-btn is-active" data-scenario="neutre">Neutre</button>
+              <button type="button" class="scenario-btn" data-scenario="negatif">Négatif</button>
+            </div>
+
+            <div class="scenario-helper" id="scenarioHelperText">
+              Le graphe principal suit actuellement le scénario neutre.
+            </div>
+          </div>
+
+          <div class="chart-grid">
+            <div class="chart-block">
+              <div class="chart-head">
+                <div>
+                  <div class="chart-title">Trajectoire projetée du sous-jacent</div>
+                  <div class="chart-note" id="pathChartNote">
+                    Historique illustratif, scénario projeté et niveaux structurels principaux du produit sélectionné.
+                  </div>
+                </div>
+              </div>
+              <canvas id="pathChart" class="chart-canvas" width="980" height="390"></canvas>
+            </div>
+
+            <div class="chart-block">
+              <div class="chart-head">
+                <div>
+                  <div class="chart-title">Profil de rendement à maturité</div>
+                  <div class="chart-note" id="payoffChartNote">
+                    Lecture simplifiée du rendement final selon le niveau du sous-jacent à maturité.
+                  </div>
+                </div>
+              </div>
+              <canvas id="payoffChart" class="chart-canvas" width="980" height="390"></canvas>
+            </div>
+
+            <div class="chart-block full-span">
+              <div class="chart-head">
+                <div>
+                  <div class="chart-title">Décomposition du coupon indicatif</div>
+                  <div class="chart-note">
+                    Le coupon résulte de la combinaison entre volatilité, temps, protection, payoff, rythme d’observation et options structurelles.
+                  </div>
+                </div>
+              </div>
+              <canvas id="driversChart" class="chart-canvas" width="1180" height="320"></canvas>
+            </div>
+          </div>
+
+          <div class="scenario-cards" id="scenarioCards"></div>
+
+          <section class="explanation-flow">
+            <h2>Pourquoi ce coupon et comment lire la simulation</h2>
+
+            <p id="methodWhy">
+              <span class="text-label">Pourquoi ce coupon ?</span><br />
+              Le coupon est principalement guidé par la prime de volatilité du sous-jacent choisi,
+              la profondeur de protection demandée et le payoff retenu.
+            </p>
+
+            <p id="methodAssumptions">
+              <span class="text-label">Hypothèses</span><br />
+              Le moteur est indicatif : il ne remplace ni un pricing desk ni une documentation définitive.
+              Il illustre un ordre de grandeur cohérent à partir d’hypothèses de volatilité, de dispersion,
+              de temps et de conditions de rappel.
+            </p>
+
+            <p id="methodScenarios">
+              <span class="text-label">Construction</span><br />
+              Les scénarios projetés reposent sur trois régimes : positif, neutre et négatif.
+              Chacun combine tendance, volatilité et forme de trajectoire pour permettre
+              une lecture immédiate du comportement potentiel du produit.
+            </p>
+          </section>
+        </section>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const progress = document.querySelector('.progress');
+    const header = document.getElementById('header');
+    const navToggle = document.getElementById('navToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const menuLinks = mobileMenu ? mobileMenu.querySelectorAll('a') : [];
+
+    const loginTrigger = document.getElementById('loginTrigger');
+    const profileMenu = document.getElementById('profileMenu');
+    const profileMenuTrigger = document.getElementById('profileMenuTrigger');
+    const profileDropdown = document.getElementById('profileDropdown');
+    const profileDropdownLinks = profileDropdown.querySelectorAll('a');
+    const logoutBtn = document.getElementById('logoutBtn');
+
+    const sectorGrid = document.getElementById('sectorGrid');
+    const assetGrid = document.getElementById('assetGrid');
+    const sectorHelper = document.getElementById('sectorHelper');
+    const payoffGrid = document.getElementById('payoffGrid');
+    const scenarioButtons = document.querySelectorAll('.scenario-btn');
+
+    const tenorRange = document.getElementById('tenorRange');
+    const protectionRange = document.getElementById('protectionRange');
+    const observationSelect = document.getElementById('observationSelect');
+    const aggressivenessRange = document.getElementById('aggressivenessRange');
+    const dynamicRange = document.getElementById('dynamicRange');
+    const memoryToggle = document.getElementById('memoryToggle');
+
+    const tenorValue = document.getElementById('tenorValue');
+    const protectionValue = document.getElementById('protectionValue');
+    const observationValue = document.getElementById('observationValue');
+    const aggressivenessValue = document.getElementById('aggressivenessValue');
+    const protectionLabel = document.getElementById('protectionLabel');
+    const protectionNote = document.getElementById('protectionNote');
+    const dynamicControlLabel = document.getElementById('dynamicControlLabel');
+    const dynamicControlValue = document.getElementById('dynamicControlValue');
+    const dynamicControlNote = document.getElementById('dynamicControlNote');
+    const memoryCard = document.getElementById('memoryCard');
+
+    const liveTitle = document.getElementById('liveTitle');
+    const liveSubtitle = document.getElementById('liveSubtitle');
+    const liveTags = document.getElementById('liveTags');
+    const couponDisplay = document.getElementById('couponDisplay');
+    const couponCaption = document.getElementById('couponCaption');
+    const floatingCouponValue = document.getElementById('floatingCouponValue');
+    const riskRing = document.getElementById('riskRing');
+    const riskValue = document.getElementById('riskValue');
+    const riskLabel = document.getElementById('riskLabel');
+    const summaryStructure = document.getElementById('summaryStructure');
+    const summaryZone = document.getElementById('summaryZone');
+    const summaryWatch = document.getElementById('summaryWatch');
+    const summaryObservation = document.getElementById('summaryObservation');
+    const liveNarrative = document.getElementById('liveNarrative');
+    const whyCouponBox = document.getElementById('whyCouponBox');
+
+    const scenarioHelperText = document.getElementById('scenarioHelperText');
+    const scenarioCards = document.getElementById('scenarioCards');
+    const pathChartNote = document.getElementById('pathChartNote');
+    const payoffChartNote = document.getElementById('payoffChartNote');
+
+    const methodWhy = document.getElementById('methodWhy');
+    const methodAssumptions = document.getElementById('methodAssumptions');
+    const methodScenarios = document.getElementById('methodScenarios');
+
+    const resetBtn = document.getElementById('resetBtn');
+    const simulateBtn = document.getElementById('simulateBtn');
+
+    const AUTH_KEY = 'priam_demo_user_authenticated';
+
+    const MARKET_UNIVERSE = {
+      digital: {
+        label: 'Actifs numériques',
+        helper: 'Prime de volatilité plus élevée, régimes de liquidité plus marqués et sensibilité aux flux ETF / crypto.',
+        premium: 0.9,
+        assets: {
+          btc_etf: {
+            name: 'ETF spot Bitcoin',
+            shortName: 'BTC ETF',
+            type: 'Directionnel',
+            vol: 0.72,
+            drift: 0.16,
+            carryAutocall: 3.3,
+            carryTwin: 1.8,
+            note: 'Lecture directionnelle pure, sensible au momentum, aux flux ETF et au sentiment de marché.',
+            historyLabels: ['Mai 25','Juin 25','Juil 25','Août 25','Sept 25','Oct 25','Nov 25','Déc 25','Jan 26','Fév 26','Mars 26'],
+            historyLevels: [108,103,99,94,97,104,112,109,101,96,100]
+          },
+          wof_crypto: {
+            name: 'ETF Worst-Of Crypto',
+            shortName: 'Worst-Of Crypto',
+            type: 'Worst-Of',
+            vol: 0.84,
+            drift: 0.12,
+            carryAutocall: 4.2,
+            carryTwin: 2.2,
+            note: 'Panier plus convexe, exposé à la dispersion et aux composantes les plus faibles du basket.',
+            historyLabels: ['Mai 25','Juin 25','Juil 25','Août 25','Sept 25','Oct 25','Nov 25','Déc 25','Jan 26','Fév 26','Mars 26'],
+            historyLevels: [102,98,93,88,86,90,92,89,84,81,80]
+          }
+        }
+      },
+
+      disruption: {
+        label: 'Technologie de rupture',
+        helper: 'Volatilité de croissance, sensibilité aux taux réels, à l’IA, au cycle des semis et au rerating des multiples.',
+        premium: 0.25,
+        assets: {
+          semis_etf: {
+            name: 'ETF Semi-conducteurs',
+            shortName: 'Semis ETF',
+            type: 'Sectoriel',
+            vol: 0.43,
+            drift: 0.11,
+            carryAutocall: 2.8,
+            carryTwin: 1.5,
+            note: 'Sous-jacent cyclique, plus sensible au cycle industriel et aux attentes sur la demande IA.',
+            historyLabels: ['Mai 25','Juin 25','Juil 25','Août 25','Sept 25','Oct 25','Nov 25','Déc 25','Jan 26','Fév 26','Mars 26'],
+            historyLevels: [101,104,109,106,102,98,103,108,111,107,105]
+          },
+          ai_cloud: {
+            name: 'ETF IA & Cloud',
+            shortName: 'IA & Cloud',
+            type: 'Croissance',
+            vol: 0.39,
+            drift: 0.10,
+            carryAutocall: 2.6,
+            carryTwin: 1.4,
+            note: 'Croissance plus régulière, sensible aux taux et au rerating logiciel.',
+            historyLabels: ['Mai 25','Juin 25','Juil 25','Août 25','Sept 25','Oct 25','Nov 25','Déc 25','Jan 26','Fév 26','Mars 26'],
+            historyLevels: [100,102,106,110,107,103,101,104,106,108,107]
+          }
+        }
+      }
+    };
+
+    const PAYOFFS = {
+      autocall: {
+        label: 'Autocall',
+        description: 'Coupon conditionnel et rappel anticipé à dates d’observation.'
+      },
+      twinwin: {
+        label: 'Twin Win',
+        description: 'Coupon plus défensif avec lecture corridor et borne haute.'
+      }
+    };
+
+    const OBS_LABELS = {
+      monthly: 'Mensuel',
+      quarterly: 'Trimestriel',
+      semiannual: 'Semestriel',
+      annual: 'Annuel'
+    };
+
+    const OBS_COUNTS = {
+      monthly: 12,
+      quarterly: 4,
+      semiannual: 2,
+      annual: 1
+    };
+
+    const AGGRESSIVENESS_MAP = {
+      1: 'Prudente',
+      2: 'Défensive',
+      3: 'Équilibré',
+      4: 'Dynamique',
+      5: 'Offensive'
+    };
+
+    const state = {
+      sector: 'digital',
+      asset: 'btc_etf',
+      payoff: 'autocall',
+      tenor: 3,
+      protection: 70,
+      observation: 'quarterly',
+      aggressiveness: 3,
+      recallBarrier: 100,
+      upsideCap: 140,
+      memoryCoupon: true,
+      chartScenario: 'neutre'
+    };
+
+    function closeMenu() {
+      header.classList.remove('menu-open');
+      navToggle.classList.remove('is-open');
+      navToggle.setAttribute('aria-expanded', 'false');
+    }
+
+    function openMenu() {
+      header.classList.add('menu-open');
+      navToggle.classList.add('is-open');
+      navToggle.setAttribute('aria-expanded', 'true');
+    }
+
+    if (navToggle) {
+      navToggle.addEventListener('click', () => {
+        const isOpen = header.classList.contains('menu-open');
+        if (isOpen) closeMenu();
+        else openMenu();
+      });
+    }
+
+    function updateScrollEffects() {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const ratio = docHeight > 0 ? scrollTop / docHeight : 0;
+      progress.style.transform = `scaleX(${ratio})`;
+      header.classList.toggle('scrolled', scrollTop > 20);
+    }
+
+    function isLoggedIn() {
+      return sessionStorage.getItem(AUTH_KEY) === 'true';
+    }
+
+    function renderAuthState() {
+      const loggedIn = isLoggedIn();
+      loginTrigger.hidden = loggedIn;
+      profileMenu.hidden = !loggedIn;
+    }
+
+    function openProfileDropdown() {
+      if (profileMenu.hidden) return;
+      profileMenu.classList.add('is-open');
+      profileMenuTrigger.setAttribute('aria-expanded', 'true');
+    }
+
+    function closeProfileDropdown() {
+      profileMenu.classList.remove('is-open');
+      profileMenuTrigger.setAttribute('aria-expanded', 'false');
+    }
+
+    function toggleProfileDropdown() {
+      if (profileMenu.classList.contains('is-open')) closeProfileDropdown();
+      else openProfileDropdown();
+    }
+
+    function logout() {
+      sessionStorage.removeItem(AUTH_KEY);
+      closeProfileDropdown();
+      renderAuthState();
+      window.location.href = 'index.html';
+    }
+
+    function clamp(value, min, max) {
+      return Math.min(Math.max(value, min), max);
+    }
+
+    function formatPercent(value, digits = 1) {
+      return `${Number(value).toLocaleString('fr-FR', {
+        minimumFractionDigits: digits,
+        maximumFractionDigits: digits
+      })} %`;
+    }
+
+    function getReturnClass(value) {
+      if (value > 2) return 'return-positive';
+      if (value < -2) return 'return-negative';
+      return 'return-neutral';
+    }
+
+    function getSector() {
+      return MARKET_UNIVERSE[state.sector];
+    }
+
+    function getAsset() {
+      return MARKET_UNIVERSE[state.sector].assets[state.asset];
+    }
+
+    function renderAssets() {
+      const sector = getSector();
+      sectorHelper.textContent = sector.helper;
+
+      assetGrid.innerHTML = Object.entries(sector.assets).map(([key, asset]) => {
+        const isActive = key === state.asset;
+        return `
+          <button type="button" class="select-card ${isActive ? 'is-active' : ''}" data-asset="${key}">
+            <span class="select-title">${asset.name}</span>
+            <span class="select-note">${asset.note}</span>
+            <div class="asset-meta">
+              <span class="asset-pill">Vol ${Math.round(asset.vol * 100)}%</span>
+              <span>${asset.type}</span>
+            </div>
+          </button>
+        `;
+      }).join('');
+
+      assetGrid.querySelectorAll('[data-asset]').forEach((button) => {
+        button.addEventListener('click', () => {
+          state.asset = button.dataset.asset;
+          renderAssets();
+          simulate();
+        });
+      });
+    }
+
+    function syncActiveStates() {
+      sectorGrid.querySelectorAll('[data-sector]').forEach((button) => {
+        button.classList.toggle('is-active', button.dataset.sector === state.sector);
+      });
+
+      payoffGrid.querySelectorAll('[data-payoff]').forEach((button) => {
+        button.classList.toggle('is-active', button.dataset.payoff === state.payoff);
+      });
+
+      scenarioButtons.forEach((button) => {
+        button.classList.toggle('is-active', button.dataset.scenario === state.chartScenario);
+      });
+    }
+
+    function updateControlPresentation() {
+      tenorValue.textContent = `${state.tenor} ${state.tenor > 1 ? 'ans' : 'an'}`;
+      protectionValue.textContent = `${state.protection} %`;
+      observationValue.textContent = OBS_LABELS[state.observation];
+      aggressivenessValue.textContent = AGGRESSIVENESS_MAP[state.aggressiveness];
+
+      if (state.payoff === 'autocall') {
+        protectionLabel.textContent = 'Barrière de protection';
+        protectionNote.textContent = 'Plus la protection demandée est haute, plus le coupon indicatif se compresse.';
+        dynamicControlLabel.textContent = 'Barrière de rappel';
+        dynamicControlValue.textContent = `${state.recallBarrier} %`;
+        dynamicControlNote.textContent = 'Une barrière de rappel plus haute laisse plus de prime dans le produit, mais réduit la probabilité de remboursement anticipé.';
+        dynamicRange.min = '90';
+        dynamicRange.max = '105';
+        dynamicRange.step = '5';
+        dynamicRange.value = String(state.recallBarrier);
+        memoryCard.hidden = false;
+      } else {
+        protectionLabel.textContent = 'Barrière basse du corridor';
+        protectionNote.textContent = 'La borne basse du corridor détermine à partir de quel niveau la lecture illustrative devient plus défavorable.';
+        dynamicControlLabel.textContent = 'Borne haute twin win';
+        dynamicControlValue.textContent = `${state.upsideCap} %`;
+        dynamicControlNote.textContent = 'Une borne haute plus généreuse laisse davantage d’upside à l’investisseur, ce qui réduit le coupon indicatif.';
+        dynamicRange.min = '115';
+        dynamicRange.max = '160';
+        dynamicRange.step = '5';
+        dynamicRange.value = String(state.upsideCap);
+        memoryCard.hidden = true;
+      }
+    }
+
+    function readInputs() {
+      state.tenor = Number(tenorRange.value);
+      state.protection = Number(protectionRange.value);
+      state.observation = observationSelect.value;
+      state.aggressiveness = Number(aggressivenessRange.value);
+
+      if (state.payoff === 'autocall') {
+        state.recallBarrier = Number(dynamicRange.value);
+      } else {
+        state.upsideCap = Number(dynamicRange.value);
+      }
+
+      state.memoryCoupon = memoryToggle.checked;
+    }
+
+    function computeIndicativeCoupon() {
+      const asset = getAsset();
+      const sector = getSector();
+
+      const baseCarry = state.payoff === 'autocall' ? asset.carryAutocall : asset.carryTwin;
+      const volPremium = asset.vol * (state.payoff === 'autocall' ? 11.2 : 6.4);
+      const sectorPremium = sector.premium;
+      const tenorAdj = state.tenor * (state.payoff === 'autocall' ? 0.48 : 0.28);
+      const protectionAdj = -(state.protection - 55) * (state.payoff === 'autocall' ? 0.24 : 0.15);
+      const aggressionAdj = (state.aggressiveness - 3) * (state.payoff === 'autocall' ? 0.95 : 0.55);
+      const observationAdj = {
+        monthly: -0.45,
+        quarterly: 0.35,
+        semiannual: 0.08,
+        annual: -0.15
+      }[state.observation];
+
+      let structureAdj = 0;
+      let optionAdj = 0;
+
+      if (state.payoff === 'autocall') {
+        structureAdj = (state.recallBarrier - 100) * 0.12;
+        optionAdj = state.memoryCoupon ? -0.65 : 0.18;
+      } else {
+        structureAdj = 0.85;
+        optionAdj = -(state.upsideCap - 120) * 0.03;
+      }
+
+      const rawCoupon =
+        baseCarry +
+        volPremium +
+        sectorPremium +
+        tenorAdj +
+        protectionAdj +
+        aggressionAdj +
+        observationAdj +
+        structureAdj +
+        optionAdj;
+
+      const coupon = state.payoff === 'autocall'
+        ? clamp(rawCoupon, 4.4, 24.5)
+        : clamp(rawCoupon, 2.8, 15.8);
+
+      const contributions = [
+        { label: 'Base sous-jacent', value: Number(baseCarry.toFixed(2)) },
+        { label: 'Prime de volatilité', value: Number(volPremium.toFixed(2)) },
+        { label: 'Prime sectorielle', value: Number(sectorPremium.toFixed(2)) },
+        { label: 'Temps / tenor', value: Number(tenorAdj.toFixed(2)) },
+        { label: 'Protection', value: Number(protectionAdj.toFixed(2)) },
+        { label: 'Biais de construction', value: Number(aggressionAdj.toFixed(2)) },
+        { label: 'Rythme d’observation', value: Number(observationAdj.toFixed(2)) },
+        { label: state.payoff === 'autocall' ? 'Barrière de rappel' : 'Borne haute twin win', value: Number(structureAdj.toFixed(2)) },
+        { label: state.payoff === 'autocall' ? 'Mémoire de coupon' : 'Option corridor', value: Number(optionAdj.toFixed(2)) }
+      ];
+
+      return {
+        coupon: Number(coupon.toFixed(1)),
+        contributions
+      };
+    }
+
+    function computeRiskScore() {
+      const asset = getAsset();
+      const payoffRisk = state.payoff === 'autocall' ? 6 : 10;
+      const protectionBenefit = (state.protection - 55) * 1.1;
+      const aggressionRisk = (state.aggressiveness - 3) * 9;
+      const tenorRisk = state.tenor * 3.5;
+      const base = 18 + asset.vol * 70 + payoffRisk + aggressionRisk + tenorRisk - protectionBenefit;
+      const risk = clamp(Math.round(base), 15, 92);
+
+      let label = 'Risque modéré';
+      if (risk >= 75) label = 'Risque très élevé';
+      else if (risk >= 60) label = 'Risque élevé';
+      else if (risk >= 40) label = 'Risque soutenu';
+
+      return { risk, label };
+    }
+
+    function computeFavorableZoneProbability() {
+      const asset = getAsset();
+
+      if (state.payoff === 'autocall') {
+        return clamp(
+          Math.round(
+            58 +
+            (100 - state.recallBarrier) * 1.15 -
+            asset.vol * 22 -
+            state.tenor * 3 +
+            (state.observation === 'quarterly' ? 4 : 0) +
+            (state.protection - 70) * 0.55
+          ),
+          18,
+          80
+        );
+      }
+
+      return clamp(
+        Math.round(
+          68 -
+          asset.vol * 18 +
+          (state.protection - 70) * 0.9 -
+          (state.upsideCap - 130) * 0.32 -
+          (state.aggressiveness - 3) * 2
+        ),
+        22,
+        84
+      );
+    }
+
+    function buildScenarioPath(mode) {
+      const asset = getAsset();
+      const months = state.tenor * 12;
+      const tFactor = state.tenor;
+
+      const positiveEnd = clamp(
+        100 +
+        asset.drift * 100 * tFactor * 0.42 +
+        asset.vol * 100 * 0.22 +
+        (state.aggressiveness - 3) * 4 +
+        (state.sector === 'digital' ? 10 : 4),
+        112,
+        168
+      );
+
+      const neutralEnd = clamp(
+        100 +
+        asset.drift * 100 * tFactor * 0.10 -
+        asset.vol * 100 * 0.05 +
+        (state.aggressiveness - 3) * 1.2,
+        84,
+        122
+      );
+
+      const negativeEnd = clamp(
+        100 -
+        asset.vol * 100 * 0.34 * tFactor -
+        (state.sector === 'digital' ? 10 : 4) -
+        (state.aggressiveness - 3) * 2,
+        38,
+        84
+      );
+
+      const targets = {
+        positif: positiveEnd,
+        neutre: neutralEnd,
+        negatif: negativeEnd
+      };
+
+      const waveBase = asset.vol * 10;
+      const path = [];
+
+      for (let i = 1; i <= months; i++) {
+        const t = i / months;
+        const target = targets[mode];
+
+        let wave = 0;
+        if (mode === 'positif') {
+          wave = Math.sin(t * Math.PI * 2.1) * (waveBase * 0.55) + Math.sin(t * Math.PI * 5) * 1.4;
+        } else if (mode === 'neutre') {
+          wave = Math.sin(t * Math.PI * 2.8) * (waveBase * 0.42);
+        } else {
+          wave = Math.sin(t * Math.PI * 3.4) * (waveBase * 0.65) - t * (asset.vol * 8);
+        }
+
+        const level = clamp(100 + (target - 100) * t + wave, 28, 185);
+        path.push(Number(level.toFixed(1)));
+      }
+
+      return path;
+    }
+
+    function getObservationIntervalMonths() {
+      return {
+        monthly: 1,
+        quarterly: 3,
+        semiannual: 6,
+        annual: 12
+      }[state.observation];
+    }
+
+    function getObservationLevels(path) {
+      const interval = getObservationIntervalMonths();
+      const levels = [];
+
+      for (let month = interval; month <= state.tenor * 12; month += interval) {
+        levels.push(path[month - 1]);
+      }
+
+      return levels;
+    }
+
+    function computeScenarioOutcome(mode, coupon) {
+      const path = buildScenarioPath(mode);
+      const obsLevels = getObservationLevels(path);
+      const obsPerYear = OBS_COUNTS[state.observation];
+
+      if (state.payoff === 'autocall') {
+        const couponPerObs = coupon / obsPerYear;
+        let paidCoupons = 0;
+        let pendingCoupons = 0;
+        let principal = 100;
+        let redemption = 'Maturité';
+        let redeemed = false;
+
+        obsLevels.forEach((level, index) => {
+          if (redeemed) return;
+
+          const couponDue = couponPerObs;
+
+          if (level >= state.recallBarrier) {
+            if (state.memoryCoupon) {
+              paidCoupons += couponDue + pendingCoupons;
+              pendingCoupons = 0;
+            } else {
+              paidCoupons += couponDue;
+            }
+            principal = 100;
+            redemption = `Rappel T${index + 1}`;
+            redeemed = true;
+            return;
+          }
+
+          if (level >= state.protection) {
+            if (state.memoryCoupon) {
+              paidCoupons += couponDue + pendingCoupons;
+              pendingCoupons = 0;
+            } else {
+              paidCoupons += couponDue;
+            }
+          } else if (state.memoryCoupon) {
+            pendingCoupons += couponDue;
+          }
+        });
+
+        if (!redeemed) {
+          const finalLevel = obsLevels[obsLevels.length - 1];
+          principal = finalLevel >= state.protection ? 100 : Number(finalLevel.toFixed(1));
+        }
+
+        const totalReturn = Number((paidCoupons + principal - 100).toFixed(1));
+
+        return {
+          mode,
+          path,
+          finalLevel: Number(path[path.length - 1].toFixed(1)),
+          coupons: Number(paidCoupons.toFixed(1)),
+          principal: Number(principal.toFixed(1)),
+          totalReturn,
+          redemption,
+          copy:
+            mode === 'positif'
+              ? 'Retour plus rapide du sous-jacent au-dessus des seuils, avec rappel anticipé plus probable.'
+              : mode === 'neutre'
+              ? 'Trajectoire plus hésitante, coupons plus sélectifs et rappel repoussé ou absent.'
+              : 'Trajectoire dégradée, coupons potentiellement manqués et exposition accrue à la barrière finale.'
+        };
+      }
+
+      const totalCoupons = Number((coupon * state.tenor).toFixed(1));
+      const finalLevel = Number(path[path.length - 1].toFixed(1));
+      const corridorMove = Math.min(Math.abs(finalLevel - 100), state.upsideCap - 100);
+      let principal = 100;
+
+      if (finalLevel >= state.protection) {
+        principal = Number((100 + corridorMove * 0.55).toFixed(1));
+      } else {
+        principal = Number(finalLevel.toFixed(1));
+      }
+
+      const totalReturn = Number((totalCoupons + principal - 100).toFixed(1));
+
+      return {
+        mode,
+        path,
+        finalLevel,
+        coupons: totalCoupons,
+        principal,
+        totalReturn,
+        redemption: finalLevel >= state.protection ? 'Corridor actif' : 'Barrière testée',
+        copy:
+          mode === 'positif'
+            ? 'Hausse captée dans le corridor avec maintien du coupon indicatif.'
+            : mode === 'neutre'
+            ? 'Marché plus contenu, avec portage coupon et lecture twin win modérée.'
+            : 'Baisse plus sévère sous la borne basse, ce qui pénalise davantage la structure.'
+      };
+    }
+
+    function generateScenarios(coupon) {
+      return {
+        positif: computeScenarioOutcome('positif', coupon),
+        neutre: computeScenarioOutcome('neutre', coupon),
+        negatif: computeScenarioOutcome('negatif', coupon)
+      };
+    }
+
+    function buildLiveProductName() {
+      const asset = getAsset();
+      const maturityYear = 2026 + state.tenor;
+      if (state.payoff === 'autocall') {
+        return `Autocall ${asset.shortName} Strategy ${maturityYear}`;
+      }
+      return `Twin Win ${asset.shortName} Opportunity ${maturityYear}`;
+    }
+
+    function renderScenarioCards(scenarios) {
+      scenarioCards.innerHTML = ['positif', 'neutre', 'negatif'].map((key) => {
+        const item = scenarios[key];
+        const title = key === 'positif' ? 'Positif' : key === 'neutre' ? 'Neutre' : 'Négatif';
+        const isSelected = key === state.chartScenario;
+        const returnClass = getReturnClass(item.totalReturn);
+
+        return `
+          <div class="scenario-card ${isSelected ? 'is-selected' : ''}">
+            <div class="scenario-head">
+              <h3>${title}</h3>
+              <span class="scenario-tag">${item.redemption}</span>
+            </div>
+
+            <div class="scenario-list">
+              <div class="scenario-row">
+                <div class="scenario-label">Niveau final simulé</div>
+                <div class="scenario-value">${formatPercent(item.finalLevel, 0)} du strike</div>
+              </div>
+              <div class="scenario-row">
+                <div class="scenario-label">Coupons estimés</div>
+                <div class="scenario-value">${formatPercent(item.coupons, 1)}</div>
+              </div>
+              <div class="scenario-row">
+                <div class="scenario-label">Remboursement nominal</div>
+                <div class="scenario-value">${formatPercent(item.principal, 1)}</div>
+              </div>
+              <div class="scenario-row">
+                <div class="scenario-label">Retour total estimé</div>
+                <div class="scenario-value ${returnClass}">${formatPercent(item.totalReturn, 1)}</div>
+              </div>
+            </div>
+
+            <p class="scenario-copy">${item.copy}</p>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderLivePreview(couponData, scenarios) {
+      const asset = getAsset();
+      const payoff = PAYOFFS[state.payoff];
+      const risk = computeRiskScore();
+      const favorableZone = computeFavorableZoneProbability();
+
+      liveTitle.textContent = buildLiveProductName();
+      liveSubtitle.textContent =
+        state.payoff === 'autocall'
+          ? `Structure en cours de construction sur ${asset.name}, avec coupon conditionnel, dates d’observation ${OBS_LABELS[state.observation].toLowerCase()}s et possibilité de rappel anticipé.`
+          : `Structure twin win en cours de construction sur ${asset.name}, avec lecture corridor, borne basse à ${state.protection}% et borne haute à ${state.upsideCap}%.`;
+
+      couponDisplay.textContent = formatPercent(couponData.coupon, 1);
+      floatingCouponValue.textContent = formatPercent(couponData.coupon, 1);
+
+      couponCaption.textContent =
+        state.payoff === 'autocall'
+          ? 'Coupon indicatif per annum. Distribution conditionnelle selon les observations retenues.'
+          : 'Coupon indicatif per annum. Lecture défensive avec corridor twin win et borne haute paramétrable.';
+
+      riskValue.textContent = String(risk.risk);
+      riskLabel.textContent = risk.label;
+      riskRing.style.background = `conic-gradient(var(--accent) ${risk.risk * 3.6}deg, rgba(255,255,255,0.08) 0deg)`;
+
+      liveTags.innerHTML = `
+        <span class="tag">${getSector().label}</span>
+        <span class="tag">${asset.name}</span>
+        <span class="tag">${payoff.label}</span>
+        <span class="tag muted">Protection ${state.protection}%</span>
+        <span class="tag muted">${state.tenor} ${state.tenor > 1 ? 'ans' : 'an'}</span>
+      `;
+
+      summaryStructure.textContent =
+        state.payoff === 'autocall'
+          ? `${payoff.label} ${OBS_LABELS[state.observation].toLowerCase()}`
+          : `${payoff.label} corridor ${state.protection}% / ${state.upsideCap}%`;
+
+      summaryZone.textContent = `${favorableZone} %`;
+
+      summaryWatch.textContent =
+        state.payoff === 'autocall'
+          ? (state.memoryCoupon
+              ? 'Mémoire active mais coupon un peu comprimé'
+              : 'Coupon plus nerveux sans mémoire')
+          : (state.upsideCap >= 145
+              ? 'Borne haute généreuse, coupon un peu plus modeste'
+              : 'Corridor plus serré, coupon mieux soutenu');
+
+      summaryObservation.textContent =
+        state.payoff === 'autocall'
+          ? scenarios.neutre.redemption
+          : (scenarios.neutre.finalLevel >= state.protection ? 'Corridor tenu en central' : 'Barrière testée en central');
+
+      liveNarrative.innerHTML =
+        state.payoff === 'autocall'
+          ? `Le produit affiché est maintenant un <strong>autocall</strong> sur <strong>${asset.shortName}</strong>, avec une protection à <strong>${state.protection}%</strong>, une barrière de rappel à <strong>${state.recallBarrier}%</strong> et des observations <strong>${OBS_LABELS[state.observation].toLowerCase()}s</strong>. À mesure que vous ajustez ces paramètres, le coupon et le profil de remboursement se recalculent immédiatement.`
+          : `Le produit affiché est maintenant un <strong>twin win</strong> sur <strong>${asset.shortName}</strong>, avec une borne basse à <strong>${state.protection}%</strong> et une borne haute à <strong>${state.upsideCap}%</strong>. Le coupon et le corridor de performance se redessinent instantanément quand vous modifiez la structure.`;
+
+      const sortedDrivers = [...couponData.contributions].sort((a, b) => Math.abs(b.value) - Math.abs(a.value));
+      const topPositive = sortedDrivers.find(item => item.value > 0);
+      const topNegative = sortedDrivers.find(item => item.value < 0);
+
+      whyCouponBox.innerHTML = `
+        <strong>Pourquoi ce coupon ?</strong><br />
+        La structure ressort à <strong>${formatPercent(couponData.coupon, 1)} per annum</strong> grâce surtout à
+        <strong>${topPositive ? topPositive.label.toLowerCase() : 'la prime de structure'}</strong>
+        ${topPositive ? `(${formatPercent(topPositive.value, 1)})` : ''}.
+        ${topNegative ? `Le principal élément de compression vient de <strong>${topNegative.label.toLowerCase()}</strong> (${formatPercent(topNegative.value, 1)}).` : ''}
+      `;
+
+      scenarioHelperText.textContent =
+        `Le graphe principal suit actuellement le scénario ${state.chartScenario}. L’aperçu du produit, lui, reste visible en continu pendant tout le scroll.`;
+
+      pathChartNote.textContent =
+        state.payoff === 'autocall'
+          ? 'Historique illustratif, trajectoires projetées et lecture conjointe de la barrière de protection et de la barrière de rappel.'
+          : 'Historique illustratif, trajectoires projetées et lecture du corridor twin win entre borne basse et borne haute.';
+
+      payoffChartNote.textContent =
+        state.payoff === 'autocall'
+          ? 'Lecture simplifiée du rendement à maturité hors détail complet de rappel intermédiaire.'
+          : 'Lecture simplifiée du rendement à maturité avec coupon per annum et corridor twin win.';
+
+      methodWhy.innerHTML =
+        `<span class="text-label">Pourquoi ce coupon ?</span><br />
+        Le coupon sort ici à <strong>${formatPercent(couponData.coupon, 1)} per annum</strong> car le modèle combine la prime de volatilité du sous-jacent, la profondeur de protection demandée, le payoff choisi et le temps vendu à l’émetteur. ${
+          state.payoff === 'autocall'
+            ? 'La mémoire de coupon et la barrière de rappel ajustent ensuite le portage et la probabilité de rappel anticipé.'
+            : 'La borne haute twin win ajuste ensuite l’arbitrage entre coupon et upside potentiel.'
+        }`;
+
+      methodAssumptions.innerHTML =
+        `<span class="text-label">Hypothèses</span><br />
+        Le moteur reste volontairement simplifié : il ne s’agit ni d’un pricing officiel ni d’une documentation contractuelle. Les hypothèses combinent volatilité implicite stylisée, prime sectorielle, coût de protection, horizon de maturité et forme de payoff. Les résultats doivent être lus comme un ordre de grandeur de structuration, non comme une cotation ferme.`;
+
+      methodScenarios.innerHTML =
+        `<span class="text-label">Construction</span><br />
+        Les scénarios projetés reposent sur trois régimes : positif, neutre et négatif. Chacun combine pente de tendance, amplitude de volatilité et comportement de fin de vie pour illustrer le comportement potentiel du produit. Le graphe principal suit actuellement le scénario <strong>${state.chartScenario}</strong>.`;
+    }
+
+    function drawPathChart(canvasId, scenarios) {
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) return;
+
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width;
+      const h = canvas.height;
+      ctx.clearRect(0, 0, w, h);
+
+      const asset = getAsset();
+      const history = asset.historyLevels;
+      const historyLabels = asset.historyLabels;
+      const futurePos = scenarios.positif.path;
+      const futureNeu = scenarios.neutre.path;
+      const futureNeg = scenarios.negatif.path;
+
+      const allValues = [...history, ...futurePos, ...futureNeu, ...futureNeg, state.protection];
+      if (state.payoff === 'autocall') allValues.push(state.recallBarrier);
+      else allValues.push(state.upsideCap);
+
+      const minVal = Math.max(25, Math.floor(Math.min(...allValues) / 10) * 10 - 10);
+      const maxVal = Math.min(190, Math.ceil(Math.max(...allValues) / 10) * 10 + 10);
+      const range = maxVal - minVal;
+
+      const padding = { top: 34, right: 24, bottom: 68, left: 54 };
+      const chartW = w - padding.left - padding.right;
+      const chartH = h - padding.top - padding.bottom;
+
+      const totalPoints = history.length + futureNeu.length;
+      const getX = (index) => padding.left + (chartW / (totalPoints - 1)) * index;
+      const getY = (value) => padding.top + ((maxVal - value) / range) * chartH;
+
+      ctx.strokeStyle = 'rgba(255,255,255,0.10)';
+      ctx.lineWidth = 1;
+
+      for (let i = 0; i <= 5; i++) {
+        const y = padding.top + (chartH / 5) * i;
+        const value = maxVal - (range / 5) * i;
+
+        ctx.beginPath();
+        ctx.moveTo(padding.left, y);
+        ctx.lineTo(w - padding.right, y);
+        ctx.stroke();
+
+        ctx.fillStyle = 'rgba(156,176,210,0.95)';
+        ctx.font = '12px Inter, sans-serif';
+        ctx.fillText(`${Math.round(value)}%`, 8, y + 4);
+      }
+
+      function drawBarrier(level, color, label) {
+        const y = getY(level);
+        ctx.save();
+        ctx.setLineDash([6, 6]);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(padding.left, y);
+        ctx.lineTo(w - padding.right, y);
+        ctx.stroke();
+        ctx.restore();
+
+        ctx.fillStyle = color;
+        ctx.font = '12px Inter, sans-serif';
+        ctx.fillText(label, w - padding.right - 190, y - 8);
+      }
+
+      drawBarrier(state.protection, '#7df2b8', state.payoff === 'autocall' ? 'Barrière protection' : 'Borne basse');
+
+      if (state.payoff === 'autocall') {
+        drawBarrier(state.recallBarrier, '#ffca72', 'Barrière rappel');
+      } else {
+        drawBarrier(state.upsideCap, '#ffca72', 'Borne haute');
+      }
+
+      const splitX = getX(history.length - 1);
+
+      ctx.save();
+      ctx.setLineDash([4, 6]);
+      ctx.strokeStyle = 'rgba(255,255,255,0.18)';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(splitX, padding.top);
+      ctx.lineTo(splitX, h - padding.bottom);
+      ctx.stroke();
+      ctx.restore();
+
+      ctx.fillStyle = 'rgba(156,176,210,0.95)';
+      ctx.font = '12px Inter, sans-serif';
+      ctx.fillText('Aujourd’hui', splitX - 28, padding.top - 10);
+
+      function drawSeries(data, offset, stroke, alpha = 1, fill = false) {
+        ctx.beginPath();
+        data.forEach((value, index) => {
+          const x = getX(offset + index);
+          const y = getY(value);
+          if (index === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        });
+
+        ctx.strokeStyle = stroke;
+        ctx.globalAlpha = alpha;
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        if (fill) {
+          ctx.lineTo(getX(offset + data.length - 1), padding.top + chartH);
+          ctx.lineTo(getX(offset), padding.top + chartH);
+          ctx.closePath();
+          ctx.globalAlpha = 0.10;
+          ctx.fillStyle = stroke;
+          ctx.fill();
+        }
+
+        data.forEach((value, index) => {
+          const x = getX(offset + index);
+          const y = getY(value);
+          ctx.beginPath();
+          ctx.arc(x, y, alpha === 1 ? 3.6 : 2.8, 0, Math.PI * 2);
+          ctx.fillStyle = stroke;
+          ctx.globalAlpha = alpha;
+          ctx.fill();
+        });
+
+        ctx.globalAlpha = 1;
+      }
+
+      drawSeries(history, 0, '#7cc4ff', 1, false);
+
+      const futureOffset = history.length - 1;
+      const activeKey = state.chartScenario;
+      const seriesMap = {
+        positif: { data: [history[history.length - 1], ...futurePos], color: '#b8ef6f' },
+        neutre: { data: [history[history.length - 1], ...futureNeu], color: '#91a5ff' },
+        negatif: { data: [history[history.length - 1], ...futureNeg], color: '#ff8f8f' }
+      };
+
+      Object.entries(seriesMap).forEach(([key, item]) => {
+        drawSeries(item.data, futureOffset, item.color, key === activeKey ? 1 : 0.24, key === activeKey);
+      });
+
+      const futureTickLabels = [];
+      for (let i = 1; i <= futureNeu.length; i++) {
+        futureTickLabels.push(`M${i}`);
+      }
+
+      const labels = [...historyLabels, ...futureTickLabels];
+
+      labels.forEach((label, index) => {
+        if (index < historyLabels.length && index % 2 !== 0) return;
+        if (index >= historyLabels.length && (index - historyLabels.length) % 6 !== 0) return;
+
+        const x = getX(index);
+        ctx.fillStyle = 'rgba(156,176,210,0.95)';
+        ctx.font = '11px Inter, sans-serif';
+        ctx.fillText(label, x - 18, h - 22);
+      });
+
+      ctx.fillStyle = '#7cc4ff';
+      ctx.fillRect(padding.left, 14, 18, 3);
+      ctx.fillStyle = '#eef4ff';
+      ctx.font = '13px Inter, sans-serif';
+      ctx.fillText('Historique', padding.left + 24, 19);
+
+      ctx.fillStyle = '#b8ef6f';
+      ctx.fillRect(padding.left + 120, 14, 18, 3);
+      ctx.fillStyle = '#eef4ff';
+      ctx.fillText('Positif', padding.left + 144, 19);
+
+      ctx.fillStyle = '#91a5ff';
+      ctx.fillRect(padding.left + 220, 14, 18, 3);
+      ctx.fillStyle = '#eef4ff';
+      ctx.fillText('Neutre', padding.left + 244, 19);
+
+      ctx.fillStyle = '#ff8f8f';
+      ctx.fillRect(padding.left + 314, 14, 18, 3);
+      ctx.fillStyle = '#eef4ff';
+      ctx.fillText('Négatif', padding.left + 338, 19);
+    }
+
+    function computeMaturityReturn(finalLevel, coupon) {
+      if (state.payoff === 'autocall') {
+        const couponCarry = finalLevel >= state.protection ? coupon * state.tenor : 0;
+        const principal = finalLevel >= state.protection ? 100 : finalLevel;
+        return Number((couponCarry + principal - 100).toFixed(1));
+      }
+
+      const coupons = coupon * state.tenor;
+      const principal =
+        finalLevel >= state.protection
+          ? 100 + Math.min(Math.abs(finalLevel - 100), state.upsideCap - 100) * 0.55
+          : finalLevel;
+
+      return Number((coupons + principal - 100).toFixed(1));
+    }
+
+    function drawPayoffChart(canvasId, coupon) {
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) return;
+
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width;
+      const h = canvas.height;
+      ctx.clearRect(0, 0, w, h);
+
+      const xValues = [];
+      for (let x = 40; x <= 170; x += 2) xValues.push(x);
+      const yValues = xValues.map((x) => computeMaturityReturn(x, coupon));
+
+      const minVal = Math.min(-60, Math.floor(Math.min(...yValues) / 10) * 10);
+      const maxVal = Math.max(60, Math.ceil(Math.max(...yValues) / 10) * 10);
+      const range = maxVal - minVal;
+
+      const padding = { top: 34, right: 28, bottom: 66, left: 54 };
+      const chartW = w - padding.left - padding.right;
+      const chartH = h - padding.top - padding.bottom;
+
+      const getX = (value) => padding.left + ((value - 40) / (170 - 40)) * chartW;
+      const getY = (value) => padding.top + ((maxVal - value) / range) * chartH;
+
+      ctx.strokeStyle = 'rgba(255,255,255,0.10)';
+      ctx.lineWidth = 1;
+
+      for (let i = 0; i <= 5; i++) {
+        const y = padding.top + (chartH / 5) * i;
+        const value = maxVal - (range / 5) * i;
+
+        ctx.beginPath();
+        ctx.moveTo(padding.left, y);
+        ctx.lineTo(w - padding.right, y);
+        ctx.stroke();
+
+        ctx.fillStyle = 'rgba(156,176,210,0.95)';
+        ctx.font = '12px Inter, sans-serif';
+        ctx.fillText(`${Math.round(value)}%`, 8, y + 4);
+      }
+
+      [40, 60, 80, 100, 120, 140, 160].forEach((xVal) => {
+        const x = getX(xVal);
+        ctx.beginPath();
+        ctx.moveTo(x, padding.top);
+        ctx.lineTo(x, h - padding.bottom);
+        ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+        ctx.stroke();
+
+        ctx.fillStyle = 'rgba(156,176,210,0.95)';
+        ctx.font = '11px Inter, sans-serif';
+        ctx.fillText(`${xVal}%`, x - 12, h - 22);
+      });
+
+      if (minVal < 0 && maxVal > 0) {
+        const zeroY = getY(0);
+        ctx.save();
+        ctx.setLineDash([6, 5]);
+        ctx.strokeStyle = 'rgba(255,255,255,0.16)';
+        ctx.beginPath();
+        ctx.moveTo(padding.left, zeroY);
+        ctx.lineTo(w - padding.right, zeroY);
+        ctx.stroke();
+        ctx.restore();
+
+        ctx.fillStyle = 'rgba(156,176,210,0.95)';
+        ctx.font = '12px Inter, sans-serif';
+        ctx.fillText('Point mort', w - padding.right - 72, zeroY - 8);
+      }
+
+      function drawMarker(level, color, label) {
+        const x = getX(level);
+        ctx.save();
+        ctx.setLineDash([5, 5]);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(x, padding.top);
+        ctx.lineTo(x, h - padding.bottom);
+        ctx.stroke();
+        ctx.restore();
+
+        ctx.fillStyle = color;
+        ctx.font = '12px Inter, sans-serif';
+        ctx.fillText(label, x - 24, padding.top - 10);
+      }
+
+      drawMarker(state.protection, '#7df2b8', state.payoff === 'autocall' ? 'Protection' : 'Borne basse');
+
+      if (state.payoff === 'autocall') {
+        drawMarker(state.recallBarrier, '#ffca72', 'Rappel');
+      } else {
+        drawMarker(state.upsideCap, '#ffca72', 'Borne haute');
+      }
+
+      ctx.beginPath();
+      yValues.forEach((value, index) => {
+        const x = getX(xValues[index]);
+        const y = getY(value);
+        if (index === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+
+      const curveColor = state.payoff === 'autocall' ? '#7cc4ff' : '#b8ef6f';
+      ctx.strokeStyle = curveColor;
+      ctx.lineWidth = 3.2;
+      ctx.stroke();
+
+      ctx.lineTo(getX(xValues[xValues.length - 1]), padding.top + chartH);
+      ctx.lineTo(getX(xValues[0]), padding.top + chartH);
+      ctx.closePath();
+      ctx.globalAlpha = 0.10;
+      ctx.fillStyle = curveColor;
+      ctx.fill();
+      ctx.globalAlpha = 1;
+
+      ctx.fillStyle = curveColor;
+      ctx.fillRect(padding.left, 14, 18, 3);
+      ctx.fillStyle = '#eef4ff';
+      ctx.font = '13px Inter, sans-serif';
+      ctx.fillText(
+        state.payoff === 'autocall' ? 'Rendement indicatif à maturité' : 'Payoff twin win indicatif',
+        padding.left + 24,
+        19
+      );
+    }
+
+    function drawDriversChart(canvasId, contributions) {
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) return;
+
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width;
+      const h = canvas.height;
+      ctx.clearRect(0, 0, w, h);
+
+      const values = contributions.map(item => item.value);
+      const maxAbs = Math.max(2.2, ...values.map(value => Math.abs(value)));
+      const padding = { top: 28, right: 24, bottom: 84, left: 50 };
+      const chartW = w - padding.left - padding.right;
+      const chartH = h - padding.top - padding.bottom;
+      const zeroY = padding.top + chartH / 2;
+      const slotW = chartW / contributions.length;
+      const barW = Math.min(68, slotW * 0.55);
+
+      ctx.save();
+      ctx.setLineDash([6, 6]);
+      ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+      ctx.beginPath();
+      ctx.moveTo(padding.left, zeroY);
+      ctx.lineTo(w - padding.right, zeroY);
+      ctx.stroke();
+      ctx.restore();
+
+      ctx.fillStyle = 'rgba(156,176,210,0.95)';
+      ctx.font = '12px Inter, sans-serif';
+      ctx.fillText('Effet neutre', 8, zeroY + 4);
+
+      contributions.forEach((item, index) => {
+        const x = padding.left + slotW * index + slotW / 2;
+        const normalized = item.value / maxAbs;
+        const barHeight = Math.abs(normalized) * (chartH / 2 - 12);
+        const y = item.value >= 0 ? zeroY - barHeight : zeroY;
+        const color = item.value >= 0 ? '#7cc4ff' : '#ff8f8f';
+
+        ctx.fillStyle = color;
+        ctx.fillRect(x - barW / 2, y, barW, barHeight);
+
+        ctx.fillStyle = '#eef4ff';
+        ctx.font = '11px Inter, sans-serif';
+        ctx.fillText(formatPercent(item.value, 1), x - 18, item.value >= 0 ? y - 8 : y + barHeight + 16);
+
+        const wrapped = item.label.split(' ');
+        ctx.fillStyle = 'rgba(156,176,210,0.95)';
+        ctx.font = '11px Inter, sans-serif';
+
+        if (wrapped.length > 1) {
+          ctx.fillText(wrapped.slice(0, Math.ceil(wrapped.length / 2)).join(' '), x - 32, h - 34);
+          ctx.fillText(wrapped.slice(Math.ceil(wrapped.length / 2)).join(' '), x - 32, h - 18);
+        } else {
+          ctx.fillText(item.label, x - 24, h - 22);
+        }
+      });
+    }
+
+    function simulate() {
+      readInputs();
+      updateControlPresentation();
+      syncActiveStates();
+
+      const couponData = computeIndicativeCoupon();
+      const scenarios = generateScenarios(couponData.coupon);
+
+      renderLivePreview(couponData, scenarios);
+      renderScenarioCards(scenarios);
+      drawPathChart('pathChart', scenarios);
+      drawPayoffChart('payoffChart', couponData.coupon);
+      drawDriversChart('driversChart', couponData.contributions);
+    }
+
+    function setDefaults() {
+      state.sector = 'digital';
+      state.asset = 'btc_etf';
+      state.payoff = 'autocall';
+      state.tenor = 3;
+      state.protection = 70;
+      state.observation = 'quarterly';
+      state.aggressiveness = 3;
+      state.recallBarrier = 100;
+      state.upsideCap = 140;
+      state.memoryCoupon = true;
+      state.chartScenario = 'neutre';
+
+      tenorRange.value = String(state.tenor);
+      protectionRange.value = String(state.protection);
+      observationSelect.value = state.observation;
+      aggressivenessRange.value = String(state.aggressiveness);
+      dynamicRange.value = String(state.recallBarrier);
+      memoryToggle.checked = true;
+    }
+
+    sectorGrid.querySelectorAll('[data-sector]').forEach((button) => {
+      button.addEventListener('click', () => {
+        state.sector = button.dataset.sector;
+        state.asset = Object.keys(getSector().assets)[0];
+        renderAssets();
+        simulate();
+      });
+    });
+
+    payoffGrid.querySelectorAll('[data-payoff]').forEach((button) => {
+      button.addEventListener('click', () => {
+        state.payoff = button.dataset.payoff;
+
+        if (state.payoff === 'autocall') {
+          state.recallBarrier = 100;
+          dynamicRange.value = String(state.recallBarrier);
+        } else {
+          state.upsideCap = 140;
+          dynamicRange.value = String(state.upsideCap);
+        }
+
+        updateControlPresentation();
+        simulate();
+      });
+    });
+
+    scenarioButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        state.chartScenario = button.dataset.scenario;
+        syncActiveStates();
+        simulate();
+      });
+    });
+
+    tenorRange.addEventListener('input', simulate);
+    protectionRange.addEventListener('input', simulate);
+    observationSelect.addEventListener('change', simulate);
+    aggressivenessRange.addEventListener('input', simulate);
+    dynamicRange.addEventListener('input', simulate);
+    memoryToggle.addEventListener('change', simulate);
+
+    resetBtn.addEventListener('click', () => {
+      setDefaults();
+      renderAssets();
+      updateControlPresentation();
+      simulate();
+    });
+
+    simulateBtn.addEventListener('click', simulate);
+
+    profileMenuTrigger.addEventListener('click', (event) => {
+      event.stopPropagation();
+      toggleProfileDropdown();
+    });
+
+    logoutBtn.addEventListener('click', logout);
+
+    profileDropdownLinks.forEach((link) => {
+      link.addEventListener('click', () => {
+        closeProfileDropdown();
+        if (window.innerWidth <= 900) closeMenu();
+      });
+    });
+
+    menuLinks.forEach((link) => {
+      link.addEventListener('click', () => {
+        if (window.innerWidth <= 900) closeMenu();
+        closeProfileDropdown();
+      });
+    });
+
+    document.addEventListener('click', (event) => {
+      if (!profileMenu.hidden && !profileMenu.contains(event.target)) {
+        closeProfileDropdown();
+      }
+    });
+
+    renderAuthState();
+    renderAssets();
+    updateControlPresentation();
+    syncActiveStates();
+    updateScrollEffects();
+    simulate();
+
+    window.addEventListener('scroll', updateScrollEffects, { passive: true });
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 900) closeMenu();
+      closeProfileDropdown();
+      updateScrollEffects();
+      simulate();
+    });
+  </script>
+</body>
+</html>

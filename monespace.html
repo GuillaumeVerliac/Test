@@ -13,12 +13,17 @@
     :root {
       --bg: #07101d;
       --bg-soft: #0b1730;
+      --surface: rgba(255,255,255,0.06);
+      --surface-strong: rgba(255,255,255,0.10);
+      --border: rgba(255,255,255,0.11);
       --text: #eef4ff;
       --muted: #9cb0d2;
       --accent: #7cc4ff;
       --accent-2: #b8ef6f;
       --danger: #ff8f8f;
-      --container: 1240px;
+      --shadow: 0 24px 90px rgba(0,0,0,0.30);
+      --radius: 26px;
+      --container: 1180px;
       --ease: cubic-bezier(.22,.84,.24,1);
     }
 
@@ -35,8 +40,8 @@
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       color: var(--text);
       background:
-        radial-gradient(circle at 12% 12%, rgba(124,196,255,0.10), transparent 22%),
-        radial-gradient(circle at 88% 42%, rgba(184,239,111,0.06), transparent 20%),
+        radial-gradient(circle at 12% 12%, rgba(124,196,255,0.13), transparent 22%),
+        radial-gradient(circle at 88% 42%, rgba(184,239,111,0.08), transparent 20%),
         linear-gradient(180deg, #06101b 0%, #091424 36%, #0b1730 68%, #07101d 100%);
       line-height: 1.6;
       overflow-x: hidden;
@@ -47,7 +52,7 @@
       position: fixed;
       inset: 0;
       pointer-events: none;
-      opacity: 0.05;
+      opacity: 0.06;
       background-image:
         linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
         linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
@@ -82,18 +87,20 @@
       left: 0;
       width: 100%;
       height: 3px;
-      z-index: 120;
+      z-index: 100;
       transform-origin: left;
       transform: scaleX(0);
       background: linear-gradient(90deg, var(--accent), #88a8ff, var(--accent-2));
     }
+
+    /* HEADER REPRIS DU INDEX */
 
     .site-header {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
-      z-index: 100;
+      z-index: 50;
       backdrop-filter: blur(16px);
       background: rgba(6, 12, 22, 0.42);
       border-bottom: 1px solid rgba(255,255,255,0.05);
@@ -316,7 +323,7 @@
         opacity .25s ease,
         visibility .25s ease,
         transform .25s ease;
-      z-index: 130;
+      z-index: 60;
     }
 
     .profile-menu.is-open .profile-dropdown {
@@ -353,6 +360,8 @@
       color: #ffd3d3 !important;
     }
 
+    /* PAGE */
+
     .page-shell {
       padding: 126px 0 60px;
       min-height: 100vh;
@@ -379,6 +388,7 @@
       flex-direction: column;
       gap: 18px;
       align-items: center;
+      justify-content: center;
       text-align: center;
       color: var(--muted);
       font-size: 0.96rem;
@@ -721,6 +731,10 @@
         <div class="header-buttons">
           <a href="contact.html" class="btn btn-primary">Nous contacter</a>
 
+          <button type="button" class="btn btn-secondary" id="loginTrigger" hidden>
+            Se connecter
+          </button>
+
           <div class="profile-menu" id="profileMenu">
             <button
               type="button"
@@ -851,6 +865,7 @@
     const mobileMenu = document.getElementById('mobileMenu');
     const menuLinks = mobileMenu ? mobileMenu.querySelectorAll('a') : [];
 
+    const loginTrigger = document.getElementById('loginTrigger');
     const profileMenu = document.getElementById('profileMenu');
     const profileMenuTrigger = document.getElementById('profileMenuTrigger');
     const profileDropdown = document.getElementById('profileDropdown');
@@ -891,7 +906,18 @@
       header.classList.toggle('scrolled', scrollTop > 20);
     };
 
+    const isLoggedIn = () => {
+      return sessionStorage.getItem(AUTH_KEY) === 'true';
+    };
+
+    const renderAuthState = () => {
+      const loggedIn = isLoggedIn();
+      loginTrigger.hidden = loggedIn;
+      profileMenu.hidden = !loggedIn;
+    };
+
     const openProfileDropdown = () => {
+      if (profileMenu.hidden) return;
       profileMenu.classList.add('is-open');
       profileMenuTrigger.setAttribute('aria-expanded', 'true');
     };
@@ -912,6 +938,7 @@
     const logout = () => {
       sessionStorage.removeItem(AUTH_KEY);
       closeProfileDropdown();
+      renderAuthState();
       window.location.href = 'index.html';
     };
 
@@ -941,11 +968,12 @@
     });
 
     document.addEventListener('click', (event) => {
-      if (!profileMenu.contains(event.target)) {
+      if (!profileMenu.hidden && !profileMenu.contains(event.target)) {
         closeProfileDropdown();
       }
     });
 
+    renderAuthState();
     updateScrollEffects();
 
     window.addEventListener('scroll', updateScrollEffects, { passive: true });

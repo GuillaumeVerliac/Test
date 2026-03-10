@@ -255,6 +255,12 @@
       transform: translateY(-2px);
     }
 
+    .btn:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+    }
+
     .btn-primary {
       background: linear-gradient(135deg, var(--accent), #91a5ff);
       color: #06101b;
@@ -847,6 +853,14 @@
 
     .newsletter-actions .btn {
       min-width: 260px;
+    }
+
+    #newsletterMessage.success {
+      color: #b8ef6f;
+    }
+
+    #newsletterMessage.error {
+      color: #ff8f8f;
     }
 
     .site-footer {
@@ -1669,7 +1683,7 @@
               Une lecture claire, structurée et directement exploitable des dynamiques de marché.
             </p>
 
-            <form class="newsletter-form">
+            <form class="newsletter-form" id="newsletterForm" novalidate>
               <div class="field">
                 <label for="firstname">Prénom *</label>
                 <input id="firstname" name="firstname" type="text" placeholder="Votre prénom" required />
@@ -1691,8 +1705,10 @@
               </div>
 
               <div class="newsletter-actions">
-                <button type="submit" class="btn btn-primary">S’inscrire à la newsletter</button>
-                <p class="footer-note">
+                <button type="submit" class="btn btn-primary" id="newsletterSubmitBtn">
+                  S’inscrire à la newsletter
+                </button>
+                <p class="footer-note" id="newsletterMessage" aria-live="polite">
                   En vous inscrivant, vous recevez chaque semaine notre lecture des marchés
                   et des opportunités de structuration.
                 </p>
@@ -1727,13 +1743,17 @@
     const mobileMenu = document.getElementById('mobileMenu');
     const menuLinks = mobileMenu ? mobileMenu.querySelectorAll('a') : [];
 
+    const newsletterForm = document.getElementById('newsletterForm');
+    const newsletterMessage = document.getElementById('newsletterMessage');
+    const newsletterSubmitBtn = document.getElementById('newsletterSubmitBtn');
+
     const disclaimerOverlay = document.getElementById('proDisclaimer');
-    const disclaimerBox = disclaimerOverlay.querySelector('.disclaimer-box');
+    const disclaimerBox = disclaimerOverlay ? disclaimerOverlay.querySelector('.disclaimer-box') : null;
     const acceptDisclaimerBtn = document.getElementById('acceptDisclaimer');
     const declineDisclaimerBtn = document.getElementById('declineDisclaimer');
 
     const loginOverlay = document.getElementById('loginOverlay');
-    const loginBox = loginOverlay.querySelector('.login-box');
+    const loginBox = loginOverlay ? loginOverlay.querySelector('.login-box') : null;
     const loginTrigger = document.getElementById('loginTrigger');
     const closeLoginModalBtn = document.getElementById('closeLoginModal');
     const loginForm = document.getElementById('loginForm');
@@ -1744,7 +1764,7 @@
     const profileMenu = document.getElementById('profileMenu');
     const profileMenuTrigger = document.getElementById('profileMenuTrigger');
     const profileDropdown = document.getElementById('profileDropdown');
-    const profileDropdownLinks = profileDropdown.querySelectorAll('a');
+    const profileDropdownLinks = profileDropdown ? profileDropdown.querySelectorAll('a') : [];
     const logoutBtn = document.getElementById('logoutBtn');
 
     const DISCLAIMER_KEY = 'priam_professional_investor_verified';
@@ -1764,12 +1784,14 @@
     revealEls.forEach((el) => observer.observe(el));
 
     const closeMenu = () => {
+      if (!header || !navToggle) return;
       header.classList.remove('menu-open');
       navToggle.classList.remove('is-open');
       navToggle.setAttribute('aria-expanded', 'false');
     };
 
     const openMenu = () => {
+      if (!header || !navToggle) return;
       header.classList.add('menu-open');
       navToggle.classList.add('is-open');
       navToggle.setAttribute('aria-expanded', 'true');
@@ -1791,8 +1813,13 @@
       const docHeight = document.documentElement.scrollHeight - window.innerHeight;
       const ratio = docHeight > 0 ? scrollTop / docHeight : 0;
 
-      progress.style.transform = `scaleX(${ratio})`;
-      header.classList.toggle('scrolled', scrollTop > 20);
+      if (progress) {
+        progress.style.transform = `scaleX(${ratio})`;
+      }
+
+      if (header) {
+        header.classList.toggle('scrolled', scrollTop > 20);
+      }
 
       parallaxEls.forEach((el) => {
         const speed = parseFloat(el.dataset.speed || '0.06');
@@ -1804,21 +1831,24 @@
     };
 
     const updateBodyLock = () => {
-      const disclaimerVisible = disclaimerOverlay.classList.contains('is-visible');
-      const loginVisible = loginOverlay.classList.contains('is-visible');
-      document.body.classList.toggle('disclaimer-locked', disclaimerVisible || loginVisible);
+      const disclaimerVisible = disclaimerOverlay && disclaimerOverlay.classList.contains('is-visible');
+      const loginVisible = loginOverlay && loginOverlay.classList.contains('is-visible');
+      document.body.classList.toggle('disclaimer-locked', Boolean(disclaimerVisible || loginVisible));
     };
 
     const showDisclaimer = () => {
+      if (!disclaimerOverlay || !disclaimerBox) return;
       disclaimerOverlay.classList.add('is-visible');
       disclaimerOverlay.setAttribute('aria-hidden', 'false');
       updateBodyLock();
+
       setTimeout(() => {
         disclaimerBox.focus();
       }, 50);
     };
 
     const hideDisclaimer = () => {
+      if (!disclaimerOverlay) return;
       disclaimerOverlay.classList.remove('is-visible');
       disclaimerOverlay.setAttribute('aria-hidden', 'true');
       updateBodyLock();
@@ -1861,11 +1891,14 @@
     };
 
     const setLoginError = (message = '') => {
-      loginError.textContent = message;
+      if (loginError) {
+        loginError.textContent = message;
+      }
     };
 
     const openLoginModal = () => {
-      if (disclaimerOverlay.classList.contains('is-visible')) return;
+      if (!loginOverlay || !loginUsername) return;
+      if (disclaimerOverlay && disclaimerOverlay.classList.contains('is-visible')) return;
 
       setLoginError('');
       loginOverlay.classList.add('is-visible');
@@ -1879,23 +1912,26 @@
     };
 
     const closeLoginModal = () => {
+      if (!loginOverlay) return;
       loginOverlay.classList.remove('is-visible');
       loginOverlay.setAttribute('aria-hidden', 'true');
       updateBodyLock();
     };
 
     const openProfileDropdown = () => {
-      if (profileMenu.hidden) return;
+      if (!profileMenu || !profileMenuTrigger || profileMenu.hidden) return;
       profileMenu.classList.add('is-open');
       profileMenuTrigger.setAttribute('aria-expanded', 'true');
     };
 
     const closeProfileDropdown = () => {
+      if (!profileMenu || !profileMenuTrigger) return;
       profileMenu.classList.remove('is-open');
       profileMenuTrigger.setAttribute('aria-expanded', 'false');
     };
 
     const toggleProfileDropdown = () => {
+      if (!profileMenu) return;
       if (profileMenu.classList.contains('is-open')) {
         closeProfileDropdown();
       } else {
@@ -1906,8 +1942,13 @@
     const renderAuthState = () => {
       const loggedIn = isLoggedIn();
 
-      loginTrigger.hidden = loggedIn;
-      profileMenu.hidden = !loggedIn;
+      if (loginTrigger) {
+        loginTrigger.hidden = loggedIn;
+      }
+
+      if (profileMenu) {
+        profileMenu.hidden = !loggedIn;
+      }
 
       if (!loggedIn) {
         closeProfileDropdown();
@@ -1917,8 +1958,8 @@
     const handleLoginSubmit = (event) => {
       event.preventDefault();
 
-      const username = loginUsername.value.trim();
-      const password = loginPassword.value;
+      const username = loginUsername ? loginUsername.value.trim() : '';
+      const password = loginPassword ? loginPassword.value : '';
 
       if (username === VALID_USERNAME && password === VALID_PASSWORD) {
         sessionStorage.setItem(AUTH_KEY, 'true');
@@ -1930,8 +1971,11 @@
       }
 
       setLoginError('Mauvais identifiant ou mot de passe.');
-      loginPassword.value = '';
-      loginPassword.focus();
+
+      if (loginPassword) {
+        loginPassword.value = '';
+        loginPassword.focus();
+      }
     };
 
     const logout = () => {
@@ -1942,6 +1986,8 @@
     };
 
     const trapFocus = (event, scopeElement) => {
+      if (!scopeElement) return;
+
       const focusableElements = scopeElement.querySelectorAll(
         'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
       );
@@ -1964,24 +2010,120 @@
       }
     };
 
-    acceptDisclaimerBtn.addEventListener('click', grantAccess);
-    declineDisclaimerBtn.addEventListener('click', leaveSite);
+    const setNewsletterMessage = (message, type = '') => {
+      if (!newsletterMessage) return;
 
-    loginTrigger.addEventListener('click', openLoginModal);
-    closeLoginModalBtn.addEventListener('click', closeLoginModal);
-    loginForm.addEventListener('submit', handleLoginSubmit);
-    logoutBtn.addEventListener('click', logout);
+      newsletterMessage.textContent = message;
+      newsletterMessage.classList.remove('success', 'error');
 
-    loginOverlay.addEventListener('click', (event) => {
-      if (event.target === loginOverlay) {
-        closeLoginModal();
+      if (type) {
+        newsletterMessage.classList.add(type);
       }
-    });
+    };
 
-    profileMenuTrigger.addEventListener('click', (event) => {
-      event.stopPropagation();
-      toggleProfileDropdown();
-    });
+    const handleNewsletterSubmit = async (event) => {
+      event.preventDefault();
+
+      const firstnameInput = document.getElementById('firstname');
+      const lastnameInput = document.getElementById('lastname');
+      const companyInput = document.getElementById('company');
+      const emailInput = document.getElementById('email');
+
+      const firstname = firstnameInput ? firstnameInput.value.trim() : '';
+      const lastname = lastnameInput ? lastnameInput.value.trim() : '';
+      const company = companyInput ? companyInput.value.trim() : '';
+      const email = emailInput ? emailInput.value.trim() : '';
+
+      if (!firstname || !lastname || !email) {
+        setNewsletterMessage('Merci de renseigner le prénom, le nom et l’e-mail.', 'error');
+        return;
+      }
+
+      if (newsletterSubmitBtn) {
+        newsletterSubmitBtn.disabled = true;
+      }
+
+      setNewsletterMessage('Envoi en cours...');
+
+      try {
+        const response = await fetch('/api/newsletter', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            firstname,
+            lastname,
+            company,
+            email
+          })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.message || 'Une erreur est survenue.');
+        }
+
+        setNewsletterMessage('Inscription envoyée avec succès.', 'success');
+
+        if (newsletterForm) {
+          newsletterForm.reset();
+        }
+      } catch (error) {
+        setNewsletterMessage(
+          error.message || 'Impossible d’envoyer la demande pour le moment.',
+          'error'
+        );
+      } finally {
+        if (newsletterSubmitBtn) {
+          newsletterSubmitBtn.disabled = false;
+        }
+      }
+    };
+
+    if (acceptDisclaimerBtn) {
+      acceptDisclaimerBtn.addEventListener('click', grantAccess);
+    }
+
+    if (declineDisclaimerBtn) {
+      declineDisclaimerBtn.addEventListener('click', leaveSite);
+    }
+
+    if (loginTrigger) {
+      loginTrigger.addEventListener('click', openLoginModal);
+    }
+
+    if (closeLoginModalBtn) {
+      closeLoginModalBtn.addEventListener('click', closeLoginModal);
+    }
+
+    if (loginForm) {
+      loginForm.addEventListener('submit', handleLoginSubmit);
+    }
+
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', logout);
+    }
+
+    if (newsletterForm) {
+      newsletterForm.addEventListener('submit', handleNewsletterSubmit);
+    }
+
+    if (loginOverlay) {
+      loginOverlay.addEventListener('click', (event) => {
+        if (event.target === loginOverlay) {
+          closeLoginModal();
+        }
+      });
+    }
+
+    if (profileMenuTrigger) {
+      profileMenuTrigger.addEventListener('click', (event) => {
+        event.stopPropagation();
+        toggleProfileDropdown();
+      });
+    }
 
     profileDropdownLinks.forEach((link) => {
       link.addEventListener('click', () => {
@@ -2002,13 +2144,13 @@
     });
 
     document.addEventListener('click', (event) => {
-      if (!profileMenu.hidden && !profileMenu.contains(event.target)) {
+      if (profileMenu && !profileMenu.hidden && !profileMenu.contains(event.target)) {
         closeProfileDropdown();
       }
     });
 
     window.addEventListener('keydown', (event) => {
-      if (disclaimerOverlay.classList.contains('is-visible')) {
+      if (disclaimerOverlay && disclaimerOverlay.classList.contains('is-visible')) {
         if (event.key === 'Escape') {
           event.preventDefault();
         }
@@ -2020,7 +2162,7 @@
         return;
       }
 
-      if (loginOverlay.classList.contains('is-visible')) {
+      if (loginOverlay && loginOverlay.classList.contains('is-visible')) {
         if (event.key === 'Escape') {
           event.preventDefault();
           closeLoginModal();

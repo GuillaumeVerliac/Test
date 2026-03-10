@@ -93,8 +93,6 @@
       background: linear-gradient(90deg, var(--accent), #88a8ff, var(--accent-2));
     }
 
-    /* HEADER REPRIS DU INDEX */
-
     .site-header {
       position: fixed;
       top: 0;
@@ -360,8 +358,6 @@
       color: #ffd3d3 !important;
     }
 
-    /* PAGE */
-
     .page-shell {
       padding: 126px 0 60px;
       min-height: 100vh;
@@ -495,48 +491,6 @@
       font-size: 1.02rem;
       font-weight: 600;
       line-height: 1.55;
-    }
-
-    .site-footer {
-      position: relative;
-      z-index: 1;
-      padding: 36px 0 42px;
-      border-top: 1px solid rgba(255,255,255,0.08);
-      background: rgba(4, 10, 18, 0.72);
-      backdrop-filter: blur(14px);
-    }
-
-    .footer-content {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 14px;
-      text-align: center;
-    }
-
-    .footer-company {
-      font-size: 1rem;
-      font-weight: 700;
-      color: #ffffff;
-      line-height: 1.5;
-    }
-
-    .footer-address,
-    .footer-copy,
-    .footer-disclaimer {
-      margin: 0;
-      color: var(--muted);
-    }
-
-    .footer-copy {
-      font-size: 0.95rem;
-    }
-
-    .footer-disclaimer {
-      max-width: 90ch;
-      font-size: 0.92rem;
-      line-height: 1.7;
     }
 
     @media (max-width: 1024px) {
@@ -683,17 +637,6 @@
 
       h1 {
         font-size: clamp(2rem, 8vw, 3rem);
-      }
-
-      .site-footer {
-        padding: 28px 0 34px;
-      }
-
-      .footer-company,
-      .footer-address,
-      .footer-copy,
-      .footer-disclaimer {
-        font-size: 0.95rem;
       }
     }
   </style>
@@ -843,20 +786,6 @@
       </section>
     </div>
   </main>
-
-  <footer class="site-footer">
-    <div class="container footer-content">
-      <div class="footer-company">Priam Solutions</div>
-      <p class="footer-address">4 rue Hérold, 75001 Paris</p>
-      <p class="footer-copy">
-        © 2025 Priam Solutions — Plateforme indépendante dédiée aux produits structurés sur crypto-actifs
-      </p>
-      <p class="footer-disclaimer">
-        Toutes les informations fournies sur cette plateforme le sont à titre informatif
-        et ne constituent en aucun cas une recommandation financière, juridique ou fiscale.
-      </p>
-    </div>
-  </footer>
 
   <script>
     const progress = document.querySelector('.progress');

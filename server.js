@@ -45,26 +45,12 @@ app.post('/api/newsletter', async (req, res) => {
       `E-mail : ${cleanEmail}`
     ].join('\n');
 
-    const html = `
-      <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #111;">
-        <h2>Nouvelle demande d'inscription à la newsletter</h2>
-        <p><strong>${escapeHtml(cleanFirstname)} ${escapeHtml(cleanLastname)}</strong> souhaite s'inscrire à la newsletter.</p>
-        <ul>
-          <li><strong>Prénom :</strong> ${escapeHtml(cleanFirstname)}</li>
-          <li><strong>Nom :</strong> ${escapeHtml(cleanLastname)}</li>
-          <li><strong>Entreprise :</strong> ${escapeHtml(cleanCompany || 'Non renseignée')}</li>
-          <li><strong>E-mail :</strong> ${escapeHtml(cleanEmail)}</li>
-        </ul>
-      </div>
-    `;
-
     await transporter.sendMail({
       from: `"Site Priam Solutions" <${process.env.OVH_SMTP_USER}>`,
       to: process.env.NEWSLETTER_TO_EMAIL,
       replyTo: cleanEmail,
       subject,
-      text,
-      html
+      text
     });
 
     return res.status(200).json({
@@ -78,15 +64,10 @@ app.post('/api/newsletter', async (req, res) => {
   }
 });
 
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
+
 app.listen(PORT, () => {
   console.log(`Serveur lancé sur http://localhost:${PORT}`);
 });
-
-function escapeHtml(value) {
-  return String(value)
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;')
-    .replaceAll("'", '&#039;');
-}

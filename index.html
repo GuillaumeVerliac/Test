@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Priam Solutions — Structuration sur actifs volatils</title>
+  <title>Priam Solutions - Produits Structurés sur crypto-actifs</title>
   <meta
     name="description"
     content="Priam Solutions conçoit des solutions structurées sur crypto-actifs, intelligence artificielle, technologie et autres thématiques de croissance pour investisseurs professionnels."
@@ -585,7 +585,8 @@
 
     .solution-panel strong,
     .solution-quote strong,
-    .newsletter-copy strong {
+    .newsletter-copy strong,
+    .disclaimer-text strong {
       font-weight: 700;
       color: #ffffff;
     }
@@ -809,7 +810,7 @@
       align-items: center;
       justify-content: center;
       padding: 32px;
-      background: rgba(3, 7, 14, 0.78);
+      background: rgba(3, 7, 14, 0.80);
       backdrop-filter: blur(14px);
       opacity: 0;
       visibility: hidden;
@@ -824,8 +825,8 @@
     }
 
     .disclaimer-box {
-      width: min(100%, 1200px);
-      padding: 48px 56px;
+      width: min(100%, 1220px);
+      padding: 54px 64px;
       border-radius: 30px;
       border: 1px solid rgba(255,255,255,0.10);
       background:
@@ -843,22 +844,18 @@
 
     .disclaimer-title {
       margin: 0;
-      font-size: clamp(2rem, 4vw, 3.4rem);
+      max-width: none;
+      font-size: clamp(2rem, 4vw, 3.35rem);
       line-height: 1.05;
       letter-spacing: -0.05em;
-      max-width: none;
     }
 
     .disclaimer-text {
-      margin: 22px auto 0;
+      margin: 24px auto 0;
       max-width: 980px;
       color: #dce8fc;
       font-size: 1.08rem;
       line-height: 1.9;
-    }
-
-    .disclaimer-text strong {
-      color: #ffffff;
     }
 
     .disclaimer-actions {
@@ -867,7 +864,7 @@
       align-items: center;
       gap: 16px;
       flex-wrap: wrap;
-      margin-top: 30px;
+      margin-top: 32px;
     }
 
     .disclaimer-actions .btn {
@@ -1093,7 +1090,7 @@
       }
 
       .disclaimer-box {
-        padding: 28px 22px;
+        padding: 30px 22px;
       }
 
       .disclaimer-text {
@@ -1137,27 +1134,28 @@
       aria-describedby="disclaimerText"
       tabindex="-1"
     >
-<h2 class="disclaimer-title" id="disclaimerTitle">
-  Accès réservé aux investisseurs qualifiés
-</h2>
+      <h2 class="disclaimer-title" id="disclaimerTitle">
+        Accès réservé aux investisseurs qualifiés
+      </h2>
 
-<p class="disclaimer-text" id="disclaimerText">
-  Les informations présentées sur ce site sont exclusivement destinées à une clientèle
-  professionnelle et ne s’adressent pas au public. En accédant à ce site, vous reconnaissez
-  agir en tant qu’<strong>investisseur qualifié</strong> au sens des dispositions applicables,
-  notamment en qualité de <strong>family office</strong>, <strong>société de gestion</strong>,
-  <strong>banque privée</strong>, <strong>investisseur institutionnel</strong>
-  ou <strong>CGPI</strong>.
-</p>
+      <p class="disclaimer-text" id="disclaimerText">
+        Ce site est exclusivement destiné à des <strong>investisseurs qualifiés</strong>
+        agissant dans un cadre professionnel. En poursuivant votre navigation,
+        vous reconnaissez accéder à ce contenu en cette qualité, notamment en tant que
+        <strong>family office</strong>, <strong>société de gestion</strong>,
+        <strong>banque privée</strong>, <strong>CGPI</strong> ou
+        <strong>investisseur institutionnel</strong>, conformément aux dispositions
+        applicables du Code monétaire et financier.
+      </p>
 
-<div class="disclaimer-actions">
-  <button type="button" class="btn btn-primary" id="acceptDisclaimer">
-    Je suis un professionnel
-  </button>
-  <button type="button" class="btn disclaimer-secondary" id="declineDisclaimer">
-    Je ne suis pas un professionnel
-  </button>
-</div>
+      <div class="disclaimer-actions">
+        <button type="button" class="btn btn-primary" id="acceptDisclaimer">
+          Je suis un professionnel
+        </button>
+        <button type="button" class="btn disclaimer-secondary" id="declineDisclaimer">
+          Je ne suis pas un professionnel
+        </button>
+      </div>
     </div>
   </div>
 
@@ -1488,7 +1486,9 @@
       disclaimerOverlay.classList.add('is-visible');
       disclaimerOverlay.setAttribute('aria-hidden', 'false');
       lockPage();
-      setTimeout(() => disclaimerBox.focus(), 50);
+      setTimeout(() => {
+        disclaimerBox.focus();
+      }, 50);
     };
 
     const hideDisclaimer = () => {
@@ -1498,11 +1498,11 @@
     };
 
     const userAlreadyVerified = () => {
-      return localStorage.getItem(DISCLAIMER_KEY) === 'true';
+      return sessionStorage.getItem(DISCLAIMER_KEY) === 'true';
     };
 
     const grantAccess = () => {
-      localStorage.setItem(DISCLAIMER_KEY, 'true');
+      sessionStorage.setItem(DISCLAIMER_KEY, 'true');
       hideDisclaimer();
     };
 

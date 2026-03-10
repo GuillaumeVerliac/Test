@@ -20,6 +20,7 @@
       --muted: #9cb0d2;
       --accent: #7cc4ff;
       --accent-2: #b8ef6f;
+      --danger: #ff8f8f;
       --shadow: 0 24px 90px rgba(0,0,0,0.30);
       --radius: 26px;
       --container: 1180px;
@@ -71,6 +72,10 @@
 
     button {
       font: inherit;
+    }
+
+    [hidden] {
+      display: none !important;
     }
 
     .container {
@@ -265,6 +270,85 @@
     .btn-secondary:hover {
       border-color: rgba(124,196,255,0.32);
       background: rgba(255,255,255,0.07);
+    }
+
+    .profile-menu {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .profile-avatar-btn {
+      width: 48px;
+      height: 48px;
+      min-width: 48px;
+      border: 1px solid rgba(124,196,255,0.30);
+      border-radius: 999px;
+      background: linear-gradient(135deg, rgba(124,196,255,0.20), rgba(145,165,255,0.20));
+      color: #ffffff;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 14px 34px rgba(124,196,255,0.18);
+      transition:
+        transform .3s var(--ease),
+        border-color .3s ease,
+        background .3s ease,
+        box-shadow .3s ease;
+    }
+
+    .profile-avatar-btn:hover {
+      transform: translateY(-2px);
+      border-color: rgba(124,196,255,0.48);
+      background: linear-gradient(135deg, rgba(124,196,255,0.28), rgba(145,165,255,0.28));
+    }
+
+    .profile-dropdown {
+      position: absolute;
+      top: calc(100% + 12px);
+      right: 0;
+      min-width: 240px;
+      padding: 10px;
+      border-radius: 20px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04)),
+        rgba(7,16,29,0.96);
+      border: 1px solid rgba(255,255,255,0.10);
+      box-shadow: 0 24px 80px rgba(0,0,0,0.34);
+      backdrop-filter: blur(14px);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transform: translateY(10px);
+      transition:
+        opacity .25s ease,
+        visibility .25s ease,
+        transform .25s ease;
+      z-index: 60;
+    }
+
+    .profile-menu.is-open .profile-dropdown {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    .profile-dropdown a {
+      display: block;
+      width: 100%;
+      padding: 11px 14px;
+      border-radius: 14px;
+      color: #e8f1ff;
+      transition: background .25s ease, color .25s ease;
+    }
+
+    .profile-dropdown a:hover {
+      background: rgba(255,255,255,0.07);
+      color: #ffffff;
     }
 
     .panel,
@@ -882,6 +966,111 @@
       border-color: rgba(255,255,255,0.22);
     }
 
+    /* Connexion */
+    .login-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 210;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: rgba(3, 7, 14, 0.78);
+      backdrop-filter: blur(14px);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity .30s ease, visibility .30s ease;
+    }
+
+    .login-overlay.is-visible {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    .login-box {
+      position: relative;
+      width: min(100%, 560px);
+      padding: 34px 30px 30px;
+      border-radius: 28px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04)),
+        rgba(7,16,29,0.96);
+      box-shadow: 0 28px 110px rgba(0,0,0,0.40);
+      transform: translateY(14px) scale(0.98);
+      transition: transform .30s var(--ease);
+    }
+
+    .login-overlay.is-visible .login-box {
+      transform: translateY(0) scale(1);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      width: 42px;
+      height: 42px;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.05);
+      color: #ffffff;
+      font-size: 1.4rem;
+      line-height: 1;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: background .25s ease, border-color .25s ease, transform .25s ease;
+    }
+
+    .modal-close:hover {
+      background: rgba(255,255,255,0.08);
+      border-color: rgba(124,196,255,0.30);
+      transform: scale(1.03);
+    }
+
+    .login-title {
+      margin: 0;
+      font-size: clamp(1.8rem, 3.2vw, 2.5rem);
+      line-height: 1.08;
+      letter-spacing: -0.04em;
+      max-width: none;
+    }
+
+    .login-text {
+      margin: 12px 0 0;
+      color: #dce8fc;
+      font-size: 1rem;
+      line-height: 1.75;
+    }
+
+    .login-form {
+      margin-top: 26px;
+      display: grid;
+      gap: 18px;
+    }
+
+    .login-error {
+      margin: -2px 0 0;
+      min-height: 1.5em;
+      color: var(--danger);
+      font-size: 0.95rem;
+      line-height: 1.45;
+    }
+
+    .login-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 4px;
+    }
+
+    .login-actions .btn {
+      min-width: 220px;
+    }
+
     @media (max-width: 1200px) {
       .solutions-title,
       .solutions-intro {
@@ -971,7 +1160,7 @@
       }
 
       .site-header.menu-open .nav-right {
-        max-height: 420px;
+        max-height: 560px;
         opacity: 1;
         pointer-events: auto;
         transform: translateY(0);
@@ -999,10 +1188,24 @@
         margin-left: 0;
         flex-direction: column;
         gap: 12px;
+        align-items: stretch;
       }
 
       .header-buttons .btn {
         width: 100%;
+      }
+
+      .profile-menu {
+        width: 100%;
+        justify-content: flex-end;
+      }
+
+      .profile-avatar-btn {
+        width: 48px;
+      }
+
+      .profile-dropdown {
+        width: min(100%, 280px);
       }
     }
 
@@ -1028,7 +1231,8 @@
 
       .btn,
       .solutions-cta .btn,
-      .disclaimer-actions .btn {
+      .disclaimer-actions .btn,
+      .login-actions .btn {
         width: 100%;
       }
 
@@ -1097,6 +1301,14 @@
         font-size: 0.98rem;
         line-height: 1.8;
       }
+
+      .login-box {
+        padding: 28px 20px 22px;
+      }
+
+      .profile-dropdown {
+        right: 0;
+      }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -1159,6 +1371,63 @@
     </div>
   </div>
 
+  <div class="login-overlay" id="loginOverlay" aria-hidden="true">
+    <div
+      class="login-box"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="loginTitle"
+      aria-describedby="loginText"
+      tabindex="-1"
+    >
+      <button
+        type="button"
+        class="modal-close"
+        id="closeLoginModal"
+        aria-label="Fermer la fenêtre de connexion"
+      >
+        ×
+      </button>
+
+      <h2 class="login-title" id="loginTitle">Connexion</h2>
+      <p class="login-text" id="loginText">
+        Renseignez votre identifiant et votre mot de passe pour accéder à votre espace.
+      </p>
+
+      <form class="login-form" id="loginForm" novalidate>
+        <div class="field field-full">
+          <label for="loginUsername">Identifiant</label>
+          <input
+            id="loginUsername"
+            name="username"
+            type="text"
+            placeholder="Votre identifiant"
+            autocomplete="username"
+            required
+          />
+        </div>
+
+        <div class="field field-full">
+          <label for="loginPassword">Mot de passe</label>
+          <input
+            id="loginPassword"
+            name="password"
+            type="password"
+            placeholder="Votre mot de passe"
+            autocomplete="current-password"
+            required
+          />
+        </div>
+
+        <p class="login-error" id="loginError" aria-live="polite"></p>
+
+        <div class="login-actions">
+          <button type="submit" class="btn btn-primary">Se connecter</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <header class="site-header" id="header">
     <div class="container nav">
       <a href="index.html" class="brand">
@@ -1188,7 +1457,31 @@
 
         <div class="header-buttons">
           <a href="contact.html" class="btn btn-primary">Nous contacter</a>
-          <a href="#" class="btn btn-secondary" onclick="return false;">Se connecter</a>
+
+          <button type="button" class="btn btn-secondary" id="loginTrigger">
+            Se connecter
+          </button>
+
+          <div class="profile-menu" id="profileMenu" hidden>
+            <button
+              type="button"
+              class="profile-avatar-btn"
+              id="profileMenuTrigger"
+              aria-label="Ouvrir le menu utilisateur"
+              aria-haspopup="true"
+              aria-expanded="false"
+              aria-controls="profileDropdown"
+            >
+              UT
+            </button>
+
+            <div class="profile-dropdown panel" id="profileDropdown" role="menu" aria-label="Menu utilisateur">
+              <a href="monespace.html" role="menuitem">Mon Espace</a>
+              <a href="marecherche.html" role="menuitem">Ma recherche</a>
+              <a href="mesproduits.html" role="menuitem">Mes produits</a>
+              <a href="messimulations.html" role="menuitem">Mes Simulations</a>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -1414,7 +1707,25 @@
     const acceptDisclaimerBtn = document.getElementById('acceptDisclaimer');
     const declineDisclaimerBtn = document.getElementById('declineDisclaimer');
 
+    const loginOverlay = document.getElementById('loginOverlay');
+    const loginBox = loginOverlay.querySelector('.login-box');
+    const loginTrigger = document.getElementById('loginTrigger');
+    const closeLoginModalBtn = document.getElementById('closeLoginModal');
+    const loginForm = document.getElementById('loginForm');
+    const loginUsername = document.getElementById('loginUsername');
+    const loginPassword = document.getElementById('loginPassword');
+    const loginError = document.getElementById('loginError');
+
+    const profileMenu = document.getElementById('profileMenu');
+    const profileMenuTrigger = document.getElementById('profileMenuTrigger');
+    const profileDropdown = document.getElementById('profileDropdown');
+    const profileDropdownLinks = profileDropdown.querySelectorAll('a');
+
     const DISCLAIMER_KEY = 'priam_professional_investor_verified';
+    const AUTH_KEY = 'priam_demo_user_authenticated';
+
+    const VALID_USERNAME = 'UtilisateurTest';
+    const VALID_PASSWORD = 'Test01';
 
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
@@ -1454,6 +1765,7 @@
         if (window.innerWidth <= 900) {
           closeMenu();
         }
+        closeProfileDropdown();
       });
     });
 
@@ -1474,18 +1786,16 @@
       });
     };
 
-    const lockPage = () => {
-      document.body.classList.add('disclaimer-locked');
-    };
-
-    const unlockPage = () => {
-      document.body.classList.remove('disclaimer-locked');
+    const updateBodyLock = () => {
+      const disclaimerVisible = disclaimerOverlay.classList.contains('is-visible');
+      const loginVisible = loginOverlay.classList.contains('is-visible');
+      document.body.classList.toggle('disclaimer-locked', disclaimerVisible || loginVisible);
     };
 
     const showDisclaimer = () => {
       disclaimerOverlay.classList.add('is-visible');
       disclaimerOverlay.setAttribute('aria-hidden', 'false');
-      lockPage();
+      updateBodyLock();
       setTimeout(() => {
         disclaimerBox.focus();
       }, 50);
@@ -1494,7 +1804,7 @@
     const hideDisclaimer = () => {
       disclaimerOverlay.classList.remove('is-visible');
       disclaimerOverlay.setAttribute('aria-hidden', 'true');
-      unlockPage();
+      updateBodyLock();
     };
 
     const userAlreadyVerified = () => {
@@ -1529,51 +1839,179 @@
       }
     };
 
+    const isLoggedIn = () => {
+      return sessionStorage.getItem(AUTH_KEY) === 'true';
+    };
+
+    const setLoginError = (message = '') => {
+      loginError.textContent = message;
+    };
+
+    const openLoginModal = () => {
+      if (disclaimerOverlay.classList.contains('is-visible')) return;
+
+      setLoginError('');
+      loginOverlay.classList.add('is-visible');
+      loginOverlay.setAttribute('aria-hidden', 'false');
+      closeProfileDropdown();
+      updateBodyLock();
+
+      setTimeout(() => {
+        loginUsername.focus();
+      }, 50);
+    };
+
+    const closeLoginModal = () => {
+      loginOverlay.classList.remove('is-visible');
+      loginOverlay.setAttribute('aria-hidden', 'true');
+      updateBodyLock();
+    };
+
+    const openProfileDropdown = () => {
+      if (profileMenu.hidden) return;
+      profileMenu.classList.add('is-open');
+      profileMenuTrigger.setAttribute('aria-expanded', 'true');
+    };
+
+    const closeProfileDropdown = () => {
+      profileMenu.classList.remove('is-open');
+      profileMenuTrigger.setAttribute('aria-expanded', 'false');
+    };
+
+    const toggleProfileDropdown = () => {
+      if (profileMenu.classList.contains('is-open')) {
+        closeProfileDropdown();
+      } else {
+        openProfileDropdown();
+      }
+    };
+
+    const renderAuthState = () => {
+      const loggedIn = isLoggedIn();
+
+      loginTrigger.hidden = loggedIn;
+      profileMenu.hidden = !loggedIn;
+
+      if (!loggedIn) {
+        closeProfileDropdown();
+      }
+    };
+
+    const handleLoginSubmit = (event) => {
+      event.preventDefault();
+
+      const username = loginUsername.value.trim();
+      const password = loginPassword.value;
+
+      if (username === VALID_USERNAME && password === VALID_PASSWORD) {
+        sessionStorage.setItem(AUTH_KEY, 'true');
+        setLoginError('');
+        renderAuthState();
+        closeLoginModal();
+        window.location.href = 'monespace.html';
+        return;
+      }
+
+      setLoginError('Mauvais identifiant ou mot de passe.');
+      loginPassword.value = '';
+      loginPassword.focus();
+    };
+
+    const trapFocus = (event, scopeElement) => {
+      const focusableElements = scopeElement.querySelectorAll(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+
+      const focusable = Array.from(focusableElements).filter(
+        (el) => !el.hasAttribute('disabled') && !el.getAttribute('aria-hidden')
+      );
+
+      if (!focusable.length) return;
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
     acceptDisclaimerBtn.addEventListener('click', grantAccess);
     declineDisclaimerBtn.addEventListener('click', leaveSite);
 
-    window.addEventListener('keydown', (event) => {
-      if (!disclaimerOverlay.classList.contains('is-visible')) return;
+    loginTrigger.addEventListener('click', openLoginModal);
+    closeLoginModalBtn.addEventListener('click', closeLoginModal);
+    loginForm.addEventListener('submit', handleLoginSubmit);
 
-      if (event.key === 'Escape') {
-        event.preventDefault();
+    loginOverlay.addEventListener('click', (event) => {
+      if (event.target === loginOverlay) {
+        closeLoginModal();
+      }
+    });
+
+    profileMenuTrigger.addEventListener('click', (event) => {
+      event.stopPropagation();
+      toggleProfileDropdown();
+    });
+
+    profileDropdownLinks.forEach((link) => {
+      link.addEventListener('click', () => {
+        closeProfileDropdown();
+      });
+    });
+
+    document.addEventListener('click', (event) => {
+      if (!profileMenu.hidden && !profileMenu.contains(event.target)) {
+        closeProfileDropdown();
+      }
+    });
+
+    window.addEventListener('keydown', (event) => {
+      if (disclaimerOverlay.classList.contains('is-visible')) {
+        if (event.key === 'Escape') {
+          event.preventDefault();
+        }
+
+        if (event.key === 'Tab') {
+          trapFocus(event, disclaimerOverlay);
+        }
+
+        return;
       }
 
-      if (event.key === 'Tab') {
-        const focusableElements = disclaimerOverlay.querySelectorAll(
-          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-        );
-
-        const focusable = Array.from(focusableElements).filter(
-          (el) => !el.hasAttribute('disabled')
-        );
-
-        if (!focusable.length) return;
-
-        const first = focusable[0];
-        const last = focusable[focusable.length - 1];
-
-        if (event.shiftKey && document.activeElement === first) {
+      if (loginOverlay.classList.contains('is-visible')) {
+        if (event.key === 'Escape') {
           event.preventDefault();
-          last.focus();
-        } else if (!event.shiftKey && document.activeElement === last) {
-          event.preventDefault();
-          first.focus();
+          closeLoginModal();
+          return;
+        }
+
+        if (event.key === 'Tab') {
+          trapFocus(event, loginOverlay);
         }
       }
     });
 
     updateScrollEffects();
+    renderAuthState();
+
     window.addEventListener('scroll', updateScrollEffects, { passive: true });
 
     window.addEventListener('resize', () => {
       if (window.innerWidth > 900) {
         closeMenu();
       }
+      closeProfileDropdown();
       updateScrollEffects();
     });
 
     window.addEventListener('load', () => {
+      renderAuthState();
+
       if (!userAlreadyVerified()) {
         showDisclaimer();
       }

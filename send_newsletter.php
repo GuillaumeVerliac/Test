@@ -64,7 +64,7 @@ $company   = preg_replace("/[\r\n]+/", ' ', $company);
 $email     = preg_replace("/[\r\n]+/", ' ', $email);
 
 // À ADAPTER SI BESOIN
-$toEmail   = 'guillaume.verliac@priam-solutions.com';
+$toEmail   = 'guillaume.verliac@priam-solutions.com, antoine.delcambre@priam-solutions.com';
 $fromEmail = 'guillaume.verliac@priam-solutions.com';
 $fromName  = 'Site Priam Solutions';
 

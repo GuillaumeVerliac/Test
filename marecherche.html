@@ -1,0 +1,1532 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ma recherche - Priam Solutions</title>
+  <meta
+    name="description"
+    content="Recherches et analyses Priam Solutions."
+  />
+
+  <style>
+    :root {
+      --bg: #07101d;
+      --bg-soft: #0b1730;
+      --surface: rgba(255,255,255,0.06);
+      --surface-strong: rgba(255,255,255,0.10);
+      --border: rgba(255,255,255,0.11);
+      --text: #eef4ff;
+      --muted: #9cb0d2;
+      --accent: #7cc4ff;
+      --accent-2: #b8ef6f;
+      --danger: #ff8f8f;
+      --tag-macro-bg: rgba(124,196,255,0.14);
+      --tag-macro-border: rgba(124,196,255,0.30);
+      --tag-macro-text: #9dd6ff;
+      --tag-sector-bg: rgba(184,239,111,0.12);
+      --tag-sector-border: rgba(184,239,111,0.24);
+      --tag-sector-text: #d2ff9c;
+      --shadow: 0 24px 90px rgba(0,0,0,0.30);
+      --radius: 26px;
+      --container: 1180px;
+      --ease: cubic-bezier(.22,.84,.24,1);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 12% 12%, rgba(124,196,255,0.13), transparent 22%),
+        radial-gradient(circle at 88% 42%, rgba(184,239,111,0.08), transparent 20%),
+        linear-gradient(180deg, #06101b 0%, #091424 36%, #0b1730 68%, #07101d 100%);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.06;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+      background-size: 84px 84px;
+      mask-image: radial-gradient(circle at center, black 36%, transparent 90%);
+      z-index: 0;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    .container {
+      width: min(var(--container), calc(100% - 40px));
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      z-index: 100;
+      transform-origin: left;
+      transform: scaleX(0);
+      background: linear-gradient(90deg, var(--accent), #88a8ff, var(--accent-2));
+    }
+
+    .site-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 50;
+      backdrop-filter: blur(16px);
+      background: rgba(6, 12, 22, 0.42);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      transition: background .3s ease, border-color .3s ease;
+    }
+
+    .site-header.scrolled {
+      background: rgba(6, 12, 22, 0.82);
+      border-bottom-color: rgba(255,255,255,0.11);
+    }
+
+    .nav {
+      min-height: 84px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      flex-shrink: 0;
+    }
+
+    .brand-logo {
+      width: 50px;
+      height: 50px;
+      object-fit: contain;
+      display: block;
+      flex-shrink: 0;
+    }
+
+    .nav-toggle {
+      display: none;
+      width: 48px;
+      height: 48px;
+      padding: 0;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 14px;
+      background: rgba(255,255,255,0.04);
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      transition: background .25s ease, border-color .25s ease, transform .25s ease;
+    }
+
+    .nav-toggle:hover {
+      background: rgba(255,255,255,0.07);
+      border-color: rgba(124,196,255,0.28);
+    }
+
+    .nav-toggle span {
+      display: block;
+      width: 18px;
+      height: 2px;
+      border-radius: 999px;
+      background: #ffffff;
+      transition: transform .25s ease, opacity .25s ease;
+    }
+
+    .nav-toggle.is-open span:nth-child(1) {
+      transform: translateY(7px) rotate(45deg);
+    }
+
+    .nav-toggle.is-open span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .nav-toggle.is-open span:nth-child(3) {
+      transform: translateY(-7px) rotate(-45deg);
+    }
+
+    .nav-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 16px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    .nav-links a {
+      position: relative;
+      padding: 6px 0;
+      transition: color .25s ease;
+    }
+
+    .nav-links a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -4px;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), transparent);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform .3s var(--ease);
+    }
+
+    .nav-links a:hover,
+    .nav-links a.is-active {
+      color: var(--text);
+    }
+
+    .nav-links a:hover::after,
+    .nav-links a.is-active::after {
+      transform: scaleX(1);
+    }
+
+    .header-buttons {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-left: 10px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 13px 18px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      font-weight: 600;
+      cursor: pointer;
+      transition:
+        transform .3s var(--ease),
+        box-shadow .3s var(--ease),
+        background .3s ease,
+        border-color .3s ease,
+        opacity .3s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), #91a5ff);
+      color: #06101b;
+      box-shadow: 0 18px 42px rgba(124,196,255,0.24);
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.04);
+      border-color: rgba(255,255,255,0.12);
+      color: var(--text);
+    }
+
+    .btn-secondary:hover {
+      border-color: rgba(124,196,255,0.32);
+      background: rgba(255,255,255,0.07);
+    }
+
+    .profile-menu {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .profile-avatar-btn {
+      width: 48px;
+      height: 48px;
+      min-width: 48px;
+      border: 1px solid rgba(124,196,255,0.30);
+      border-radius: 999px;
+      background: linear-gradient(135deg, rgba(124,196,255,0.20), rgba(145,165,255,0.20));
+      color: #ffffff;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 14px 34px rgba(124,196,255,0.18);
+      transition:
+        transform .3s var(--ease),
+        border-color .3s ease,
+        background .3s ease,
+        box-shadow .3s ease;
+    }
+
+    .profile-avatar-btn:hover {
+      transform: translateY(-2px);
+      border-color: rgba(124,196,255,0.48);
+      background: linear-gradient(135deg, rgba(124,196,255,0.28), rgba(145,165,255,0.28));
+    }
+
+    .profile-dropdown {
+      position: absolute;
+      top: calc(100% + 12px);
+      right: 0;
+      min-width: 250px;
+      padding: 10px;
+      border-radius: 20px;
+      background: rgba(8, 17, 32, 0.98);
+      border: 1px solid rgba(255,255,255,0.16);
+      box-shadow: 0 24px 80px rgba(0,0,0,0.42);
+      backdrop-filter: blur(16px);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transform: translateY(10px);
+      transition:
+        opacity .25s ease,
+        visibility .25s ease,
+        transform .25s ease;
+      z-index: 60;
+    }
+
+    .profile-menu.is-open .profile-dropdown {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    .profile-dropdown a,
+    .profile-dropdown button {
+      display: block;
+      width: 100%;
+      padding: 11px 14px;
+      border-radius: 14px;
+      color: #e8f1ff;
+      background: transparent;
+      border: none;
+      text-align: left;
+      cursor: pointer;
+      transition: background .25s ease, color .25s ease;
+    }
+
+    .profile-dropdown a:hover,
+    .profile-dropdown button:hover {
+      background: rgba(255,255,255,0.08);
+      color: #ffffff;
+    }
+
+    .profile-logout {
+      margin-top: 6px;
+      border-top: 1px solid rgba(255,255,255,0.10) !important;
+      padding-top: 14px !important;
+      color: #ffd3d3 !important;
+    }
+
+    .page-shell {
+      padding: 126px 0 60px;
+      min-height: 100vh;
+      position: relative;
+      z-index: 1;
+    }
+
+    .dashboard-layout {
+      display: grid;
+      grid-template-columns: 220px minmax(0, 1fr);
+      gap: 56px;
+      align-items: start;
+    }
+
+    .side-nav {
+      position: sticky;
+      top: 50%;
+      transform: translateY(-50%);
+      align-self: start;
+    }
+
+    .side-nav-links {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    .side-nav-links a {
+      position: relative;
+      display: inline-block;
+      padding: 6px 0;
+      transition: color .25s ease;
+    }
+
+    .side-nav-links a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -4px;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), transparent);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform .3s var(--ease);
+    }
+
+    .side-nav-links a:hover,
+    .side-nav-links a.is-active {
+      color: var(--text);
+    }
+
+    .side-nav-links a:hover::after,
+    .side-nav-links a.is-active::after {
+      transform: scaleX(1);
+    }
+
+    .content {
+      width: 100%;
+    }
+
+    .intro {
+      margin-bottom: 34px;
+    }
+
+    h1, h2, h3, h4 {
+      margin: 0;
+      letter-spacing: -0.04em;
+      line-height: 1.12;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 4vw, 3.1rem);
+      max-width: none;
+    }
+
+    h2 {
+      font-size: clamp(1.4rem, 3vw, 1.95rem);
+    }
+
+    h3 {
+      font-size: 1.24rem;
+      line-height: 1.35;
+    }
+
+    h4 {
+      font-size: 1rem;
+      color: #ffffff;
+    }
+
+    .lead,
+    .body-text {
+      margin: 22px 0 0;
+      color: #dfe9fb;
+      font-size: 1.04rem;
+      line-height: 1.9;
+      max-width: none;
+    }
+
+    .articles-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 28px;
+      margin-top: 34px;
+    }
+
+    .article-card {
+      display: block;
+      cursor: pointer;
+      transition: transform .3s var(--ease), opacity .3s ease;
+    }
+
+    .article-card:hover {
+      transform: translateY(-4px);
+    }
+
+    .article-thumb {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      display: block;
+      border-radius: 18px;
+      margin-bottom: 18px;
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 18px 44px rgba(0,0,0,0.22);
+    }
+
+    .article-date {
+      display: inline-block;
+      margin-bottom: 10px;
+      font-size: 0.9rem;
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .article-tag {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 16px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 0.86rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      border: 1px solid transparent;
+    }
+
+    .article-tag.macro {
+      background: var(--tag-macro-bg);
+      border-color: var(--tag-macro-border);
+      color: var(--tag-macro-text);
+    }
+
+    .article-tag.sector {
+      background: var(--tag-sector-bg);
+      border-color: var(--tag-sector-border);
+      color: var(--tag-sector-text);
+    }
+
+    .article-excerpt {
+      margin: 12px 0 0;
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.8;
+    }
+
+    .article-detail {
+      display: none;
+      padding-top: 6px;
+    }
+
+    .article-detail.is-visible {
+      display: block;
+    }
+
+    .article-back {
+      margin-bottom: 26px;
+    }
+
+    .article-hero-image {
+      width: 100%;
+      max-height: 420px;
+      object-fit: cover;
+      display: block;
+      border-radius: 22px;
+      margin: 24px 0 28px;
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 20px 54px rgba(0,0,0,0.26);
+    }
+
+    .article-meta {
+      color: var(--accent);
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 14px;
+    }
+
+    .article-kpi-row {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin: 26px 0 30px;
+    }
+
+    .article-kpi {
+      padding: 14px 16px;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      background: rgba(255,255,255,0.03);
+    }
+
+    .article-kpi-label {
+      display: block;
+      color: var(--muted);
+      font-size: 0.82rem;
+      margin-bottom: 6px;
+    }
+
+    .article-kpi-value {
+      font-size: 1.12rem;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .article-body {
+      color: #dfe9fb;
+      font-size: 1.03rem;
+      line-height: 1.95;
+    }
+
+    .article-body p {
+      margin: 0 0 22px;
+    }
+
+    .article-body h2 {
+      margin: 40px 0 16px;
+      font-size: clamp(1.3rem, 2.5vw, 1.75rem);
+    }
+
+    .article-body strong {
+      color: #ffffff;
+    }
+
+    .chart-block {
+      margin: 34px 0 32px;
+      padding: 22px 20px 18px;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px;
+      background: rgba(255,255,255,0.03);
+    }
+
+    .chart-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .chart-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .chart-note {
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.7;
+      max-width: 72ch;
+    }
+
+    .chart-canvas {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.02);
+    }
+
+    @media (max-width: 1024px) {
+      .dashboard-layout {
+        grid-template-columns: 180px minmax(0, 1fr);
+        gap: 36px;
+      }
+
+      .articles-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .article-kpi-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 900px) {
+      .nav {
+        min-height: 84px;
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: center;
+        gap: 16px;
+        padding: 16px 0;
+      }
+
+      .brand {
+        width: auto;
+        justify-content: flex-start;
+      }
+
+      .nav-toggle {
+        display: inline-flex;
+        justify-self: end;
+      }
+
+      .nav-right {
+        grid-column: 1 / -1;
+        width: 100%;
+        margin-left: 0;
+        display: grid;
+        gap: 18px;
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(-8px);
+        transition:
+          max-height .35s var(--ease),
+          opacity .25s ease,
+          transform .25s ease;
+      }
+
+      .site-header.menu-open .nav-right {
+        max-height: 700px;
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateY(0);
+        padding-top: 8px;
+      }
+
+      .nav-links {
+        width: 100%;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 14px;
+        padding: 18px 18px 6px;
+        border-radius: 22px;
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.08);
+      }
+
+      .nav-links a {
+        width: 100%;
+        padding: 8px 0;
+      }
+
+      .header-buttons {
+        width: 100%;
+        margin-left: 0;
+        flex-direction: column;
+        gap: 12px;
+        align-items: stretch;
+      }
+
+      .header-buttons .btn {
+        width: 100%;
+      }
+
+      .profile-menu {
+        width: 100%;
+        display: block;
+      }
+
+      .profile-avatar-btn {
+        width: 100%;
+        height: 52px;
+        border-radius: 18px;
+      }
+
+      .profile-dropdown {
+        position: static;
+        top: auto;
+        right: auto;
+        min-width: 0;
+        width: 100%;
+        margin-top: 10px;
+        transform: none;
+        box-shadow: 0 18px 50px rgba(0,0,0,0.28);
+        display: none;
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+      }
+
+      .profile-menu.is-open .profile-dropdown {
+        display: block;
+      }
+
+      .dashboard-layout {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+
+      .side-nav {
+        display: none;
+      }
+
+      .article-kpi-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .container {
+        width: min(var(--container), calc(100% - 24px));
+      }
+
+      .page-shell {
+        padding: 118px 0 40px;
+      }
+
+      .article-thumb {
+        height: 190px;
+      }
+
+      .article-hero-image {
+        border-radius: 18px;
+        max-height: 300px;
+      }
+
+      h1 {
+        font-size: clamp(2rem, 8vw, 3rem);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="progress" aria-hidden="true"></div>
+
+  <header class="site-header" id="header">
+    <div class="container nav">
+      <a href="index.html" class="brand">
+        <img src="logo.png" alt="Logo Priam Solutions" class="brand-logo" />
+        <span>Priam Solutions</span>
+      </a>
+
+      <button
+        class="nav-toggle"
+        id="navToggle"
+        aria-label="Ouvrir le menu"
+        aria-expanded="false"
+        aria-controls="mobileMenu"
+        type="button"
+      >
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <div class="nav-right" id="mobileMenu">
+        <nav class="nav-links" aria-label="Navigation principale">
+          <a href="index.html">Accueil</a>
+          <a href="a-propos.html">Équipe</a>
+          <a href="recherche.html" class="is-active">Recherche</a>
+        </nav>
+
+        <div class="header-buttons">
+          <a href="contact.html" class="btn btn-primary">Nous contacter</a>
+
+          <button type="button" class="btn btn-secondary" id="loginTrigger" hidden>
+            Se connecter
+          </button>
+
+          <div class="profile-menu" id="profileMenu">
+            <button
+              type="button"
+              class="profile-avatar-btn"
+              id="profileMenuTrigger"
+              aria-label="Ouvrir le menu utilisateur"
+              aria-haspopup="true"
+              aria-expanded="false"
+              aria-controls="profileDropdown"
+            >
+              UT
+            </button>
+
+            <div class="profile-dropdown" id="profileDropdown" role="menu" aria-label="Menu utilisateur">
+              <a href="monespace.html" role="menuitem">Mon espace</a>
+              <a href="marecherche.html" role="menuitem">Ma recherche</a>
+              <a href="mesproduits.html" role="menuitem">Mes produits</a>
+              <a href="messimulations.html" role="menuitem">Mes simulations</a>
+              <button type="button" id="logoutBtn" class="profile-logout" role="menuitem">
+                Déconnexion
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-shell">
+    <div class="container dashboard-layout">
+      <aside class="side-nav" aria-label="Navigation espace utilisateur">
+        <nav class="side-nav-links">
+          <a href="monespace.html">Mon espace</a>
+          <a href="marecherche.html" class="is-active">Ma recherche</a>
+          <a href="mesproduits.html">Mes produits</a>
+          <a href="messimulations.html">Mes simulations</a>
+        </nav>
+      </aside>
+
+      <section class="content">
+        <div id="articlesListView">
+          <div class="intro">
+            <h1>Vos articles et analyses Priam</h1>
+            <p class="lead">
+              Retrouvez ici nos publications de recherche : analyses macroéconomiques, lectures sectorielles
+              et points de vue sur les dynamiques qui structurent l’univers des actifs numériques.
+            </p>
+          </div>
+
+          <div class="articles-grid">
+            <article class="article-card" data-article="article1">
+              <img src="image1.png" alt="Analyse Moyen-Orient et crypto-actifs" class="article-thumb" />
+              <span class="article-date">Publié le 27 février 2026</span>
+              <h3>Moyen-Orient, énergie et flux globaux : quel impact sur le secteur des cryptomonnaies ?</h3>
+              <p class="article-excerpt">
+                Une lecture macro approfondie du lien entre tensions géopolitiques, pétrole, dollar,
+                inflation importée, liquidité mondiale et compression des multiples sur les actifs numériques.
+              </p>
+              <div class="article-tag macro">Analyse macroéconomique</div>
+            </article>
+
+            <article class="article-card" data-article="article2">
+              <img src="image2.png" alt="Analyse Bitcoin et concurrence en 2026" class="article-thumb" />
+              <span class="article-date">Publié le 29 janvier 2026</span>
+              <h3>Bitcoin sous pression face à ses concurrents en 2026 : correction, rotation sectorielle et perspectives</h3>
+              <p class="article-excerpt">
+                Une analyse sectorielle détaillée de la baisse relative du Bitcoin, de la rotation des flux vers
+                d’autres segments du marché et des scénarios de revalorisation à moyen terme.
+              </p>
+              <div class="article-tag sector">Analyse sectorielle</div>
+            </article>
+          </div>
+        </div>
+
+        <article class="article-detail" id="article1">
+          <div class="article-back">
+            <button class="btn btn-secondary back-to-list" type="button">Retour aux articles</button>
+          </div>
+
+          <div class="article-meta">Publié le 27 février 2026 — Analyse macroéconomique</div>
+          <h1>Moyen-Orient, énergie et flux globaux : quel impact sur le secteur des cryptomonnaies ?</h1>
+
+          <img src="image1.png" alt="Analyse Moyen-Orient et crypto-actifs" class="article-hero-image" />
+
+          <div class="article-kpi-row">
+            <div class="article-kpi">
+              <span class="article-kpi-label">Hausse du Brent observée</span>
+              <div class="article-kpi-value">+18 %</div>
+            </div>
+            <div class="article-kpi">
+              <span class="article-kpi-label">Hausse de la volatilité crypto</span>
+              <div class="article-kpi-value">+32 %</div>
+            </div>
+            <div class="article-kpi">
+              <span class="article-kpi-label">Reflux estimé des flux risqués</span>
+              <div class="article-kpi-value">-11 %</div>
+            </div>
+            <div class="article-kpi">
+              <span class="article-kpi-label">Appréciation du dollar</span>
+              <div class="article-kpi-value">+4,6 %</div>
+            </div>
+          </div>
+
+          <div class="chart-block">
+            <div class="chart-head">
+              <div>
+                <div class="chart-title">Énergie, dollar et pression sur les actifs numériques</div>
+                <div class="chart-note">
+                  Illustration de scénario Priam sur huit semaines : plus le choc énergétique se prolonge,
+                  plus le couple dollar / taux réels tend à peser sur l’appétit pour le risque.
+                </div>
+              </div>
+            </div>
+            <canvas id="macroChart" class="chart-canvas" width="980" height="360"></canvas>
+          </div>
+
+          <div class="article-body">
+            <p>
+              Les tensions au Moyen-Orient constituent rarement un simple bruit géopolitique. Elles se transmettent
+              aux marchés par une chaîne de causalité très identifiable : <strong>hausse du risque politique</strong>,
+              <strong>stress sur l’énergie</strong>, <strong>révision des anticipations d’inflation</strong>,
+              <strong>renforcement du dollar</strong>, puis <strong>compression de la prise de risque</strong>.
+              Dans ce schéma, les crypto-actifs ne réagissent pas seulement au titre géopolitique lui-même ; ils
+              réagissent à la façon dont ce titre modifie la liquidité mondiale et le coût implicite du capital.
+            </p>
+
+            <p>
+              Sur notre grille de lecture, un épisode de tension durable au Moyen-Orient peut faire monter le Brent
+              de <strong>10 à 20 % sur quelques semaines</strong>. Ce mouvement, même s’il n’est pas toujours permanent,
+              suffit à rehausser le débat sur l’inflation importée. Or, lorsque le marché reprice un scénario d’inflation
+              plus collante, il intègre aussi l’idée que les banques centrales disposeront de moins de flexibilité pour
+              détendre rapidement les conditions financières. C’est là que le lien avec les actifs numériques devient
+              structurant : le secteur demeure très sensible à la quantité de liquidité disponible, au niveau des taux
+              réels et à la direction du dollar.
+            </p>
+
+            <h2>Un choc géopolitique agit d’abord comme un choc de liquidité</h2>
+
+            <p>
+              Dans les premiers jours d’un choc, les investisseurs ne cherchent pas un récit sophistiqué : ils cherchent
+              de la profondeur, de la visibilité et de la liquidité. Historiquement, cela se traduit par un retour vers
+              les actifs les plus défensifs ou les plus liquides. Dans une configuration type, nous observons une montée
+              simultanée de <strong>l’indice dollar de 3 à 5 %</strong>, une détente sur les actifs obligataires de meilleure
+              qualité, et une sous-performance des segments à duration longue ou à bêta élevé. Les crypto-actifs, en
+              particulier les poches les plus spéculatives du marché, se retrouvent alors confrontés à un double effet :
+              baisse des flux entrants et hausse de la volatilité.
+            </p>
+
+            <p>
+              Sur un stress marqué, nous estimons qu’une contraction des flux vers les actifs numériques de l’ordre de
+              <strong>8 à 12 %</strong> sur un mois est parfaitement plausible, avec un élargissement des écarts de valorisation
+              entre grandes capitalisations et actifs périphériques. Cela signifie qu’en environnement tendu, le secteur
+              ne se déforme pas de manière uniforme : il se hiérarchise. Les actifs les plus liquides et les infrastructures
+              les plus lisibles absorbent mieux le choc ; les récits plus fragiles, eux, décrochent plus vite.
+            </p>
+
+            <h2>Le pétrole pèse sur la crypto moins par la technique que par le régime macro</h2>
+
+            <p>
+              Une lecture superficielle pourrait réduire l’analyse à la seule question énergétique. Ce serait une erreur.
+              Le véritable effet du pétrole sur les marchés crypto n’est pas seulement opérationnel ; il est surtout
+              <strong>macro-financier</strong>. Quand l’énergie repart à la hausse, les marges se resserrent, le consommateur
+              devient plus prudent, la croissance anticipée ralentit et les banques centrales doivent arbitrer entre activité
+              et stabilité des prix. Cette incertitude suffit à faire remonter les primes de risque.
+            </p>
+
+            <p>
+              Sur notre matrice de scénarios, une hausse durable de <strong>15 % du baril</strong> peut mécaniquement faire
+              remonter l’aversion au risque de plusieurs crans, surtout si elle coïncide avec des données inflationnistes déjà
+              élevées. Le marché cesse alors de rémunérer les promesses lointaines pour privilégier les structures capables
+              d’absorber la volatilité. C’est précisément dans ce type de régime que la lecture des options implicites,
+              des corridors de prix et de la convexité devient déterminante pour la construction d’exposition.
+            </p>
+
+            <h2>Le secteur crypto n’est pas une valeur refuge immédiate</h2>
+
+            <p>
+              L’un des malentendus récurrents du marché consiste à considérer que la décentralisation suffit à transformer
+              les cryptomonnaies en refuge automatique dès qu’un choc géopolitique survient. En pratique, le comportement
+              est plus séquentiel. Dans la première phase, le marché vend ce qui est volatile et conserve ce qui est liquide.
+              Dans la seconde phase, lorsque la poussière retombe, certains investisseurs recommencent à regarder les actifs
+              numériques comme des instruments alternatifs de circulation ou de préservation relative de valeur.
+            </p>
+
+            <p>
+              Ce décalage est fondamental. Nous estimons qu’il existe souvent une fenêtre de <strong>2 à 6 semaines</strong>
+              entre le choc initial et la phase de réévaluation plus constructive. Pendant cette période, la volatilité du
+              secteur peut remonter de <strong>25 à 35 %</strong>, ce qui dégrade la lisibilité en apparence mais ouvre en
+              réalité des opportunités de structuration plus fines. Là où un investisseur directionnel voit principalement
+              de l’inconfort, un investisseur structurant peut voir une matière première optionnelle plus riche.
+            </p>
+
+            <h2>Lecture sectorielle : concentration sur les grandes capitalisations et sélectivité accrue</h2>
+
+            <p>
+              Dans un contexte géopolitique tendu, le marché opère un tri plus sévère. Les grandes capitalisations, les
+              actifs les plus échangés et les segments disposant d’une utilité claire ont tendance à concentrer l’essentiel
+              des flux résiduels. À l’inverse, les protocoles dont la valeur repose presque exclusivement sur le momentum
+              narratif ou sur une liquidité trop fine souffrent rapidement. Nous observons alors une dispersion accrue des
+              performances intra-sectorielles, avec parfois un écart de plus de <strong>20 points</strong> entre le haut et
+              le bas du spectre sur quelques semaines.
+            </p>
+
+            <p>
+              Cette dispersion explique pourquoi l’analyse sectorielle ne peut jamais être déconnectée de la lecture macro.
+              Le choc géopolitique agit comme un accélérateur de sélection. Il ne condamne pas le secteur ; il force le marché
+              à distinguer les actifs de cœur, les actifs de conviction et les actifs d’opportunité. Pour un investisseur
+              professionnel, cette hiérarchisation est précieuse : elle permet d’ordonner les expositions et de ne pas traiter
+              la classe d’actifs comme un bloc homogène.
+            </p>
+
+            <h2>Notre conclusion</h2>
+
+            <p>
+              Notre lecture reste claire : un épisode de tension prolongé au Moyen-Orient est d’abord un facteur de
+              <strong>resserrement financier indirect</strong>. Par le canal du pétrole, du dollar et des taux réels, il
+              peut peser à court terme sur l’ensemble des actifs risqués, y compris les cryptomonnaies. Mais ce même choc
+              peut aussi créer, dans un second temps, des dislocations de valorisation intéressantes et des fenêtres où la
+              volatilité devient exploitable plutôt que subie.
+            </p>
+
+            <p>
+              Pour l’investisseur, le bon réflexe n’est donc pas de chercher une réaction simpliste du type “la géopolitique
+              est bonne ou mauvaise pour la crypto”. Le bon réflexe consiste à lire le régime de marché qu’elle produit :
+              énergie plus chère, dollar plus ferme, flux plus sélectifs, dispersion accrue. C’est dans cette lecture-là
+              que se trouvent les vraies opportunités de construction.
+            </p>
+          </div>
+        </article>
+
+        <article class="article-detail" id="article2">
+          <div class="article-back">
+            <button class="btn btn-secondary back-to-list" type="button">Retour aux articles</button>
+          </div>
+
+          <div class="article-meta">Publié le 29 janvier 2026 — Analyse sectorielle</div>
+          <h1>Bitcoin sous pression face à ses concurrents en 2026 : correction, rotation sectorielle et perspectives</h1>
+
+          <img src="image2.png" alt="Analyse Bitcoin et concurrence en 2026" class="article-hero-image" />
+
+          <div class="article-kpi-row">
+            <div class="article-kpi">
+              <span class="article-kpi-label">Sous-performance relative BTC</span>
+              <div class="article-kpi-value">-14 pts</div>
+            </div>
+            <div class="article-kpi">
+              <span class="article-kpi-label">Rotation vers concurrents</span>
+              <div class="article-kpi-value">+22 %</div>
+            </div>
+            <div class="article-kpi">
+              <span class="article-kpi-label">Dominance BTC estimée</span>
+              <div class="article-kpi-value">48 % → 42 %</div>
+            </div>
+            <div class="article-kpi">
+              <span class="article-kpi-label">Volatilité annuelle implicite</span>
+              <div class="article-kpi-value">63 %</div>
+            </div>
+          </div>
+
+          <div class="chart-block">
+            <div class="chart-head">
+              <div>
+                <div class="chart-title">Rotation sectorielle : Bitcoin vs panier de concurrents</div>
+                <div class="chart-note">
+                  Indice base 100 reconstitué à titre illustratif : le graphique met en évidence une phase
+                  de rotation où les flux quittent temporairement le leader pour rechercher davantage de bêta.
+                </div>
+              </div>
+            </div>
+            <canvas id="sectorChart" class="chart-canvas" width="980" height="360"></canvas>
+          </div>
+
+          <div class="article-body">
+            <p>
+              Les phases de baisse du Bitcoin ne doivent jamais être lues uniquement comme des accidents de parcours.
+              Lorsqu’elles s’inscrivent dans un marché devenu plus mature, elles révèlent souvent un phénomène plus
+              profond : <strong>une redistribution du leadership</strong>. En 2026, la pression observée sur le Bitcoin
+              face à certains concurrents peut s’interpréter comme le résultat combiné d’une fatigue relative du récit
+              dominant, d’une compression du momentum, et d’une recherche plus active de performance sur d’autres segments
+              du marché.
+            </p>
+
+            <p>
+              Sur notre lecture de flux, nous estimons qu’une baisse relative de l’ordre de <strong>12 à 15 points</strong>
+              du Bitcoin face à un panier concurrent sur un trimestre constitue déjà un signal significatif. Elle indique
+              non seulement un arbitrage tactique des portefeuilles, mais aussi une évolution des préférences du marché.
+              Lorsque la dominance du Bitcoin recule de <strong>48 % vers 42 %</strong>, ce n’est pas seulement un mouvement
+              de prix : c’est la photographie d’un secteur où le capital cherche une nouvelle zone de rendement.
+            </p>
+
+            <h2>Pourquoi le marché se détourne temporairement du leader</h2>
+
+            <p>
+              Le Bitcoin conserve des qualités centrales : profondeur de marché, reconnaissance institutionnelle, lisibilité
+              du récit et rôle de référence dans la gestion du risque crypto. Mais précisément parce qu’il occupe cette place
+              centrale, il concentre aussi moins de surprise. Plus un actif est “institutionnalisé”, plus son profil devient
+              lisible, et plus les investisseurs tactiques sont tentés d’aller chercher ailleurs le supplément de performance.
+            </p>
+
+            <p>
+              Dans les phases de rotation, le marché cherche souvent trois choses : <strong>plus de vitesse</strong>,
+              <strong>plus de narration technologique</strong> et <strong>plus de convexité</strong>. Certains concurrents
+              du Bitcoin répondent mieux à cette recherche, au moins temporairement. Sur notre scénario central, la rotation
+              peut conduire à une surperformance relative de <strong>18 à 25 %</strong> de certains segments sur deux à trois
+              mois, sans que cela invalide structurellement la place du Bitcoin dans l’écosystème.
+            </p>
+
+            <h2>Le phénomène n’est pas seulement technique, il est aussi sectoriel</h2>
+
+            <p>
+              L’erreur serait de réduire cette baisse à un simple problème de momentum. En réalité, le marché crypto a gagné
+              en granularité. Il ne valorise plus uniquement une idée générale de décentralisation ; il valorise des sous-secteurs,
+              des infrastructures, des usages, des mécanismes de monétisation et des communautés de liquidité. Dès lors, le
+              leadership peut se déplacer en fonction du cycle sectoriel.
+            </p>
+
+            <p>
+              En 2026, nous observons un environnement où le capital devient plus discriminant. Le Bitcoin, en tant qu’actif
+              dominant, joue parfois un rôle proche de celui d’un indice directeur : il rassure, il structure, mais il n’est
+              pas toujours l’actif qui maximise la sensibilité à la phase de marché. Les investisseurs les plus offensifs
+              se repositionnent alors sur des segments où l’élasticité aux flux est plus élevée. Cette dynamique explique
+              pourquoi le marché peut être globalement constructif tout en sanctionnant relativement le leader historique.
+            </p>
+
+            <h2>Le rôle de la valorisation et des attentes intégrées</h2>
+
+            <p>
+              Les actifs leaders paient souvent le prix de leur succès. Lorsque le consensus est déjà très fort, les bonnes
+              nouvelles ont un impact asymétrique plus faible, tandis que les déceptions ou même les simples ralentissements
+              de flux entraînent des prises de bénéfices plus rapides. Sur le Bitcoin, une partie importante du statut
+              institutionnel, de la profondeur et de la résilience est déjà intégrée dans les prix. Cela n’en fait pas
+              un mauvais actif ; cela en fait un actif plus exigeant en matière de surprise positive.
+            </p>
+
+            <p>
+              À l’inverse, les concurrents bénéficient d’attentes plus ouvertes. Il leur suffit parfois d’une amélioration
+              marginale de traction, d’une meilleure lecture des usages ou d’une hausse des volumes pour capter une
+              revalorisation plus vive. Dans nos scénarios, une expansion de multiples sur un panier concurrent peut être
+              de <strong>1,3x à 1,6x</strong> plus rapide que sur le Bitcoin en phase de rotation favorable, ce qui explique
+              la violence apparente de certaines divergences de performance.
+            </p>
+
+            <h2>Faut-il y voir une remise en cause durable du Bitcoin ?</h2>
+
+            <p>
+              Pas nécessairement. Une rotation sectorielle n’implique pas automatiquement une dégradation structurelle du
+              leader. Elle peut au contraire traduire la maturité d’un marché qui distingue davantage les rôles. Le Bitcoin
+              demeure l’actif de référence, le pivot de liquidité et souvent le premier point d’entrée institutionnel. Mais
+              dans certains régimes, cette qualité de pivot suffit précisément à le rendre moins explosif que ses concurrents.
+            </p>
+
+            <p>
+              Pour l’investisseur, le point crucial est de savoir si la baisse relative du Bitcoin est provoquée par
+              <strong>une dégradation globale du secteur</strong> ou par <strong>une rotation interne de flux</strong>.
+              Dans le premier cas, la prudence doit dominer sur l’ensemble de la chaîne. Dans le second cas, la baisse
+              du Bitcoin peut devenir une phase de respiration, avec une fenêtre de rechargement potentiellement attractive
+              lorsque l’excès de valorisation sur les concurrents commence à se résorber.
+            </p>
+
+            <h2>Perspectives d’avenir : phase de transition, pas nécessairement phase de rupture</h2>
+
+            <p>
+              Notre scénario central reste celui d’une phase de transition plutôt que d’une rupture. À horizon moyen terme,
+              le Bitcoin conserve plusieurs avantages compétitifs : visibilité réglementaire relative, profondeur des marchés
+              dérivés, intérêt institutionnel et rôle de collatéral implicite dans de nombreuses constructions de portefeuille.
+              Ce socle limite la probabilité d’un décrochage durable tant que le secteur reste globalement en expansion.
+            </p>
+
+            <p>
+              En revanche, à court terme, la pression relative peut persister si la rotation sectorielle s’accentue. Nous
+              surveillons en priorité trois variables : la dominance du Bitcoin, la dispersion de performance intra-crypto
+              et la structure de la volatilité implicite. Une dominance en recul, combinée à une volatilité toujours élevée
+              mais non désordonnée, suggère souvent un marché qui redistribue les cartes sans encore invalider la thèse
+              de fond sur le leader.
+            </p>
+
+            <p>
+              Pour la structuration, ce type de moment est particulièrement intéressant. Un actif de référence qui corrige,
+              alors même que le secteur reste vivant, offre souvent de meilleures fenêtres de construction que les phases
+              d’euphorie linéaire. Les points d’entrée deviennent plus lisibles, les barrières peuvent être mieux calibrées
+              et la volatilité implicite redevient une variable exploitable.
+            </p>
+
+            <h2>Notre conclusion</h2>
+
+            <p>
+              La chute relative du Bitcoin face à certains concurrents en 2026 ne doit donc pas être interprétée comme une
+              perte automatique de pertinence. Elle reflète d’abord une rotation des flux, une maturation du marché et une
+              demande accrue pour des profils de rendement plus nerveux. Pour un investisseur discipliné, cette phase n’est
+              pas seulement défensive ; elle est aussi analytique. Elle permet de distinguer ce qui relève d’une simple
+              rotation tactique de ce qui relèverait d’un véritable déplacement structurel du leadership.
+            </p>
+
+            <p>
+              En ce sens, la correction actuelle peut aussi préparer la prochaine étape. Car dans les marchés les plus
+              matures, le leadership ne disparaît pas forcément lorsqu’il est contesté ; il se recompose, se renforce et
+              réapparaît souvent dans de meilleures conditions après la phase d’excès concurrentiel.
+            </p>
+          </div>
+        </article>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const progress = document.querySelector('.progress');
+    const header = document.getElementById('header');
+    const navToggle = document.getElementById('navToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const menuLinks = mobileMenu ? mobileMenu.querySelectorAll('a') : [];
+
+    const loginTrigger = document.getElementById('loginTrigger');
+    const profileMenu = document.getElementById('profileMenu');
+    const profileMenuTrigger = document.getElementById('profileMenuTrigger');
+    const profileDropdown = document.getElementById('profileDropdown');
+    const profileDropdownLinks = profileDropdown.querySelectorAll('a');
+    const logoutBtn = document.getElementById('logoutBtn');
+
+    const articlesListView = document.getElementById('articlesListView');
+    const articleCards = document.querySelectorAll('.article-card');
+    const articleDetails = document.querySelectorAll('.article-detail');
+    const backButtons = document.querySelectorAll('.back-to-list');
+
+    const AUTH_KEY = 'priam_demo_user_authenticated';
+
+    const closeMenu = () => {
+      header.classList.remove('menu-open');
+      navToggle.classList.remove('is-open');
+      navToggle.setAttribute('aria-expanded', 'false');
+    };
+
+    const openMenu = () => {
+      header.classList.add('menu-open');
+      navToggle.classList.add('is-open');
+      navToggle.setAttribute('aria-expanded', 'true');
+    };
+
+    if (navToggle) {
+      navToggle.addEventListener('click', () => {
+        const isOpen = header.classList.contains('menu-open');
+        if (isOpen) {
+          closeMenu();
+        } else {
+          openMenu();
+        }
+      });
+    }
+
+    const updateScrollEffects = () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const ratio = docHeight > 0 ? scrollTop / docHeight : 0;
+
+      progress.style.transform = `scaleX(${ratio})`;
+      header.classList.toggle('scrolled', scrollTop > 20);
+    };
+
+    const isLoggedIn = () => {
+      return sessionStorage.getItem(AUTH_KEY) === 'true';
+    };
+
+    const renderAuthState = () => {
+      const loggedIn = isLoggedIn();
+      loginTrigger.hidden = loggedIn;
+      profileMenu.hidden = !loggedIn;
+    };
+
+    const openProfileDropdown = () => {
+      if (profileMenu.hidden) return;
+      profileMenu.classList.add('is-open');
+      profileMenuTrigger.setAttribute('aria-expanded', 'true');
+    };
+
+    const closeProfileDropdown = () => {
+      profileMenu.classList.remove('is-open');
+      profileMenuTrigger.setAttribute('aria-expanded', 'false');
+    };
+
+    const toggleProfileDropdown = () => {
+      if (profileMenu.classList.contains('is-open')) {
+        closeProfileDropdown();
+      } else {
+        openProfileDropdown();
+      }
+    };
+
+    const logout = () => {
+      sessionStorage.removeItem(AUTH_KEY);
+      closeProfileDropdown();
+      renderAuthState();
+      window.location.href = 'index.html';
+    };
+
+    const hideAllArticles = () => {
+      articleDetails.forEach((article) => {
+        article.classList.remove('is-visible');
+      });
+    };
+
+    const showArticle = (articleId) => {
+      hideAllArticles();
+      articlesListView.style.display = 'none';
+
+      const targetArticle = document.getElementById(articleId);
+      if (targetArticle) {
+        targetArticle.classList.add('is-visible');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    };
+
+    const showArticlesList = () => {
+      hideAllArticles();
+      articlesListView.style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    articleCards.forEach((card) => {
+      card.addEventListener('click', () => {
+        const articleId = card.dataset.article;
+        showArticle(articleId);
+      });
+    });
+
+    backButtons.forEach((button) => {
+      button.addEventListener('click', showArticlesList);
+    });
+
+    profileMenuTrigger.addEventListener('click', (event) => {
+      event.stopPropagation();
+      toggleProfileDropdown();
+    });
+
+    logoutBtn.addEventListener('click', logout);
+
+    profileDropdownLinks.forEach((link) => {
+      link.addEventListener('click', () => {
+        closeProfileDropdown();
+        if (window.innerWidth <= 900) {
+          closeMenu();
+        }
+      });
+    });
+
+    menuLinks.forEach((link) => {
+      link.addEventListener('click', () => {
+        if (window.innerWidth <= 900) {
+          closeMenu();
+        }
+        closeProfileDropdown();
+      });
+    });
+
+    document.addEventListener('click', (event) => {
+      if (!profileMenu.hidden && !profileMenu.contains(event.target)) {
+        closeProfileDropdown();
+      }
+    });
+
+    function drawLineChart(canvasId, labels, seriesA, seriesB, seriesAName, seriesBName) {
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) return;
+
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width;
+      const h = canvas.height;
+
+      ctx.clearRect(0, 0, w, h);
+
+      const padding = { top: 36, right: 40, bottom: 52, left: 52 };
+      const chartW = w - padding.left - padding.right;
+      const chartH = h - padding.top - padding.bottom;
+
+      const values = [...seriesA, ...seriesB];
+      const minVal = Math.min(...values);
+      const maxVal = Math.max(...values);
+      const range = maxVal - minVal || 1;
+
+      ctx.strokeStyle = 'rgba(255,255,255,0.10)';
+      ctx.lineWidth = 1;
+
+      const gridLines = 5;
+      for (let i = 0; i <= gridLines; i++) {
+        const y = padding.top + (chartH / gridLines) * i;
+        ctx.beginPath();
+        ctx.moveTo(padding.left, y);
+        ctx.lineTo(w - padding.right, y);
+        ctx.stroke();
+
+        const value = (maxVal - (range / gridLines) * i).toFixed(0);
+        ctx.fillStyle = 'rgba(156,176,210,0.9)';
+        ctx.font = '12px Inter, sans-serif';
+        ctx.fillText(value, 10, y + 4);
+      }
+
+      labels.forEach((label, index) => {
+        const x = padding.left + (chartW / (labels.length - 1)) * index;
+        ctx.fillStyle = 'rgba(156,176,210,0.9)';
+        ctx.font = '12px Inter, sans-serif';
+        ctx.fillText(label, x - 10, h - 18);
+      });
+
+      function plotSeries(data, stroke, fill) {
+        ctx.beginPath();
+        data.forEach((value, index) => {
+          const x = padding.left + (chartW / (data.length - 1)) * index;
+          const y = padding.top + ((maxVal - value) / range) * chartH;
+          if (index === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        });
+
+        ctx.strokeStyle = stroke;
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        ctx.lineTo(padding.left + chartW, padding.top + chartH);
+        ctx.lineTo(padding.left, padding.top + chartH);
+        ctx.closePath();
+
+        ctx.globalAlpha = 0.12;
+        ctx.fillStyle = fill;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+
+        data.forEach((value, index) => {
+          const x = padding.left + (chartW / (data.length - 1)) * index;
+          const y = padding.top + ((maxVal - value) / range) * chartH;
+          ctx.beginPath();
+          ctx.arc(x, y, 4, 0, Math.PI * 2);
+          ctx.fillStyle = stroke;
+          ctx.fill();
+        });
+      }
+
+      plotSeries(seriesA, '#7cc4ff', '#7cc4ff');
+      plotSeries(seriesB, '#b8ef6f', '#b8ef6f');
+
+      const legendY = 18;
+      ctx.fillStyle = '#7cc4ff';
+      ctx.fillRect(padding.left, legendY, 18, 3);
+      ctx.fillStyle = '#eef4ff';
+      ctx.font = '13px Inter, sans-serif';
+      ctx.fillText(seriesAName, padding.left + 24, legendY + 5);
+
+      ctx.fillStyle = '#b8ef6f';
+      ctx.fillRect(padding.left + 170, legendY, 18, 3);
+      ctx.fillStyle = '#eef4ff';
+      ctx.fillText(seriesBName, padding.left + 194, legendY + 5);
+    }
+
+    function drawCharts() {
+      drawLineChart(
+        'macroChart',
+        ['S1', 'S2', 'S3', 'S4', 'S5', 'S6', 'S7', 'S8'],
+        [82, 88, 96, 101, 105, 109, 112, 117],
+        [100, 97, 94, 91, 89, 87, 85, 83],
+        'Indice Brent / Dollar',
+        'Indice appétit crypto'
+      );
+
+      drawLineChart(
+        'sectorChart',
+        ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8'],
+        [100, 98, 96, 93, 91, 89, 90, 92],
+        [100, 103, 107, 111, 116, 119, 121, 122],
+        'Bitcoin',
+        'Panier concurrents'
+      );
+    }
+
+    renderAuthState();
+    updateScrollEffects();
+    drawCharts();
+
+    window.addEventListener('scroll', updateScrollEffects, { passive: true });
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 900) {
+        closeMenu();
+      }
+      closeProfileDropdown();
+      updateScrollEffects();
+      drawCharts();
+    });
+  </script>
+</body>
+</html>
